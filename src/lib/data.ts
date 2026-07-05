@@ -1,5 +1,5 @@
 export const MATERIALS = [
-  { id: "air48", tier: "PREMIUM", subject: "PCM MIX", title: "AIR 48 Notes", desc: "Comprehensive notes from AIR 48 student — all subjects", type: "Notes", link: "" },
+  { id: "air48", tier: "PREMIUM", subject: "PCM MIX", title: "AIR 48 Notes", desc: "Comprehensive notes from AIR 48 student — all subjects", type: "Notes", link: "https://dypol.bolt.host/" },
   { id: "hcv", tier: "CORE", subject: "PHYSICS", title: "HC Verma (HCV — Both Volumes)", desc: "Legendary physics text", type: "Books", link: "" },
   { id: "irodov", tier: "CORE", subject: "PHYSICS", title: "Irodov + Solutions", desc: "Problems in general physics", type: "Books", link: "" },
   { id: "ncert-punch", tier: "CORE", subject: "PCM MIX", title: "NCERT Punch", desc: "Concise NCERT companion", type: "Notes", link: "" },
