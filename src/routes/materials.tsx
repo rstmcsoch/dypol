@@ -1,24 +1,38 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Search, BookOpen, FileText, Sparkles, Clock, ClipboardList, GraduationCap, Filter, ArrowRight, Lock } from "lucide-react";
+import {
+  Search,
+  BookOpen,
+  FileText,
+  Sparkles,
+  Clock,
+  ClipboardList,
+  GraduationCap,
+  Filter,
+  ArrowRight,
+  Lock,
+} from "lucide-react";
 import { MATERIALS, RESOURCE_TYPES, SUBJECTS } from "@/lib/data";
 
 export const Route = createFileRoute("/materials")({
   head: () => ({
     meta: [
       { title: "Materials — Dypol" },
-      { name: "description", content: "Curated books, notes, PYQs and modules — all in one launcher." },
+      {
+        name: "description",
+        content: "Curated books, notes, PYQs and modules — all in one launcher.",
+      },
     ],
   }),
   component: Materials,
 });
 
 const TYPE_ICONS: Record<string, typeof BookOpen> = {
-  "Books": BookOpen,
-  "Notes": FileText,
+  Books: BookOpen,
+  Notes: FileText,
   "Crux / Summary": Sparkles,
-  "PYQs": Clock,
+  PYQs: Clock,
   "Test Series": ClipboardList,
   "Coaching Modules": GraduationCap,
 };
@@ -115,7 +129,8 @@ function Materials() {
             <div className="text-xs tracking-widest text-muted-foreground">RESULTS</div>
           </div>
           <div className="text-3xl font-bold">
-            {filtered.length} <span className="text-muted-foreground text-lg font-normal italic">materials</span>
+            {filtered.length}{" "}
+            <span className="text-muted-foreground text-lg font-normal italic">materials</span>
           </div>
 
           <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -124,13 +139,19 @@ function Materials() {
               return (
                 <motion.article
                   key={m.id}
-                  initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.02, 0.3) }}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: Math.min(i * 0.02, 0.3) }}
                   className="group rounded-2xl border border-border glass p-5 hover:border-primary/50 hover:-translate-y-1 transition-all"
                 >
                   <div className="flex items-start justify-between">
-                    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
-                      m.tier === "PREMIUM" ? "gradient-primary text-primary-foreground" : "bg-muted text-foreground"
-                    }`}>
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                        m.tier === "PREMIUM"
+                          ? "gradient-primary text-primary-foreground"
+                          : "bg-muted text-foreground"
+                      }`}
+                    >
                       {m.tier === "PREMIUM" ? "★ PREMIUM" : "🔥 CORE"}
                     </span>
                     <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary">
@@ -143,10 +164,15 @@ function Materials() {
                   <h3 className="mt-1 text-lg font-bold leading-tight">{m.title}</h3>
                   <p className="mt-2 text-sm text-muted-foreground">{m.desc}</p>
                   <div className="mt-3">
-                    <span className="inline-block rounded-md bg-muted px-2 py-0.5 text-xs">{m.type}</span>
+                    <span className="inline-block rounded-md bg-muted px-2 py-0.5 text-xs">
+                      {m.type}
+                    </span>
                   </div>
                   {/* Empty image slot */}
-                  <div data-slot={`material-${m.id}-image`} className="mt-4 aspect-video rounded-xl border border-dashed border-border/60 grid place-items-center text-[10px] text-muted-foreground">
+                  <div
+                    data-slot={`material-${m.id}-image`}
+                    className="mt-4 aspect-video rounded-xl border border-dashed border-border/60 grid place-items-center text-[10px] text-muted-foreground"
+                  >
                     image slot
                   </div>
                   <button
@@ -154,7 +180,8 @@ function Materials() {
                     title="Link coming soon — add href in src/lib/data.ts"
                     className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-full gradient-primary text-primary-foreground py-2.5 font-semibold btn-glow opacity-70 cursor-not-allowed"
                   >
-                    <Lock className="h-3.5 w-3.5" /> Access Resource <ArrowRight className="h-4 w-4" />
+                    <Lock className="h-3.5 w-3.5" /> Access Resource{" "}
+                    <ArrowRight className="h-4 w-4" />
                   </button>
                 </motion.article>
               );

@@ -16,8 +16,11 @@ function Support() {
   return (
     <main className="px-4 md:px-8 pt-6 pb-16">
       <div className="mx-auto max-w-4xl">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-          className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-xs font-semibold text-primary">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-xs font-semibold text-primary"
+        >
           ✦ WE'VE GOT YOU
         </motion.div>
         <h1 className="mt-4 font-display text-5xl md:text-7xl font-black tracking-tighter">
@@ -28,14 +31,37 @@ function Support() {
         </p>
 
         <div className="mt-10 grid gap-4 md:grid-cols-2">
-          <SupportCard icon={MessageCircle} title="Chat with us" body="Fastest way to get unstuck. We usually reply within an hour." cta="Open chat" />
-          <SupportCard icon={Mail} title="Email" body="For bigger topics or file attachments." cta="hello@dypol.app" />
-          <SupportCard icon={Coffee} title="Buy us a Chai" body="If Dypol is helping you, help keep it alive." cta="Donate" />
-          <SupportCard icon={Heart} title="Feature requests" body="Tell us what you'd love next." cta="Share idea" />
+          <SupportCard
+            icon={MessageCircle}
+            title="Chat with us"
+            body="Fastest way to get unstuck. We usually reply within an hour."
+            cta="Open chat"
+          />
+          <SupportCard
+            icon={Mail}
+            title="Email"
+            body="For bigger topics or file attachments."
+            cta="hello@dypol.app"
+          />
+          <SupportCard
+            icon={Coffee}
+            title="Buy us a Chai"
+            body="If Dypol is helping you, help keep it alive."
+            cta="Donate"
+          />
+          <SupportCard
+            icon={Heart}
+            title="Feature requests"
+            body="Tell us what you'd love next."
+            cta="Share idea"
+          />
         </div>
 
         <div className="mt-12 rounded-3xl border border-border glass p-8 text-center">
-          <div data-slot="support-image" className="mx-auto mb-6 aspect-video max-w-lg rounded-2xl border border-dashed border-border/60 grid place-items-center text-xs text-muted-foreground">
+          <div
+            data-slot="support-image"
+            className="mx-auto mb-6 aspect-video max-w-lg rounded-2xl border border-dashed border-border/60 grid place-items-center text-xs text-muted-foreground"
+          >
             support banner image slot
           </div>
           <h2 className="font-display text-3xl font-bold">Live it your way.</h2>
@@ -46,7 +72,17 @@ function Support() {
   );
 }
 
-function SupportCard({ icon: Icon, title, body, cta }: { icon: typeof MessageCircle; title: string; body: string; cta: string }) {
+function SupportCard({
+  icon: Icon,
+  title,
+  body,
+  cta,
+}: {
+  icon: typeof MessageCircle;
+  title: string;
+  body: string;
+  cta: string;
+}) {
   return (
     <div className="group rounded-3xl border border-border glass p-6 hover:border-primary/50 hover:-translate-y-1 transition-all">
       <div className="grid h-12 w-12 place-items-center rounded-2xl gradient-primary text-primary-foreground">

@@ -17,7 +17,9 @@ function Home() {
     <main className="px-4 md:px-8 pt-6 pb-16">
       <div className="mx-auto max-w-6xl">
         <motion.div
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
           className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-xs font-medium text-primary"
         >
           <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
@@ -27,30 +29,47 @@ function Home() {
         <div className="mt-6 grid gap-8 lg:grid-cols-[1.6fr_1fr]">
           <div>
             <motion.h1
-              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
               className="font-display text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.85]"
             >
               DYPOL<span className="text-gradient align-top text-4xl md:text-6xl">®</span>
             </motion.h1>
             <motion.p
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.25 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.25 }}
               className="mt-4 text-lg md:text-2xl font-medium text-muted-foreground max-w-2xl"
             >
-              Live <span className="text-gradient font-bold">Unscripted Life</span>. Your single launcher for curated study materials, coaching portals, and calm guidance — built for people who mean it.
+              Live <span className="text-gradient font-bold">Unscripted Life</span>. Your single
+              launcher for curated study materials, coaching portals, and calm guidance — built for
+              people who mean it.
             </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.35 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.35 }}
               className="mt-8 flex flex-wrap gap-3"
             >
-              <Link to="/materials" className="group inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-6 py-3 font-semibold btn-glow hover:[&]:opacity-95 hover:-translate-y-0.5 active:scale-95 transition">
+              <Link
+                to="/materials"
+                className="group inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-6 py-3 font-semibold btn-glow hover:[&]:opacity-95 hover:-translate-y-0.5 active:scale-95 transition"
+              >
                 <BookOpen className="h-4 w-4" /> BROWSE MATERIALS
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition" />
               </Link>
-              <Link to="/portals" className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 font-semibold hover:bg-muted hover:-translate-y-0.5 active:scale-95 transition">
+              <Link
+                to="/portals"
+                className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 font-semibold hover:bg-muted hover:-translate-y-0.5 active:scale-95 transition"
+              >
                 <Sparkles className="h-4 w-4" /> OPEN PORTALS
               </Link>
-              <Link to="/support" className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 font-semibold hover:bg-muted hover:-translate-y-0.5 active:scale-95 transition">
+              <Link
+                to="/support"
+                className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 font-semibold hover:bg-muted hover:-translate-y-0.5 active:scale-95 transition"
+              >
                 <Headphones className="h-4 w-4" /> CHAT SUPPORT
               </Link>
             </motion.div>
@@ -65,14 +84,20 @@ function Home() {
           </div>
 
           <motion.aside
-            initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
             className="space-y-4"
           >
             <div className="relative rounded-3xl border border-border glass p-6">
-              <span className="absolute -top-2 right-4 rounded-full gradient-primary px-3 py-0.5 text-xs font-bold text-primary-foreground">LIMITED</span>
+              <span className="absolute -top-2 right-4 rounded-full gradient-primary px-3 py-0.5 text-xs font-bold text-primary-foreground">
+                LIMITED
+              </span>
               <div className="text-xs text-muted-foreground tracking-widest">PROMO ACTIVE</div>
               <div className="mt-2 text-4xl font-black text-gradient">10% OFF</div>
-              <p className="text-sm text-muted-foreground mt-1">On any coaching batch with code below.</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                On any coaching batch with code below.
+              </p>
               <button
                 onClick={copy}
                 className="mt-4 w-full flex items-center justify-between rounded-2xl border border-border px-4 py-3 font-mono text-primary hover:bg-muted active:scale-[0.99] transition"
@@ -91,7 +116,10 @@ function Home() {
                 { top: "NO", bot: "Signup*" },
                 { top: "DAILY", bot: "Updates" },
               ].map((s) => (
-                <div key={s.top} className="rounded-2xl border border-border p-4 hover:border-primary/50 transition">
+                <div
+                  key={s.top}
+                  className="rounded-2xl border border-border p-4 hover:border-primary/50 transition"
+                >
                   <div className="text-xs text-muted-foreground">{s.top}</div>
                   <div className="mt-1 font-semibold">{s.bot}</div>
                 </div>
@@ -103,7 +131,10 @@ function Home() {
               <p className="mt-1 text-xs text-muted-foreground">
                 A calm space to gather your resources and just do the work.
               </p>
-              <Link to="/welcome" className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:gap-2 transition-all">
+              <Link
+                to="/welcome"
+                className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:gap-2 transition-all"
+              >
                 Sign in <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
@@ -115,18 +146,40 @@ function Home() {
           <div>
             <div className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-full gradient-primary" />
-              <span className="font-display font-bold text-lg">DYPOL<span className="text-primary">.</span></span>
+              <span className="font-display font-bold text-lg">
+                DYPOL<span className="text-primary">.</span>
+              </span>
             </div>
-            <div className="text-xs text-muted-foreground tracking-widest mt-2">LIVE UNSCRIPTED LIFE</div>
-            <p className="text-muted-foreground mt-3 text-sm">A curated, distraction-free launcher for people building their own path.</p>
+            <div className="text-xs text-muted-foreground tracking-widest mt-2">
+              LIVE UNSCRIPTED LIFE
+            </div>
+            <p className="text-muted-foreground mt-3 text-sm">
+              A curated, distraction-free launcher for people building their own path.
+            </p>
           </div>
           <div>
             <div className="text-xs tracking-widest text-muted-foreground">EXPLORE</div>
             <ul className="mt-3 space-y-2">
-              <li><Link to="/materials" className="hover:text-primary transition">Materials</Link></li>
-              <li><Link to="/portals" className="hover:text-primary transition">Portals</Link></li>
-              <li><Link to="/support" className="hover:text-primary transition">Support</Link></li>
-              <li><Link to="/profile" className="hover:text-primary transition">Profile</Link></li>
+              <li>
+                <Link to="/materials" className="hover:text-primary transition">
+                  Materials
+                </Link>
+              </li>
+              <li>
+                <Link to="/portals" className="hover:text-primary transition">
+                  Portals
+                </Link>
+              </li>
+              <li>
+                <Link to="/support" className="hover:text-primary transition">
+                  Support
+                </Link>
+              </li>
+              <li>
+                <Link to="/profile" className="hover:text-primary transition">
+                  Profile
+                </Link>
+              </li>
             </ul>
           </div>
           <div>

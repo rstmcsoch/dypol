@@ -1,4 +1,3 @@
-
 # Dypol — Live Unscripted Life
 
 A rebranded, orange→red themed site inspired by Bookie's layout. Keeps Home / Materials (teaser) / Portals (teaser) / Support, plus full auth + onboarding + profile. Adds a multi-theme picker with light/dark, and swaps navigation to a liquid-glass bottom nav on mobile/portrait, top nav on desktop/landscape.
@@ -18,6 +17,7 @@ Removed: Tests, YPT.
 ## Theme System
 
 Theme picker modal (like the screenshot) with:
+
 - Light / Dark mode toggle
 - Color themes: **Sunset Blaze (default orange→red)**, Sandalwood, Forest Emerald, Ocean Deep, Sakura Blossom, Dracula Midnight, Lavender Mist, Cyberpunk Neon
 - Stored in localStorage; applied via `data-theme` attr + `.dark` class on `<html>`
