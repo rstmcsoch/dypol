@@ -149,7 +149,7 @@ function Materials() {
                   <div data-slot={`material-${m.id}-image`} className="mt-4 aspect-video rounded-xl border border-dashed border-border/60 grid place-items-center text-[10px] text-muted-foreground">
                     image slot
                   </div>
-                  {m.url ? (
+                  {m.link ? (
                     <a
                       href={m.url}
                       target="_blank"
