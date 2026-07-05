@@ -151,7 +151,7 @@ function Materials() {
                   </div>
                   {m.link ? (
                     <a
-                      href={m.url}
+                      href={m.link}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-full gradient-primary text-primary-foreground py-2.5 font-semibold btn-glow hover:opacity-95 active:scale-95 transition"
