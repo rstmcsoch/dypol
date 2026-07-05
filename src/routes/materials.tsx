@@ -149,13 +149,24 @@ function Materials() {
                   <div data-slot={`material-${m.id}-image`} className="mt-4 aspect-video rounded-xl border border-dashed border-border/60 grid place-items-center text-[10px] text-muted-foreground">
                     image slot
                   </div>
-                  <button
-                    disabled
-                    title="Link coming soon — add href in src/lib/data.ts"
-                    className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-full gradient-primary text-primary-foreground py-2.5 font-semibold btn-glow opacity-70 cursor-not-allowed"
-                  >
-                    <Lock className="h-3.5 w-3.5" /> Access Resource <ArrowRight className="h-4 w-4" />
-                  </button>
+                  {m.url ? (
+                    <a
+                      href={m.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-full gradient-primary text-primary-foreground py-2.5 font-semibold btn-glow hover:opacity-95 active:scale-95 transition"
+                    >
+                      Access Resource <ArrowRight className="h-4 w-4" />
+                    </a>
+                  ) : (
+                    <button
+                      disabled
+                      title="Link coming soon"
+                      className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-full gradient-primary text-primary-foreground py-2.5 font-semibold btn-glow opacity-70 cursor-not-allowed"
+                    >
+                      <Lock className="h-3.5 w-3.5" /> Access Resource <ArrowRight className="h-4 w-4" />
+                    </button>
+                  )}
                 </motion.article>
               );
             })}
