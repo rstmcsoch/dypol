@@ -1,0 +1,45 @@
+export const MATERIALS = [
+  { id: "air48", tier: "PREMIUM", subject: "PCM MIX", title: "AIR 48 Notes", desc: "Comprehensive notes from AIR 48 student — all subjects", type: "Notes", link: "" },
+  { id: "hcv", tier: "CORE", subject: "PHYSICS", title: "HC Verma (HCV — Both Volumes)", desc: "Legendary physics text", type: "Books", link: "" },
+  { id: "irodov", tier: "CORE", subject: "PHYSICS", title: "Irodov + Solutions", desc: "Problems in general physics", type: "Books", link: "" },
+  { id: "ncert-punch", tier: "CORE", subject: "PCM MIX", title: "NCERT Punch", desc: "Concise NCERT companion", type: "Notes", link: "" },
+  { id: "ncert-exampler", tier: "CORE", subject: "PCM MIX", title: "NCERT Exemplar", desc: "Advanced NCERT problems", type: "Books", link: "" },
+  { id: "know-ncert", tier: "CORE", subject: "PCM MIX", title: "Know Your NCERT + NCERT Maps", desc: "Chapter mind maps", type: "Notes", link: "" },
+  { id: "cengage-phy", tier: "CORE", subject: "PHYSICS", title: "Cengage Physics", desc: "Full BM Sharma series", type: "Books", link: "" },
+  { id: "cengage-chem", tier: "CORE", subject: "CHEMISTRY", title: "Cengage Chemistry", desc: "KS Verma / Ranjeet Shahi", type: "Books", link: "" },
+  { id: "cengage-math", tier: "CORE", subject: "MATHS", title: "Cengage Mathematics", desc: "G Tewani full set", type: "Books", link: "" },
+  { id: "ms-chauhan", tier: "PREMIUM", subject: "CHEMISTRY", title: "MS Chauhan Organic", desc: "Advanced problems", type: "Books", link: "" },
+  { id: "n-avasthi", tier: "CORE", subject: "CHEMISTRY", title: "N Avasthi Physical", desc: "Numerical mastery", type: "Books", link: "" },
+  { id: "resnick", tier: "CORE", subject: "PHYSICS", title: "Resnick Halliday", desc: "Fundamentals of physics", type: "Books", link: "" },
+  { id: "arihant-pyq", tier: "PREMIUM", subject: "PCM MIX", title: "Arihant 43-Year PYQs", desc: "Chapterwise + Topicwise", type: "PYQs", link: "" },
+  { id: "dpp-pw", tier: "CORE", subject: "PCM MIX", title: "PW Lakshya DPPs", desc: "Daily practice problems", type: "Notes", link: "" },
+  { id: "allen-modules", tier: "PREMIUM", subject: "PCM MIX", title: "ALLEN Modules", desc: "Kota classroom modules", type: "Coaching Modules", link: "" },
+  { id: "fiitjee-modules", tier: "PREMIUM", subject: "PCM MIX", title: "FIITJEE Modules", desc: "Ranker's study pack", type: "Coaching Modules", link: "" },
+  { id: "bansal-modules", tier: "PREMIUM", subject: "PCM MIX", title: "Bansal Modules", desc: "Classic Kota material", type: "Coaching Modules", link: "" },
+  { id: "resonance", tier: "CORE", subject: "PCM MIX", title: "Resonance DLPD", desc: "Distance learning modules", type: "Coaching Modules", link: "" },
+  { id: "test-series-fiitjee", tier: "PREMIUM", subject: "PCM MIX", title: "FIITJEE AITS", desc: "All India Test Series", type: "Test Series", link: "" },
+  { id: "test-series-allen", tier: "PREMIUM", subject: "PCM MIX", title: "ALLEN Test Series", desc: "Full JEE mocks", type: "Test Series", link: "" },
+  { id: "test-series-vibrant", tier: "PREMIUM", subject: "PCM MIX", title: "Vibrant Test Series", desc: "Weekly practice tests", type: "Test Series", link: "" },
+  { id: "crux-phy", tier: "CORE", subject: "PHYSICS", title: "Physics Crux / Summary", desc: "Quick revision sheets", type: "Crux / Summary", link: "" },
+  { id: "crux-chem", tier: "CORE", subject: "CHEMISTRY", title: "Chemistry Crux / Summary", desc: "Formula & reaction sheets", type: "Crux / Summary", link: "" },
+  { id: "crux-math", tier: "CORE", subject: "MATHS", title: "Maths Crux / Summary", desc: "Concept sheets", type: "Crux / Summary", link: "" },
+] as const;
+
+export const PORTALS = [
+  { id: "pw", name: "PW (Physics Wallah)", desc: "Lectures, notes & mirrors", count: 6, link: "" },
+  { id: "vibrant", name: "Vibrant Academy", desc: "Believe in excellence", count: 3, link: "" },
+  { id: "mission-jeet", name: "Mission JEET", desc: "Targeted JEE coverage", count: 1, link: "" },
+  { id: "unacademy", name: "Unacademy", desc: "Mirrors & lecture access", count: 2, link: "" },
+  { id: "careerwill", name: "Careerwill (Jindal)", desc: "Jindal sir lectures", count: 1, link: "" },
+  { id: "apni-kaksha", name: "Apni Kaksha", desc: "Telegram channel", count: 1, link: "" },
+  { id: "competishun", name: "Competishun", desc: "ABJ Sir Physics lectures", count: 1, link: "" },
+  { id: "allen", name: "ALLEN", desc: "Lectures via Telegram bot", count: 1, link: "" },
+  { id: "aakash", name: "Aakash Digital", desc: "AIATS + iTutor", count: 0, link: "" },
+  { id: "resonance", name: "Resonance", desc: "R-Kaysh & DLPD", count: 0, link: "" },
+] as const;
+
+export const RESOURCE_TYPES = [
+  "Books", "Notes", "Crux / Summary", "PYQs", "Test Series", "Coaching Modules",
+] as const;
+
+export const SUBJECTS = ["Physics", "Chemistry", "Mathematics", "PCM Mix"] as const;
