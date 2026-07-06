@@ -100,7 +100,7 @@ function Onboarding() {
             {step === 3 && (
               <motion.div key="3" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
                 <h2 className="mt-4 font-display text-3xl font-black">You're set, {name}.</h2>
-                <p className="mt-1 text-sm text-muted-foreground">Living <span className="text-primary font-semibold">unscripted</span> as a <span className="font-semibold">{target}</span>.</p>
+                <p className="mt-1 text-sm text-muted-foreground">Living <span className="text-primary font-semibold">unscripted</span>, targeting <span className="font-semibold">{target}</span>.</p>
                 <div className="mt-5 rounded-2xl border border-border p-4 text-sm text-muted-foreground">
                   Everything you customize stays on this device unless you sign in later.
                 </div>
