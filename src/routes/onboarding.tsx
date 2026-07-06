@@ -71,8 +71,8 @@ function Onboarding() {
             )}
             {step === 2 && (
               <motion.div key="2" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
-                <h2 className="mt-4 font-display text-3xl font-black">Pick your path</h2>
-                <p className="mt-1 text-sm text-muted-foreground">Helps us tailor your experience.</p>
+                <h2 className="mt-4 font-display text-3xl font-black">Pick your target</h2>
+                <p className="mt-1 text-sm text-muted-foreground">Which exam & year are you preparing for?</p>
                 <div className="mt-5 grid grid-cols-2 gap-2">
                   {TARGETS.map((t) => (
                     <button
