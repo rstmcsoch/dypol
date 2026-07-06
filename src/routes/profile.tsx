@@ -8,13 +8,22 @@ export const Route = createFileRoute("/profile")({
   component: Profile,
 });
 
-const TARGETS = ["Creator", "Student", "Founder", "Athlete", "Artist", "Other"];
+const TARGETS = [
+  "JEE 2027",
+  "JEE 2028",
+  "JEE 2029",
+  "JEE 2030",
+  "NEET 2027",
+  "NEET 2028",
+  "NEET 2029",
+  "NEET 2030",
+];
 
 function Profile() {
   const navigate = useNavigate();
   const [user, setUser] = useState<DypolUser | null>(null);
   const [name, setName] = useState("");
-  const [target, setTarget] = useState("Creator");
+  const [target, setTarget] = useState("JEE 2027");
 
   useEffect(() => {
     const u = getUser();
@@ -77,7 +86,7 @@ function Profile() {
                 className="mt-2 w-full rounded-2xl border border-border bg-transparent px-4 py-3 outline-none focus:border-primary transition" />
             </div>
             <div className="mt-5">
-              <label className="text-xs tracking-widest text-muted-foreground">PATH</label>
+              <label className="text-xs tracking-widest text-muted-foreground">TARGET EXAM</label>
               <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {TARGETS.map((t) => (
                   <button key={t} onClick={() => setTarget(t)}

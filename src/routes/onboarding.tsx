@@ -9,12 +9,21 @@ export const Route = createFileRoute("/onboarding")({
   component: Onboarding,
 });
 
-const TARGETS = ["Creator", "Student", "Founder", "Athlete", "Artist", "Other"] as const;
+const TARGETS = [
+  "JEE 2027",
+  "JEE 2028",
+  "JEE 2029",
+  "JEE 2030",
+  "NEET 2027",
+  "NEET 2028",
+  "NEET 2029",
+  "NEET 2030",
+] as const;
 
 function Onboarding() {
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
-  const [target, setTarget] = useState<string>("Creator");
+  const [target, setTarget] = useState<string>("JEE 2027");
   const navigate = useNavigate();
 
   const finish = () => {
@@ -62,8 +71,8 @@ function Onboarding() {
             )}
             {step === 2 && (
               <motion.div key="2" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
-                <h2 className="mt-4 font-display text-3xl font-black">Pick your path</h2>
-                <p className="mt-1 text-sm text-muted-foreground">Helps us tailor your experience.</p>
+                <h2 className="mt-4 font-display text-3xl font-black">Pick your target</h2>
+                <p className="mt-1 text-sm text-muted-foreground">Which exam & year are you preparing for?</p>
                 <div className="mt-5 grid grid-cols-2 gap-2">
                   {TARGETS.map((t) => (
                     <button
@@ -91,7 +100,7 @@ function Onboarding() {
             {step === 3 && (
               <motion.div key="3" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
                 <h2 className="mt-4 font-display text-3xl font-black">You're set, {name}.</h2>
-                <p className="mt-1 text-sm text-muted-foreground">Living <span className="text-primary font-semibold">unscripted</span> as a <span className="font-semibold">{target}</span>.</p>
+                <p className="mt-1 text-sm text-muted-foreground">Living <span className="text-primary font-semibold">unscripted</span>, targeting <span className="font-semibold">{target}</span>.</p>
                 <div className="mt-5 rounded-2xl border border-border p-4 text-sm text-muted-foreground">
                   Everything you customize stays on this device unless you sign in later.
                 </div>
