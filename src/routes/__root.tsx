@@ -12,6 +12,8 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { AppNav } from "@/components/nav/AppNav";
+import { supabase } from "@/integrations/supabase/client";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -74,8 +76,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Dypol — Live Unscripted Life" },
       { name: "twitter:description", content: "Dypol is your unscripted study companion — curated materials, portals, and support, all in one calm launcher." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/b677bd51-5c71-434a-962a-5f4499f78e70" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/b677bd51-5c71-434a-962a-5f4499f78e70" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -99,17 +99,28 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+      router.invalidate();
+      if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [router, queryClient]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <div className="min-h-screen bg-background text-foreground relative">
-          {/* ambient gradient backdrop */}
           <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 opacity-40">
             <div className="absolute top-0 left-1/4 h-96 w-96 rounded-full gradient-primary blur-[120px]" />
             <div className="absolute bottom-0 right-1/4 h-96 w-96 rounded-full gradient-primary blur-[140px] opacity-60" />
           </div>
           <AppNav />
           <Outlet />
+          <Toaster position="top-right" richColors />
         </div>
       </ThemeProvider>
     </QueryClientProvider>

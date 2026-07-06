@@ -1,14 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { ArrowRight, BookOpen, Headphones, Sparkles, Copy, Check } from "lucide-react";
+import { ArrowRight, BookOpen, Headphones, Sparkles, Copy, Check, Settings } from "lucide-react";
 import { useState } from "react";
+import { useSiteSettings } from "@/lib/site-api";
+import { useAuth } from "@/hooks/use-auth";
 
-export const Route = createFileRoute("/")({ component: Home });
+export const Route = createFileRoute("/")({
+  ssr: false,
+  component: Home,
+});
 
 function Home() {
+  const { isAdmin } = useAuth();
+  const { data: s } = useSiteSettings();
   const [copied, setCopied] = useState(false);
+  const promoCode = s?.promo_code ?? "UNSCRIPTED10";
   const copy = async () => {
-    await navigator.clipboard.writeText("UNSCRIPTED10");
+    await navigator.clipboard.writeText(promoCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
@@ -16,13 +24,20 @@ function Home() {
   return (
     <main className="px-4 md:px-8 pt-6 pb-16">
       <div className="mx-auto max-w-6xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-xs font-medium text-primary"
-        >
-          <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-          WELCOME BACK
-        </motion.div>
+        <div className="flex items-center justify-between">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-xs font-medium text-primary"
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+            WELCOME BACK
+          </motion.div>
+          {isAdmin && (
+            <Link to="/admin" className="inline-flex items-center gap-1.5 rounded-full gradient-primary text-primary-foreground text-xs font-semibold px-3 py-1.5 btn-glow active:scale-95 transition">
+              <Settings className="h-3.5 w-3.5" /> Edit site
+            </Link>
+          )}
+        </div>
 
         <div className="mt-6 grid gap-8 lg:grid-cols-[1.6fr_1fr]">
           <div>
@@ -30,13 +45,13 @@ function Home() {
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
               className="font-display text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.85]"
             >
-              DYPOL<span className="text-gradient align-top text-4xl md:text-6xl">®</span>
+              {s?.hero_headline ?? "DYPOL"}<span className="text-gradient align-top text-4xl md:text-6xl">®</span>
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.25 }}
               className="mt-4 text-lg md:text-2xl font-medium text-muted-foreground max-w-2xl"
             >
-              Live <span className="text-gradient font-bold">Unscripted Life</span>. Your single launcher for curated study materials, coaching portals, and calm guidance — built for people who mean it.
+              Live <span className="text-gradient font-bold">{s?.tagline ?? "Unscripted Life"}</span>. {s?.hero_subheadline ?? ""}
             </motion.p>
 
             <motion.div
@@ -55,13 +70,13 @@ function Home() {
               </Link>
             </motion.div>
 
-            {/* Empty hero image slot */}
-            <div
-              data-slot="hero-image"
-              className="mt-10 aspect-[16/8] w-full rounded-3xl border-2 border-dashed border-border/60 grid place-items-center text-xs text-muted-foreground"
-            >
-              hero image slot — drop your image here
-            </div>
+            {s?.hero_image_url ? (
+              <img src={s.hero_image_url} alt="" className="mt-10 aspect-[16/8] w-full rounded-3xl object-cover border border-border" />
+            ) : (
+              <div className="mt-10 aspect-[16/8] w-full rounded-3xl border-2 border-dashed border-border/60 grid place-items-center text-xs text-muted-foreground">
+                hero image slot {isAdmin && <span className="ml-2">— add one in <Link to="/admin" className="text-primary underline">Admin</Link></span>}
+              </div>
+            )}
           </div>
 
           <motion.aside
@@ -71,17 +86,14 @@ function Home() {
             <div className="relative rounded-3xl border border-border glass p-6">
               <span className="absolute -top-2 right-4 rounded-full gradient-primary px-3 py-0.5 text-xs font-bold text-primary-foreground">LIMITED</span>
               <div className="text-xs text-muted-foreground tracking-widest">PROMO ACTIVE</div>
-              <div className="mt-2 text-4xl font-black text-gradient">10% OFF</div>
-              <p className="text-sm text-muted-foreground mt-1">On any coaching batch with code below.</p>
+              <div className="mt-2 text-4xl font-black text-gradient">{s?.promo_headline ?? "10% OFF"}</div>
+              <p className="text-sm text-muted-foreground mt-1">{s?.promo_body ?? ""}</p>
               <button
                 onClick={copy}
                 className="mt-4 w-full flex items-center justify-between rounded-2xl border border-border px-4 py-3 font-mono text-primary hover:bg-muted active:scale-[0.99] transition"
               >
-                <span>UNSCRIPTED10</span>
+                <span>{promoCode}</span>
                 {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-              </button>
-              <button className="mt-3 text-sm font-semibold text-primary hover:underline">
-                GET DISCOUNT ↗
               </button>
             </div>
 
@@ -90,35 +102,38 @@ function Home() {
                 { top: "FREE", bot: "Access" },
                 { top: "NO", bot: "Signup*" },
                 { top: "DAILY", bot: "Updates" },
-              ].map((s) => (
-                <div key={s.top} className="rounded-2xl border border-border p-4 hover:border-primary/50 transition">
-                  <div className="text-xs text-muted-foreground">{s.top}</div>
-                  <div className="mt-1 font-semibold">{s.bot}</div>
+              ].map((x) => (
+                <div key={x.top} className="rounded-2xl border border-border p-4 hover:border-primary/50 transition">
+                  <div className="text-xs text-muted-foreground">{x.top}</div>
+                  <div className="mt-1 font-semibold">{x.bot}</div>
                 </div>
               ))}
             </div>
 
             <div className="rounded-3xl border border-border glass p-5">
-              <div className="text-sm font-semibold">Welcome to Dypol</div>
+              <div className="text-sm font-semibold">Welcome to {s?.site_title ?? "Dypol"}</div>
               <p className="mt-1 text-xs text-muted-foreground">
                 A calm space to gather your resources and just do the work.
               </p>
-              <Link to="/welcome" className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:gap-2 transition-all">
+              <Link to="/auth" className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:gap-2 transition-all">
                 Sign in <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
           </motion.aside>
         </div>
 
-        {/* footer */}
         <footer className="mt-24 border-t border-border pt-8 grid gap-6 md:grid-cols-4 text-sm">
           <div>
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full gradient-primary" />
-              <span className="font-display font-bold text-lg">DYPOL<span className="text-primary">.</span></span>
+              {s?.logo_url ? (
+                <img src={s.logo_url} alt="" className="h-8 w-8 rounded-full object-cover border border-border" />
+              ) : (
+                <div className="h-8 w-8 rounded-full gradient-primary" />
+              )}
+              <span className="font-display font-bold text-lg">{s?.site_title ?? "DYPOL"}<span className="text-primary">.</span></span>
             </div>
-            <div className="text-xs text-muted-foreground tracking-widest mt-2">LIVE UNSCRIPTED LIFE</div>
-            <p className="text-muted-foreground mt-3 text-sm">A curated, distraction-free launcher for people building their own path.</p>
+            <div className="text-xs text-muted-foreground tracking-widest mt-2">{s?.footer_tagline ?? "LIVE UNSCRIPTED LIFE"}</div>
+            <p className="text-muted-foreground mt-3 text-sm">{s?.footer_about ?? ""}</p>
           </div>
           <div>
             <div className="text-xs tracking-widest text-muted-foreground">EXPLORE</div>
@@ -140,13 +155,14 @@ function Home() {
           <div>
             <div className="text-xs tracking-widest text-muted-foreground">CONTACT</div>
             <ul className="mt-3 space-y-2 text-muted-foreground">
-              <li>Support / Donate</li>
-              <li>Contact via Chat ↗</li>
+              {s?.support_email && <li>{s.support_email}</li>}
+              {s?.support_whatsapp && <li>{s.support_whatsapp}</li>}
+              <li><Link to="/support" className="hover:text-primary transition">Support / Donate</Link></li>
             </ul>
           </div>
         </footer>
         <div className="mt-6 flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
-          <div>© 2026 DYPOL. All rights reserved.</div>
+          <div>{s?.footer_copyright ?? "© 2026 DYPOL. All rights reserved."}</div>
           <div className="tracking-widest">CRAFTED UNSCRIPTED · MADE WITH INTENT</div>
         </div>
       </div>

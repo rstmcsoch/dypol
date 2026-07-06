@@ -1,52 +1,85 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Camera, LogOut, Save, Sparkles, Target, Calendar } from "lucide-react";
-import { getUser, saveUser, clearUser, type DypolUser } from "@/lib/user";
+import { Camera, LogOut, Save, Sparkles, Target, Calendar, Loader2, Shield } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
+import { uploadSiteAsset } from "@/lib/site-api";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({ meta: [{ title: "Profile — Dypol" }] }),
+  ssr: false,
   component: Profile,
 });
 
 const TARGETS = [
-  "JEE 2027",
-  "JEE 2028",
-  "JEE 2029",
-  "JEE 2030",
-  "NEET 2027",
-  "NEET 2028",
-  "NEET 2029",
-  "NEET 2030",
+  "JEE 2027", "JEE 2028", "JEE 2029", "JEE 2030",
+  "NEET 2027", "NEET 2028", "NEET 2029", "NEET 2030",
 ];
+
+interface ProfileRow {
+  id: string;
+  display_name: string | null;
+  target: string | null;
+  avatar_url: string | null;
+  created_at: string;
+}
 
 function Profile() {
   const navigate = useNavigate();
-  const [user, setUser] = useState<DypolUser | null>(null);
+  const { user, isAdmin, loading } = useAuth();
+  const [profile, setProfile] = useState<ProfileRow | null>(null);
   const [name, setName] = useState("");
-  const [target, setTarget] = useState("JEE 2027");
+  const [target, setTarget] = useState<string>("JEE 2027");
+  const [busy, setBusy] = useState(false);
+  const [avatarBusy, setAvatarBusy] = useState(false);
 
   useEffect(() => {
-    const u = getUser();
-    if (!u) { navigate({ to: "/welcome" }); return; }
-    setUser(u); setName(u.displayName); setTarget(u.target);
-  }, [navigate]);
+    if (loading) return;
+    if (!user) { navigate({ to: "/auth" }); return; }
+    supabase.from("profiles").select("*").eq("id", user.id).maybeSingle().then(({ data }) => {
+      if (!data) return;
+      setProfile(data as ProfileRow);
+      setName(data.display_name ?? user.email?.split("@")[0] ?? "");
+      setTarget(data.target ?? "JEE 2027");
+    });
+  }, [user?.id, loading, navigate]);
 
-  if (!user) return null;
+  if (loading || !user) {
+    return <div className="min-h-[60vh] grid place-items-center"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
+  }
 
-  const save = () => {
-    const next = { ...user, displayName: name, target };
-    saveUser(next);
-    setUser(next);
+  const save = async () => {
+    setBusy(true);
+    try {
+      const { error } = await supabase.from("profiles").upsert({
+        id: user.id, display_name: name, target,
+      });
+      if (error) throw error;
+      toast.success("Profile saved");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Save failed");
+    } finally { setBusy(false); }
   };
-  const signOut = () => { clearUser(); navigate({ to: "/welcome" }); };
-  const onAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+  const signOut = async () => { await supabase.auth.signOut(); navigate({ to: "/auth" }); };
+
+  const onAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0]; if (!f) return;
-    const r = new FileReader();
-    r.onload = () => { const next = { ...user, avatarDataUrl: String(r.result) }; saveUser(next); setUser(next); };
-    r.readAsDataURL(f);
+    setAvatarBusy(true);
+    try {
+      const url = await uploadSiteAsset(f, "misc");
+      const { error } = await supabase.from("profiles").upsert({ id: user.id, avatar_url: url });
+      if (error) throw error;
+      setProfile((p) => (p ? { ...p, avatar_url: url } : p));
+      toast.success("Avatar updated");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Upload failed");
+    } finally { setAvatarBusy(false); }
   };
 
-  const initial = user.displayName?.[0]?.toUpperCase() ?? "?";
+  const initial = (name || user.email || "?")[0]?.toUpperCase();
+  const joined = profile?.created_at ?? user.created_at;
 
   return (
     <main className="px-4 md:px-8 pt-6 pb-16">
@@ -56,22 +89,22 @@ function Profile() {
           <div className="grid gap-6 md:grid-cols-[auto_1fr] items-center">
             <div className="relative">
               <div className="h-28 w-28 rounded-full gradient-primary grid place-items-center text-4xl font-black text-primary-foreground overflow-hidden">
-                {user.avatarDataUrl ? <img src={user.avatarDataUrl} alt="" className="h-full w-full object-cover" /> : initial}
+                {profile?.avatar_url ? <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" /> : initial}
               </div>
               <label className="absolute -bottom-1 -right-1 grid h-10 w-10 place-items-center rounded-full glass-strong cursor-pointer hover:scale-110 active:scale-95 transition">
-                <Camera className="h-4 w-4" />
-                <input type="file" accept="image/*" onChange={onAvatar} className="hidden" />
+                {avatarBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
+                <input type="file" accept="image/*" onChange={onAvatar} className="hidden" disabled={avatarBusy} />
               </label>
               <div className="mt-2 text-center text-xs text-muted-foreground">Upload photo</div>
             </div>
             <div className="min-w-0">
               <div className="inline-flex items-center gap-1.5 rounded-full glass px-3 py-0.5 text-xs font-semibold text-primary">
-                <Sparkles className="h-3 w-3" /> {user.isGuest ? "GUEST ACCOUNT" : "MEMBER"}
+                {isAdmin ? <><Shield className="h-3 w-3" /> ADMIN</> : <><Sparkles className="h-3 w-3" /> MEMBER</>}
               </div>
-              <h1 className="mt-2 font-display text-5xl md:text-6xl font-black truncate">{user.displayName}</h1>
+              <h1 className="mt-2 font-display text-5xl md:text-6xl font-black truncate">{name || user.email}</h1>
               <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                <span className="inline-flex items-center gap-1.5"><Target className="h-4 w-4" /> {user.target}</span>
-                <span className="inline-flex items-center gap-1.5"><Calendar className="h-4 w-4" /> Joined {new Date(user.createdAt).toLocaleDateString()}</span>
+                <span className="inline-flex items-center gap-1.5"><Target className="h-4 w-4" /> {target}</span>
+                <span className="inline-flex items-center gap-1.5"><Calendar className="h-4 w-4" /> Joined {new Date(joined).toLocaleDateString()}</span>
               </div>
             </div>
           </div>
@@ -99,21 +132,26 @@ function Profile() {
               </div>
             </div>
             <div className="mt-6 flex flex-wrap gap-2">
-              <button onClick={save}
-                className="inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-5 py-2.5 font-semibold btn-glow active:scale-95 transition">
-                <Save className="h-4 w-4" /> Save changes
+              <button onClick={save} disabled={busy}
+                className="inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-5 py-2.5 font-semibold btn-glow active:scale-95 transition disabled:opacity-60">
+                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save changes
               </button>
               <button onClick={signOut}
                 className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 font-semibold hover:bg-muted active:scale-95 transition">
                 <LogOut className="h-4 w-4" /> Sign out
               </button>
+              {isAdmin && (
+                <Link to="/admin" className="inline-flex items-center gap-2 rounded-full border border-primary text-primary px-5 py-2.5 font-semibold hover:bg-primary/10 active:scale-95 transition">
+                  <Shield className="h-4 w-4" /> Open Admin
+                </Link>
+              )}
             </div>
           </section>
 
           <aside className="space-y-4">
             <div className="rounded-3xl border border-border glass p-5">
-              <div className="text-sm font-bold">Saved progress</div>
-              <p className="mt-1 text-sm text-muted-foreground">Your favorites and choices live on this device.</p>
+              <div className="text-sm font-bold">Your account</div>
+              <p className="mt-1 text-sm text-muted-foreground break-all">{user.email}</p>
             </div>
             <div className="rounded-3xl border border-border glass p-5">
               <div className="text-sm font-bold">Stay unscripted</div>
