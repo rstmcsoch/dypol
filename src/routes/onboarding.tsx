@@ -23,7 +23,7 @@ const TARGETS = [
 function Onboarding() {
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
-  const [target, setTarget] = useState<string>("Creator");
+  const [target, setTarget] = useState<string>("JEE 2027");
   const navigate = useNavigate();
 
   const finish = () => {
