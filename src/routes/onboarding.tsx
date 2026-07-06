@@ -9,7 +9,16 @@ export const Route = createFileRoute("/onboarding")({
   component: Onboarding,
 });
 
-const TARGETS = ["Creator", "Student", "Founder", "Athlete", "Artist", "Other"] as const;
+const TARGETS = [
+  "JEE 2027",
+  "JEE 2028",
+  "JEE 2029",
+  "JEE 2030",
+  "NEET 2027",
+  "NEET 2028",
+  "NEET 2029",
+  "NEET 2030",
+] as const;
 
 function Onboarding() {
   const [step, setStep] = useState(1);
