@@ -86,7 +86,7 @@ function Profile() {
                 className="mt-2 w-full rounded-2xl border border-border bg-transparent px-4 py-3 outline-none focus:border-primary transition" />
             </div>
             <div className="mt-5">
-              <label className="text-xs tracking-widest text-muted-foreground">PATH</label>
+              <label className="text-xs tracking-widest text-muted-foreground">TARGET EXAM</label>
               <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {TARGETS.map((t) => (
                   <button key={t} onClick={() => setTarget(t)}
