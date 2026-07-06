@@ -1,8 +1,23 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Search, BookOpen, FileText, Sparkles, Clock, ClipboardList, GraduationCap, Filter, ArrowRight, Lock } from "lucide-react";
-import { MATERIALS, RESOURCE_TYPES, SUBJECTS } from "@/lib/data";
+import {
+  Search,
+  BookOpen,
+  FileText,
+  Sparkles,
+  Clock,
+  ClipboardList,
+  GraduationCap,
+  Filter,
+  ArrowRight,
+  Lock,
+  Settings,
+  Loader2,
+} from "lucide-react";
+import { RESOURCE_TYPES, SUBJECTS } from "@/lib/data";
+import { useMaterials } from "@/lib/site-api";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/materials")({
   head: () => ({
@@ -11,25 +26,28 @@ export const Route = createFileRoute("/materials")({
       { name: "description", content: "Curated books, notes, PYQs and modules — all in one launcher." },
     ],
   }),
+  ssr: false,
   component: Materials,
 });
 
 const TYPE_ICONS: Record<string, typeof BookOpen> = {
-  "Books": BookOpen,
-  "Notes": FileText,
+  Books: BookOpen,
+  Notes: FileText,
   "Crux / Summary": Sparkles,
-  "PYQs": Clock,
+  PYQs: Clock,
   "Test Series": ClipboardList,
   "Coaching Modules": GraduationCap,
 };
 
 function Materials() {
+  const { isAdmin } = useAuth();
+  const { data: materials = [], isLoading } = useMaterials();
   const [subjects, setSubjects] = useState<string[]>([]);
   const [type, setType] = useState<string | null>(null);
   const [q, setQ] = useState("");
 
   const filtered = useMemo(() => {
-    return MATERIALS.filter((m) => {
+    return materials.filter((m) => {
       if (q && !m.title.toLowerCase().includes(q.toLowerCase())) return false;
       if (type && m.type !== type) return false;
       if (subjects.length) {
@@ -42,7 +60,7 @@ function Materials() {
       }
       return true;
     });
-  }, [subjects, type, q]);
+  }, [materials, subjects, type, q]);
 
   const toggleSubject = (s: string) =>
     setSubjects((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
@@ -109,6 +127,14 @@ function Materials() {
               placeholder="Search modules, PYQs, books, test series…"
               className="flex-1 bg-transparent outline-none text-sm"
             />
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="inline-flex items-center gap-1.5 rounded-full gradient-primary text-primary-foreground text-xs font-semibold px-3 py-1.5 btn-glow active:scale-95 transition"
+              >
+                <Settings className="h-3.5 w-3.5" /> Edit
+              </Link>
+            )}
           </div>
 
           <div className="mt-6 flex items-baseline gap-2">
@@ -118,60 +144,79 @@ function Materials() {
             {filtered.length} <span className="text-muted-foreground text-lg font-normal italic">materials</span>
           </div>
 
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {filtered.map((m, i) => {
-              const Icon = TYPE_ICONS[m.type] ?? BookOpen;
-              return (
-                <motion.article
-                  key={m.id}
-                  initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.02, 0.3) }}
-                  className="group rounded-2xl border border-border glass p-5 hover:border-primary/50 hover:-translate-y-1 transition-all"
-                >
-                  <div className="flex items-start justify-between">
-                    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
-                      m.tier === "PREMIUM" ? "gradient-primary text-primary-foreground" : "bg-muted text-foreground"
-                    }`}>
-                      {m.tier === "PREMIUM" ? "★ PREMIUM" : "🔥 CORE"}
-                    </span>
-                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary">
-                      <Icon className="h-5 w-5" />
+          {isLoading ? (
+            <div className="mt-12 flex justify-center text-muted-foreground">
+              <Loader2 className="h-6 w-6 animate-spin" />
+            </div>
+          ) : (
+            <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {filtered.map((m, i) => {
+                const Icon = TYPE_ICONS[m.type] ?? BookOpen;
+                return (
+                  <motion.article
+                    key={m.id}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: Math.min(i * 0.02, 0.3) }}
+                    className="group rounded-2xl border border-border glass p-5 hover:border-primary/50 hover:-translate-y-1 transition-all"
+                  >
+                    <div className="flex items-start justify-between">
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                          m.tier === "PREMIUM"
+                            ? "gradient-primary text-primary-foreground"
+                            : "bg-muted text-foreground"
+                        }`}
+                      >
+                        {m.tier === "PREMIUM" ? "★ PREMIUM" : "🔥 CORE"}
+                      </span>
+                      <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary">
+                        <Icon className="h-5 w-5" />
+                      </div>
                     </div>
-                  </div>
-                  <div className="mt-4 text-[10px] tracking-widest text-muted-foreground">
-                    {m.subject} · JEE
-                  </div>
-                  <h3 className="mt-1 text-lg font-bold leading-tight">{m.title}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">{m.desc}</p>
-                  <div className="mt-3">
-                    <span className="inline-block rounded-md bg-muted px-2 py-0.5 text-xs">{m.type}</span>
-                  </div>
-                  {/* Empty image slot */}
-                  <div data-slot={`material-${m.id}-image`} className="mt-4 aspect-video rounded-xl border border-dashed border-border/60 grid place-items-center text-[10px] text-muted-foreground">
-                    image slot
-                  </div>
-                  {m.link ? (
-                    <a
-                      href={m.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-full gradient-primary text-primary-foreground py-2.5 font-semibold btn-glow hover:opacity-95 active:scale-95 transition"
-                    >
-                      Access Resource <ArrowRight className="h-4 w-4" />
-                    </a>
-                  ) : (
-                    <button
-                      disabled
-                      title="Link coming soon"
-                      className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-full gradient-primary text-primary-foreground py-2.5 font-semibold btn-glow opacity-70 cursor-not-allowed"
-                    >
-                      <Lock className="h-3.5 w-3.5" /> Access Resource <ArrowRight className="h-4 w-4" />
-                    </button>
-                  )}
-                </motion.article>
-              );
-            })}
-          </div>
-          {filtered.length === 0 && (
+                    <div className="mt-4 text-[10px] tracking-widest text-muted-foreground">
+                      {m.subject} · JEE
+                    </div>
+                    <h3 className="mt-1 text-lg font-bold leading-tight">{m.title}</h3>
+                    <p className="mt-2 text-sm text-muted-foreground">{m.description}</p>
+                    <div className="mt-3">
+                      <span className="inline-block rounded-md bg-muted px-2 py-0.5 text-xs">{m.type}</span>
+                    </div>
+                    {m.image_url ? (
+                      <img
+                        src={m.image_url}
+                        alt=""
+                        className="mt-4 aspect-video w-full rounded-xl object-cover border border-border"
+                      />
+                    ) : (
+                      <div className="mt-4 aspect-video rounded-xl border border-dashed border-border/60 grid place-items-center text-[10px] text-muted-foreground">
+                        image slot
+                      </div>
+                    )}
+                    {m.link ? (
+                      <a
+                        href={m.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-full gradient-primary text-primary-foreground py-2.5 font-semibold btn-glow hover:opacity-95 active:scale-95 transition"
+                      >
+                        Access Resource <ArrowRight className="h-4 w-4" />
+                      </a>
+                    ) : (
+                      <button
+                        disabled
+                        title="Link coming soon"
+                        className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-full gradient-primary text-primary-foreground py-2.5 font-semibold btn-glow opacity-70 cursor-not-allowed"
+                      >
+                        <Lock className="h-3.5 w-3.5" /> Access Resource <ArrowRight className="h-4 w-4" />
+                      </button>
+                    )}
+                  </motion.article>
+                );
+              })}
+            </div>
+          )}
+          {!isLoading && filtered.length === 0 && (
             <div className="mt-12 rounded-2xl border border-dashed border-border p-12 text-center text-muted-foreground">
               No materials match those filters.
             </div>
