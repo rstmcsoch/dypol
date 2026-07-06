@@ -23,7 +23,7 @@ function Profile() {
   const navigate = useNavigate();
   const [user, setUser] = useState<DypolUser | null>(null);
   const [name, setName] = useState("");
-  const [target, setTarget] = useState("Creator");
+  const [target, setTarget] = useState("JEE 2027");
 
   useEffect(() => {
     const u = getUser();
