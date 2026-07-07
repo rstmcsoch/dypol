@@ -7,6 +7,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -48,12 +49,18 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         <p className="mt-2 text-sm text-muted-foreground">Try again or head home.</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
-            onClick={() => { router.invalidate(); reset(); }}
+            onClick={() => {
+              router.invalidate();
+              reset();
+            }}
             className="rounded-full gradient-primary px-5 py-2 text-sm font-medium text-primary-foreground btn-glow"
           >
             Try again
           </button>
-          <a href="/" className="rounded-full border border-border px-5 py-2 text-sm font-medium hover:bg-muted">
+          <a
+            href="/"
+            className="rounded-full border border-border px-5 py-2 text-sm font-medium hover:bg-muted"
+          >
             Go home
           </a>
         </div>
@@ -68,14 +75,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Dypol — Live Unscripted Life" },
-      { name: "description", content: "Dypol is your unscripted study companion — curated materials, portals, and support, all in one calm launcher." },
+      {
+        name: "description",
+        content:
+          "Dypol is your unscripted study companion — curated materials, portals, and support, all in one calm launcher.",
+      },
       { name: "author", content: "Dypol" },
       { property: "og:title", content: "Dypol — Live Unscripted Life" },
-      { property: "og:description", content: "Dypol is your unscripted study companion — curated materials, portals, and support, all in one calm launcher." },
+      {
+        property: "og:description",
+        content:
+          "Dypol is your unscripted study companion — curated materials, portals, and support, all in one calm launcher.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Dypol — Live Unscripted Life" },
-      { name: "twitter:description", content: "Dypol is your unscripted study companion — curated materials, portals, and support, all in one calm launcher." },
+      {
+        name: "twitter:description",
+        content:
+          "Dypol is your unscripted study companion — curated materials, portals, and support, all in one calm launcher.",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -91,8 +110,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <head><HeadContent /></head>
-      <body>{children}<Scripts /></body>
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        {children}
+        <Scripts />
+      </body>
     </html>
   );
 }
@@ -121,6 +145,7 @@ function RootComponent() {
           <AppNav />
           <Outlet />
           <Toaster position="top-right" richColors />
+          <SpeedInsights />
         </div>
       </ThemeProvider>
     </QueryClientProvider>

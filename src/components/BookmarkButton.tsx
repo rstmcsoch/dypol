@@ -28,7 +28,8 @@ export function BookmarkButton({ kind, refId, title, subtitle, url, imageUrl, cl
     toggle.mutate(
       { kind, ref_id: refId, title, subtitle, url, image_url: imageUrl ?? null },
       {
-        onSuccess: (r) => toast.success(r.removed ? "Removed from bookmarks" : "Saved to bookmarks"),
+        onSuccess: (r) =>
+          toast.success(r.removed ? "Removed from bookmarks" : "Saved to bookmarks"),
         onError: (e) => toast.error(e instanceof Error ? e.message : "Something went wrong"),
       },
     );
@@ -40,7 +41,9 @@ export function BookmarkButton({ kind, refId, title, subtitle, url, imageUrl, cl
       aria-label={saved ? "Remove bookmark" : "Save bookmark"}
       title={saved ? "Bookmarked" : "Save"}
       className={`grid h-9 w-9 shrink-0 place-items-center rounded-full transition active:scale-90 ${
-        saved ? "bg-primary/15 text-primary" : "hover:bg-muted text-muted-foreground hover:text-primary"
+        saved
+          ? "bg-primary/15 text-primary"
+          : "hover:bg-muted text-muted-foreground hover:text-primary"
       } ${className ?? ""}`}
     >
       {toggle.isPending ? (

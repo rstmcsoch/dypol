@@ -39,13 +39,24 @@ function Brand() {
   return (
     <>
       {s?.logo_url ? (
-        <img src={s.logo_url} alt="" data-slot="logo" className="h-8 w-8 rounded-full object-cover border border-border" />
+        <img
+          src={s.logo_url}
+          alt=""
+          data-slot="logo"
+          className="h-8 w-8 rounded-full object-cover border border-border"
+        />
       ) : (
-        <div data-slot="logo" className="h-8 w-8 rounded-full gradient-primary grid place-items-center text-primary-foreground font-black text-sm">
+        <div
+          data-slot="logo"
+          className="h-8 w-8 rounded-full gradient-primary grid place-items-center text-primary-foreground font-black text-sm"
+        >
           {(label[0] ?? "D").toUpperCase()}
         </div>
       )}
-      <span className="font-display font-bold text-lg tracking-tight">{label.toUpperCase()}<span className="text-primary">.</span></span>
+      <span className="font-display font-bold text-lg tracking-tight">
+        {label.toUpperCase()}
+        <span className="text-primary">.</span>
+      </span>
     </>
   );
 }
@@ -91,7 +102,10 @@ function TopNav({ pathname }: { pathname: string }) {
   return (
     <header className="sticky top-0 z-50 w-full px-4 pt-4">
       <div className="mx-auto flex max-w-6xl items-center gap-3 rounded-full glass-strong px-3 py-2">
-        <Link to="/" className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-muted/30 transition">
+        <Link
+          to="/"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-muted/30 transition"
+        >
           <Brand />
         </Link>
         <nav className="flex-1 flex items-center justify-center gap-1">
@@ -110,7 +124,9 @@ function TopNav({ pathname }: { pathname: string }) {
                     transition={{ type: "spring", damping: 22, stiffness: 250 }}
                   />
                 )}
-                <span className={`relative z-10 flex items-center gap-1.5 ${active ? "text-primary-foreground" : "text-muted-foreground"}`}>
+                <span
+                  className={`relative z-10 flex items-center gap-1.5 ${active ? "text-primary-foreground" : "text-muted-foreground"}`}
+                >
                   <Icon className="h-3.5 w-3.5" /> {label}
                 </span>
               </Link>
@@ -158,11 +174,19 @@ function BottomNav({ pathname }: { pathname: string }) {
                       transition={{ type: "spring", damping: 22, stiffness: 250 }}
                     />
                   )}
-                  <span className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-active:opacity-100 transition-opacity"
-                    style={{ background: "radial-gradient(circle at center, rgb(255 255 255 / 0.35), transparent 60%)" }}
+                  <span
+                    className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-active:opacity-100 transition-opacity"
+                    style={{
+                      background:
+                        "radial-gradient(circle at center, rgb(255 255 255 / 0.35), transparent 60%)",
+                    }}
                   />
-                  <Icon className={`relative z-10 h-5 w-5 ${active ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"}`} />
-                  <span className={`relative z-10 text-[10px] font-medium ${active ? "text-primary-foreground" : "text-muted-foreground"}`}>
+                  <Icon
+                    className={`relative z-10 h-5 w-5 ${active ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"}`}
+                  />
+                  <span
+                    className={`relative z-10 text-[10px] font-medium ${active ? "text-primary-foreground" : "text-muted-foreground"}`}
+                  >
                     {label}
                   </span>
                 </Link>

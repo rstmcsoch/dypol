@@ -27,10 +27,12 @@ Right now everything (materials, portals, logo, hero, site copy) lives in TypeSc
 ### 4. Editor UX — both inline pencils AND an /admin dashboard
 
 **Inline (visible only when signed in as admin):**
+
 - Pencil icon overlay on every editable surface: logo, hero image, tagline, each material card, each portal card, footer, support block.
 - Click → modal with the right form (text fields, URL field, image upload where relevant) → saves and refreshes.
 
 **/admin dashboard (protected under `_authenticated/_admin/`):**
+
 - **Overview** — site title/tagline/footer/CTAs form + logo & hero uploaders.
 - **Materials** — table with add / edit / delete / drag-to-reorder; tier, subject, type dropdowns; link field; bulk paste-links helper.
 - **Portals** — same treatment (name, desc, link, count).

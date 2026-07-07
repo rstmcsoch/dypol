@@ -2,17 +2,34 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
-  Loader2, Plus, Trash2, Save, LogOut, Image as ImageIcon, ExternalLink,
-  ArrowLeft, Sparkles, Layers, Settings2, ShieldAlert,
+  Loader2,
+  Plus,
+  Trash2,
+  Save,
+  LogOut,
+  Image as ImageIcon,
+  ExternalLink,
+  ArrowLeft,
+  Sparkles,
+  Layers,
+  Settings2,
+  ShieldAlert,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import {
-  useMaterials, usePortals, useSiteSettings,
-  useSaveMaterial, useDeleteMaterial,
-  useSavePortal, useDeletePortal,
-  useSaveSiteSettings, uploadSiteAsset,
-  type Material, type Portal, type SiteSettings,
+  useMaterials,
+  usePortals,
+  useSiteSettings,
+  useSaveMaterial,
+  useDeleteMaterial,
+  useSavePortal,
+  useDeletePortal,
+  useSaveSiteSettings,
+  uploadSiteAsset,
+  type Material,
+  type Portal,
+  type SiteSettings,
 } from "@/lib/site-api";
 import { RESOURCE_TYPES, TIERS } from "@/lib/data";
 
@@ -45,11 +62,15 @@ function Admin() {
           </div>
           <h1 className="mt-4 font-display text-3xl font-black">Admin only</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Your account ({user?.email}) doesn't have admin access yet. Ask the site owner to grant your account the
+            Your account ({user?.email}) doesn't have admin access yet. Ask the site owner to grant
+            your account the
             <code className="mx-1 rounded bg-muted px-1.5 py-0.5">admin</code> role.
           </p>
           <div className="mt-6 flex justify-center gap-2">
-            <Link to="/" className="rounded-full border border-border px-5 py-2.5 text-sm font-semibold hover:bg-muted">
+            <Link
+              to="/"
+              className="rounded-full border border-border px-5 py-2.5 text-sm font-semibold hover:bg-muted"
+            >
               Home
             </Link>
             <button
@@ -72,7 +93,10 @@ function Admin() {
       <div className="mx-auto max-w-6xl">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <div>
-            <Link to="/" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition"
+            >
               <ArrowLeft className="h-3 w-3" /> Back to site
             </Link>
             <h1 className="mt-1 font-display text-4xl md:text-5xl font-black">Admin</h1>
@@ -170,36 +194,100 @@ function SiteTab() {
   return (
     <div className="grid gap-6 md:grid-cols-2">
       <Section title="Branding">
-        <ImageField label="Logo" url={form.logo_url ?? null} uploading={uploading === "logo"}
+        <ImageField
+          label="Logo"
+          url={form.logo_url ?? null}
+          uploading={uploading === "logo"}
           onFile={(f) => onFile("logo", f)}
-          onClear={() => { update("logo_url", null); save.mutate({ logo_url: null }); }}
+          onClear={() => {
+            update("logo_url", null);
+            save.mutate({ logo_url: null });
+          }}
         />
-        <ImageField label="Hero image" url={form.hero_image_url ?? null} uploading={uploading === "hero"}
+        <ImageField
+          label="Hero image"
+          url={form.hero_image_url ?? null}
+          uploading={uploading === "hero"}
           onFile={(f) => onFile("hero", f)}
-          onClear={() => { update("hero_image_url", null); save.mutate({ hero_image_url: null }); }}
+          onClear={() => {
+            update("hero_image_url", null);
+            save.mutate({ hero_image_url: null });
+          }}
         />
-        <TextField label="Site title" value={form.site_title ?? ""} onChange={(v) => update("site_title", v)} />
-        <TextField label="Tagline" value={form.tagline ?? ""} onChange={(v) => update("tagline", v)} />
+        <TextField
+          label="Site title"
+          value={form.site_title ?? ""}
+          onChange={(v) => update("site_title", v)}
+        />
+        <TextField
+          label="Tagline"
+          value={form.tagline ?? ""}
+          onChange={(v) => update("tagline", v)}
+        />
       </Section>
 
       <Section title="Home hero">
-        <TextField label="Hero headline" value={form.hero_headline ?? ""} onChange={(v) => update("hero_headline", v)} />
-        <TextArea label="Hero sub-headline" value={form.hero_subheadline ?? ""} onChange={(v) => update("hero_subheadline", v)} />
-        <TextField label="Promo headline" value={form.promo_headline ?? ""} onChange={(v) => update("promo_headline", v)} />
-        <TextField label="Promo body" value={form.promo_body ?? ""} onChange={(v) => update("promo_body", v)} />
-        <TextField label="Promo code" value={form.promo_code ?? ""} onChange={(v) => update("promo_code", v)} />
+        <TextField
+          label="Hero headline"
+          value={form.hero_headline ?? ""}
+          onChange={(v) => update("hero_headline", v)}
+        />
+        <TextArea
+          label="Hero sub-headline"
+          value={form.hero_subheadline ?? ""}
+          onChange={(v) => update("hero_subheadline", v)}
+        />
+        <TextField
+          label="Promo headline"
+          value={form.promo_headline ?? ""}
+          onChange={(v) => update("promo_headline", v)}
+        />
+        <TextField
+          label="Promo body"
+          value={form.promo_body ?? ""}
+          onChange={(v) => update("promo_body", v)}
+        />
+        <TextField
+          label="Promo code"
+          value={form.promo_code ?? ""}
+          onChange={(v) => update("promo_code", v)}
+        />
       </Section>
 
       <Section title="Support">
-        <TextField label="Support email" value={form.support_email ?? ""} onChange={(v) => update("support_email", v)} />
-        <TextField label="Support WhatsApp / phone" value={form.support_whatsapp ?? ""} onChange={(v) => update("support_whatsapp", v)} />
-        <TextArea label="Support body" value={form.support_body ?? ""} onChange={(v) => update("support_body", v)} />
+        <TextField
+          label="Support email"
+          value={form.support_email ?? ""}
+          onChange={(v) => update("support_email", v)}
+        />
+        <TextField
+          label="Support WhatsApp / phone"
+          value={form.support_whatsapp ?? ""}
+          onChange={(v) => update("support_whatsapp", v)}
+        />
+        <TextArea
+          label="Support body"
+          value={form.support_body ?? ""}
+          onChange={(v) => update("support_body", v)}
+        />
       </Section>
 
       <Section title="Footer">
-        <TextField label="Footer tagline" value={form.footer_tagline ?? ""} onChange={(v) => update("footer_tagline", v)} />
-        <TextArea label="About text" value={form.footer_about ?? ""} onChange={(v) => update("footer_about", v)} />
-        <TextField label="Copyright line" value={form.footer_copyright ?? ""} onChange={(v) => update("footer_copyright", v)} />
+        <TextField
+          label="Footer tagline"
+          value={form.footer_tagline ?? ""}
+          onChange={(v) => update("footer_tagline", v)}
+        />
+        <TextArea
+          label="About text"
+          value={form.footer_about ?? ""}
+          onChange={(v) => update("footer_about", v)}
+        />
+        <TextField
+          label="Copyright line"
+          value={form.footer_copyright ?? ""}
+          onChange={(v) => update("footer_copyright", v)}
+        />
       </Section>
 
       <div className="md:col-span-2 flex justify-end">
@@ -208,7 +296,12 @@ function SiteTab() {
           disabled={save.isPending}
           className="inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-6 py-3 font-semibold btn-glow active:scale-95 transition disabled:opacity-60"
         >
-          {save.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save all changes
+          {save.isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Save className="h-4 w-4" />
+          )}{" "}
+          Save all changes
         </button>
       </div>
     </div>
@@ -230,7 +323,17 @@ function MaterialsTab() {
       <div className="flex items-center justify-between">
         <div className="text-sm text-muted-foreground">{materials.length} materials</div>
         <button
-          onClick={() => setEditing({ tier: "CORE", subject: "PCM MIX", type: "Books", title: "", description: "", link: "", sort_order: 1000 })}
+          onClick={() =>
+            setEditing({
+              tier: "CORE",
+              subject: "PCM MIX",
+              type: "Books",
+              title: "",
+              description: "",
+              link: "",
+              sort_order: 1000,
+            })
+          }
           className="inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-4 py-2 text-sm font-semibold btn-glow active:scale-95 transition"
         >
           <Plus className="h-4 w-4" /> Add material
@@ -259,7 +362,12 @@ function MaterialsTab() {
                 <td className="p-3 hidden md:table-cell">{m.subject}</td>
                 <td className="p-3 hidden lg:table-cell max-w-[200px] truncate">
                   {m.link ? (
-                    <a href={m.link} target="_blank" rel="noreferrer" className="text-primary hover:underline inline-flex items-center gap-1">
+                    <a
+                      href={m.link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-primary hover:underline inline-flex items-center gap-1"
+                    >
                       link <ExternalLink className="h-3 w-3" />
                     </a>
                   ) : (
@@ -268,14 +376,21 @@ function MaterialsTab() {
                 </td>
                 <td className="p-3">
                   <div className="flex justify-end gap-1">
-                    <button onClick={() => setEditing(m)} className="rounded-lg px-3 py-1.5 text-xs font-semibold hover:bg-primary/10 hover:text-primary transition">
+                    <button
+                      onClick={() => setEditing(m)}
+                      className="rounded-lg px-3 py-1.5 text-xs font-semibold hover:bg-primary/10 hover:text-primary transition"
+                    >
                       Edit
                     </button>
                     <button
                       onClick={async () => {
                         if (!confirm(`Delete "${m.title}"?`)) return;
-                        try { await del.mutateAsync(m.id); toast.success("Deleted"); }
-                        catch (e) { toast.error(e instanceof Error ? e.message : "Delete failed"); }
+                        try {
+                          await del.mutateAsync(m.id);
+                          toast.success("Deleted");
+                        } catch (e) {
+                          toast.error(e instanceof Error ? e.message : "Delete failed");
+                        }
                       }}
                       className="rounded-lg px-2 py-1.5 text-xs hover:bg-destructive/10 hover:text-destructive transition"
                       title="Delete"
@@ -291,32 +406,78 @@ function MaterialsTab() {
       </div>
 
       {editing && (
-        <Modal onClose={() => setEditing(null)} title={editing.id ? "Edit material" : "New material"}>
+        <Modal
+          onClose={() => setEditing(null)}
+          title={editing.id ? "Edit material" : "New material"}
+        >
           <div className="grid gap-3">
-            <TextField label="Title" value={editing.title ?? ""} onChange={(v) => setEditing({ ...editing, title: v })} />
-            <TextArea label="Description" value={editing.description ?? ""} onChange={(v) => setEditing({ ...editing, description: v })} />
-            <TextField label="Link (URL)" value={editing.link ?? ""} onChange={(v) => setEditing({ ...editing, link: v })} placeholder="https://..." />
+            <TextField
+              label="Title"
+              value={editing.title ?? ""}
+              onChange={(v) => setEditing({ ...editing, title: v })}
+            />
+            <TextArea
+              label="Description"
+              value={editing.description ?? ""}
+              onChange={(v) => setEditing({ ...editing, description: v })}
+            />
+            <TextField
+              label="Link (URL)"
+              value={editing.link ?? ""}
+              onChange={(v) => setEditing({ ...editing, link: v })}
+              placeholder="https://..."
+            />
             <div className="grid grid-cols-3 gap-2">
-              <SelectField label="Tier" value={editing.tier ?? "CORE"} options={[...TIERS]} onChange={(v) => setEditing({ ...editing, tier: v })} />
-              <TextField label="Subject" value={editing.subject ?? "PCM MIX"} onChange={(v) => setEditing({ ...editing, subject: v })} />
-              <SelectField label="Type" value={editing.type ?? "Books"} options={[...RESOURCE_TYPES]} onChange={(v) => setEditing({ ...editing, type: v })} />
+              <SelectField
+                label="Tier"
+                value={editing.tier ?? "CORE"}
+                options={[...TIERS]}
+                onChange={(v) => setEditing({ ...editing, tier: v })}
+              />
+              <TextField
+                label="Subject"
+                value={editing.subject ?? "PCM MIX"}
+                onChange={(v) => setEditing({ ...editing, subject: v })}
+              />
+              <SelectField
+                label="Type"
+                value={editing.type ?? "Books"}
+                options={[...RESOURCE_TYPES]}
+                onChange={(v) => setEditing({ ...editing, type: v })}
+              />
             </div>
-            <TextField label="Sort order (smaller = higher)" value={String(editing.sort_order ?? 1000)} onChange={(v) => setEditing({ ...editing, sort_order: Number(v) || 0 })} />
+            <TextField
+              label="Sort order (smaller = higher)"
+              value={String(editing.sort_order ?? 1000)}
+              onChange={(v) => setEditing({ ...editing, sort_order: Number(v) || 0 })}
+            />
           </div>
           <div className="mt-5 flex justify-end gap-2">
-            <button onClick={() => setEditing(null)} className="rounded-full border border-border px-4 py-2 text-sm font-semibold hover:bg-muted">Cancel</button>
+            <button
+              onClick={() => setEditing(null)}
+              className="rounded-full border border-border px-4 py-2 text-sm font-semibold hover:bg-muted"
+            >
+              Cancel
+            </button>
             <button
               onClick={async () => {
                 try {
                   await save.mutateAsync(editing);
                   toast.success("Saved");
                   setEditing(null);
-                } catch (e) { toast.error(e instanceof Error ? e.message : "Save failed"); }
+                } catch (e) {
+                  toast.error(e instanceof Error ? e.message : "Save failed");
+                }
               }}
               disabled={save.isPending}
               className="inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-5 py-2 text-sm font-semibold btn-glow disabled:opacity-60"
             >
-              {save.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save
+              {save.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}{" "}
+              Save
             </button>
           </div>
         </Modal>
@@ -342,8 +503,11 @@ function PortalsTab() {
     try {
       const url = await uploadSiteAsset(file, "misc");
       setEditing({ ...editing, logo_url: url });
-    } catch (e) { toast.error(e instanceof Error ? e.message : "Upload failed"); }
-    finally { setUploading(false); }
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Upload failed");
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -351,7 +515,9 @@ function PortalsTab() {
       <div className="flex items-center justify-between">
         <div className="text-sm text-muted-foreground">{portals.length} portals</div>
         <button
-          onClick={() => setEditing({ name: "", description: "", link: "", link_count: 0, sort_order: 1000 })}
+          onClick={() =>
+            setEditing({ name: "", description: "", link: "", link_count: 0, sort_order: 1000 })
+          }
           className="inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-4 py-2 text-sm font-semibold btn-glow active:scale-95 transition"
         >
           <Plus className="h-4 w-4" /> Add portal
@@ -360,9 +526,16 @@ function PortalsTab() {
 
       <div className="grid gap-3 sm:grid-cols-2">
         {portals.map((p) => (
-          <div key={p.id} className="rounded-2xl border border-border glass p-4 flex items-start gap-3">
+          <div
+            key={p.id}
+            className="rounded-2xl border border-border glass p-4 flex items-start gap-3"
+          >
             {p.logo_url ? (
-              <img src={p.logo_url} alt="" className="h-12 w-12 rounded-xl object-cover border border-border" />
+              <img
+                src={p.logo_url}
+                alt=""
+                className="h-12 w-12 rounded-xl object-cover border border-border"
+              />
             ) : (
               <div className="h-12 w-12 rounded-xl border border-dashed border-border/60 grid place-items-center text-[9px] text-muted-foreground">
                 logo
@@ -373,7 +546,12 @@ function PortalsTab() {
               <div className="text-xs text-muted-foreground truncate">{p.description}</div>
               <div className="mt-1 text-xs">
                 {p.link ? (
-                  <a href={p.link} target="_blank" rel="noreferrer" className="text-primary hover:underline">
+                  <a
+                    href={p.link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-primary hover:underline"
+                  >
                     {p.link}
                   </a>
                 ) : (
@@ -382,12 +560,21 @@ function PortalsTab() {
               </div>
             </div>
             <div className="flex flex-col gap-1">
-              <button onClick={() => setEditing(p)} className="rounded-lg px-3 py-1 text-xs font-semibold hover:bg-primary/10 hover:text-primary transition">Edit</button>
+              <button
+                onClick={() => setEditing(p)}
+                className="rounded-lg px-3 py-1 text-xs font-semibold hover:bg-primary/10 hover:text-primary transition"
+              >
+                Edit
+              </button>
               <button
                 onClick={async () => {
                   if (!confirm(`Delete "${p.name}"?`)) return;
-                  try { await del.mutateAsync(p.id); toast.success("Deleted"); }
-                  catch (e) { toast.error(e instanceof Error ? e.message : "Delete failed"); }
+                  try {
+                    await del.mutateAsync(p.id);
+                    toast.success("Deleted");
+                  } catch (e) {
+                    toast.error(e instanceof Error ? e.message : "Delete failed");
+                  }
                 }}
                 className="rounded-lg px-3 py-1 text-xs hover:bg-destructive/10 hover:text-destructive transition inline-flex items-center gap-1"
               >
@@ -401,32 +588,68 @@ function PortalsTab() {
       {editing && (
         <Modal onClose={() => setEditing(null)} title={editing.id ? "Edit portal" : "New portal"}>
           <div className="grid gap-3">
-            <TextField label="Name" value={editing.name ?? ""} onChange={(v) => setEditing({ ...editing, name: v })} />
-            <TextArea label="Description" value={editing.description ?? ""} onChange={(v) => setEditing({ ...editing, description: v })} />
-            <TextField label="Link (URL)" value={editing.link ?? ""} onChange={(v) => setEditing({ ...editing, link: v })} placeholder="https://..." />
+            <TextField
+              label="Name"
+              value={editing.name ?? ""}
+              onChange={(v) => setEditing({ ...editing, name: v })}
+            />
+            <TextArea
+              label="Description"
+              value={editing.description ?? ""}
+              onChange={(v) => setEditing({ ...editing, description: v })}
+            />
+            <TextField
+              label="Link (URL)"
+              value={editing.link ?? ""}
+              onChange={(v) => setEditing({ ...editing, link: v })}
+              placeholder="https://..."
+            />
             <div className="grid grid-cols-2 gap-2">
-              <TextField label="Link count (badge)" value={String(editing.link_count ?? 0)} onChange={(v) => setEditing({ ...editing, link_count: Number(v) || 0 })} />
-              <TextField label="Sort order" value={String(editing.sort_order ?? 1000)} onChange={(v) => setEditing({ ...editing, sort_order: Number(v) || 0 })} />
+              <TextField
+                label="Link count (badge)"
+                value={String(editing.link_count ?? 0)}
+                onChange={(v) => setEditing({ ...editing, link_count: Number(v) || 0 })}
+              />
+              <TextField
+                label="Sort order"
+                value={String(editing.sort_order ?? 1000)}
+                onChange={(v) => setEditing({ ...editing, sort_order: Number(v) || 0 })}
+              />
             </div>
-            <ImageField label="Logo" url={editing.logo_url ?? null} uploading={uploading}
+            <ImageField
+              label="Logo"
+              url={editing.logo_url ?? null}
+              uploading={uploading}
               onFile={onLogoFile}
               onClear={() => setEditing({ ...editing, logo_url: null })}
             />
           </div>
           <div className="mt-5 flex justify-end gap-2">
-            <button onClick={() => setEditing(null)} className="rounded-full border border-border px-4 py-2 text-sm font-semibold hover:bg-muted">Cancel</button>
+            <button
+              onClick={() => setEditing(null)}
+              className="rounded-full border border-border px-4 py-2 text-sm font-semibold hover:bg-muted"
+            >
+              Cancel
+            </button>
             <button
               onClick={async () => {
                 try {
                   await save.mutateAsync(editing);
                   toast.success("Saved");
                   setEditing(null);
-                } catch (e) { toast.error(e instanceof Error ? e.message : "Save failed"); }
+                } catch (e) {
+                  toast.error(e instanceof Error ? e.message : "Save failed");
+                }
               }}
               disabled={save.isPending}
               className="inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-5 py-2 text-sm font-semibold btn-glow disabled:opacity-60"
             >
-              {save.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save
+              {save.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}{" "}
+              Save
             </button>
           </div>
         </Modal>
@@ -456,12 +679,16 @@ function AccountTab() {
               if (error) throw error;
               toast.success("Password updated");
               setPw("");
-            } catch (e) { toast.error(e instanceof Error ? e.message : "Failed"); }
-            finally { setBusy(false); }
+            } catch (e) {
+              toast.error(e instanceof Error ? e.message : "Failed");
+            } finally {
+              setBusy(false);
+            }
           }}
           className="mt-2 inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-5 py-2 font-semibold btn-glow disabled:opacity-60"
         >
-          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Update password
+          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}{" "}
+          Update password
         </button>
       </Section>
 
@@ -502,7 +729,19 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-function TextField({ label, value, onChange, placeholder, type = "text" }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string }) {
+function TextField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  type?: string;
+}) {
   return (
     <label className="block">
       <span className="text-xs tracking-widest text-muted-foreground">{label.toUpperCase()}</span>
@@ -517,7 +756,15 @@ function TextField({ label, value, onChange, placeholder, type = "text" }: { lab
   );
 }
 
-function TextArea({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+function TextArea({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
   return (
     <label className="block">
       <span className="text-xs tracking-widest text-muted-foreground">{label.toUpperCase()}</span>
@@ -531,7 +778,17 @@ function TextArea({ label, value, onChange }: { label: string; value: string; on
   );
 }
 
-function SelectField({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: string[] }) {
+function SelectField({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: string[];
+}) {
   return (
     <label className="block">
       <span className="text-xs tracking-widest text-muted-foreground">{label.toUpperCase()}</span>
@@ -541,20 +798,38 @@ function SelectField({ label, value, onChange, options }: { label: string; value
         className="mt-1.5 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary transition"
       >
         {options.map((o) => (
-          <option key={o} value={o}>{o}</option>
+          <option key={o} value={o}>
+            {o}
+          </option>
         ))}
       </select>
     </label>
   );
 }
 
-function ImageField({ label, url, uploading, onFile, onClear }: { label: string; url: string | null; uploading: boolean; onFile: (f: File | undefined) => void; onClear: () => void }) {
+function ImageField({
+  label,
+  url,
+  uploading,
+  onFile,
+  onClear,
+}: {
+  label: string;
+  url: string | null;
+  uploading: boolean;
+  onFile: (f: File | undefined) => void;
+  onClear: () => void;
+}) {
   return (
     <div>
       <div className="text-xs tracking-widest text-muted-foreground uppercase">{label}</div>
       <div className="mt-1.5 flex items-center gap-3">
         {url ? (
-          <img src={url} alt="" className="h-16 w-16 rounded-xl object-cover border border-border" />
+          <img
+            src={url}
+            alt=""
+            className="h-16 w-16 rounded-xl object-cover border border-border"
+          />
         ) : (
           <div className="h-16 w-16 rounded-xl border border-dashed border-border/60 grid place-items-center text-muted-foreground">
             <ImageIcon className="h-4 w-4" />
@@ -562,12 +837,24 @@ function ImageField({ label, url, uploading, onFile, onClear }: { label: string;
         )}
         <div className="flex flex-col gap-1">
           <label className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-1.5 text-xs font-semibold hover:bg-muted cursor-pointer transition">
-            {uploading ? <Loader2 className="h-3 w-3 animate-spin" /> : <ImageIcon className="h-3 w-3" />}
+            {uploading ? (
+              <Loader2 className="h-3 w-3 animate-spin" />
+            ) : (
+              <ImageIcon className="h-3 w-3" />
+            )}
             {uploading ? "Uploading…" : url ? "Replace" : "Upload"}
-            <input type="file" accept="image/*" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => onFile(e.target.files?.[0])}
+            />
           </label>
           {url && (
-            <button onClick={onClear} className="text-xs text-muted-foreground hover:text-destructive text-left transition">
+            <button
+              onClick={onClear}
+              className="text-xs text-muted-foreground hover:text-destructive text-left transition"
+            >
               Remove
             </button>
           )}
@@ -577,16 +864,32 @@ function ImageField({ label, url, uploading, onFile, onClear }: { label: string;
   );
 }
 
-function Modal({ title, children, onClose }: { title: string; children: React.ReactNode; onClose: () => void }) {
+function Modal({
+  title,
+  children,
+  onClose,
+}: {
+  title: string;
+  children: React.ReactNode;
+  onClose: () => void;
+}) {
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-background/70 backdrop-blur-sm p-4" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-50 grid place-items-center bg-background/70 backdrop-blur-sm p-4"
+      onClick={onClose}
+    >
       <div
         onClick={(e) => e.stopPropagation()}
         className="w-full max-w-lg rounded-3xl border border-border glass-strong p-6 max-h-[90vh] overflow-y-auto"
       >
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-bold">{title}</h3>
-          <button onClick={onClose} className="rounded-full h-8 w-8 grid place-items-center hover:bg-muted">×</button>
+          <button
+            onClick={onClose}
+            className="rounded-full h-8 w-8 grid place-items-center hover:bg-muted"
+          >
+            ×
+          </button>
         </div>
         <div className="mt-4">{children}</div>
       </div>

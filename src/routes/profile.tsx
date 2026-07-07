@@ -1,6 +1,18 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LogOut, Save, Sparkles, Target, Calendar, Loader2, Shield, BookmarkCheck, Trash2, ExternalLink, Bookmark as BookmarkIcon } from "lucide-react";
+import {
+  LogOut,
+  Save,
+  Sparkles,
+  Target,
+  Calendar,
+  Loader2,
+  Shield,
+  BookmarkCheck,
+  Trash2,
+  ExternalLink,
+  Bookmark as BookmarkIcon,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
@@ -14,8 +26,14 @@ export const Route = createFileRoute("/profile")({
 });
 
 const TARGETS = [
-  "JEE 2027", "JEE 2028", "JEE 2029", "JEE 2030",
-  "NEET 2027", "NEET 2028", "NEET 2029", "NEET 2030",
+  "JEE 2027",
+  "JEE 2028",
+  "JEE 2029",
+  "JEE 2030",
+  "NEET 2027",
+  "NEET 2028",
+  "NEET 2029",
+  "NEET 2030",
 ];
 
 interface ProfileRow {
@@ -38,33 +56,52 @@ function Profile() {
 
   useEffect(() => {
     if (loading) return;
-    if (!user) { navigate({ to: "/auth" }); return; }
-    supabase.from("profiles").select("*").eq("id", user.id).maybeSingle().then(({ data }) => {
-      if (!data) return;
-      setProfile(data as ProfileRow);
-      setName(data.display_name ?? user.email?.split("@")[0] ?? "");
-      setTarget(data.target ?? "JEE 2027");
-    });
+    if (!user) {
+      navigate({ to: "/auth" });
+      return;
+    }
+    supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!data) return;
+        setProfile(data as ProfileRow);
+        setName(data.display_name ?? user.email?.split("@")[0] ?? "");
+        setTarget(data.target ?? "JEE 2027");
+      });
   }, [user?.id, loading, navigate]);
 
   if (loading || !user) {
-    return <div className="min-h-[60vh] grid place-items-center"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
+    return (
+      <div className="min-h-[60vh] grid place-items-center">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
   }
 
   const save = async () => {
     setBusy(true);
     try {
       const { error } = await supabase.from("profiles").upsert({
-        id: user.id, display_name: name, target,
+        id: user.id,
+        display_name: name,
+        target,
       });
       if (error) throw error;
       toast.success("Profile saved");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Save failed");
-    } finally { setBusy(false); }
+    } finally {
+      setBusy(false);
+    }
   };
 
-  const signOut = async () => { await supabase.auth.signOut(); navigate({ to: "/auth" }); };
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    navigate({ to: "/auth" });
+  };
 
   const initial = (name || user.email || "?")[0]?.toUpperCase();
   const joined = profile?.created_at ?? user.created_at;
@@ -77,17 +114,35 @@ function Profile() {
           <div className="grid gap-6 md:grid-cols-[auto_1fr] items-center">
             <div className="relative">
               <div className="h-28 w-28 rounded-full gradient-primary grid place-items-center text-4xl font-black text-primary-foreground overflow-hidden">
-                {profile?.avatar_url ? <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" /> : initial}
+                {profile?.avatar_url ? (
+                  <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  initial
+                )}
               </div>
             </div>
             <div className="min-w-0">
               <div className="inline-flex items-center gap-1.5 rounded-full glass px-3 py-0.5 text-xs font-semibold text-primary">
-                {isAdmin ? <><Shield className="h-3 w-3" /> ADMIN</> : <><Sparkles className="h-3 w-3" /> MEMBER</>}
+                {isAdmin ? (
+                  <>
+                    <Shield className="h-3 w-3" /> ADMIN
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-3 w-3" /> MEMBER
+                  </>
+                )}
               </div>
-              <h1 className="mt-2 font-display text-5xl md:text-6xl font-black truncate">{name || user.email}</h1>
+              <h1 className="mt-2 font-display text-5xl md:text-6xl font-black truncate">
+                {name || user.email}
+              </h1>
               <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                <span className="inline-flex items-center gap-1.5"><Target className="h-4 w-4" /> {target}</span>
-                <span className="inline-flex items-center gap-1.5"><Calendar className="h-4 w-4" /> Joined {new Date(joined).toLocaleDateString()}</span>
+                <span className="inline-flex items-center gap-1.5">
+                  <Target className="h-4 w-4" /> {target}
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <Calendar className="h-4 w-4" /> Joined {new Date(joined).toLocaleDateString()}
+                </span>
               </div>
             </div>
           </div>
@@ -103,33 +158,50 @@ function Profile() {
             <h2 className="text-2xl font-bold">Edit profile</h2>
             <div className="mt-6">
               <label className="text-xs tracking-widest text-muted-foreground">DISPLAY NAME</label>
-              <input value={name} onChange={(e) => setName(e.target.value)}
-                className="mt-2 w-full rounded-2xl border border-border bg-transparent px-4 py-3 outline-none focus:border-primary transition" />
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="mt-2 w-full rounded-2xl border border-border bg-transparent px-4 py-3 outline-none focus:border-primary transition"
+              />
             </div>
             <div className="mt-5">
               <label className="text-xs tracking-widest text-muted-foreground">TARGET EXAM</label>
               <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {TARGETS.map((t) => (
-                  <button key={t} onClick={() => setTarget(t)}
+                  <button
+                    key={t}
+                    onClick={() => setTarget(t)}
                     className={`rounded-xl border py-2.5 text-sm font-semibold transition active:scale-95 ${
-                      target === t ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/50"
-                    }`}>
+                      target === t
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border hover:border-primary/50"
+                    }`}
+                  >
                     {t}
                   </button>
                 ))}
               </div>
             </div>
             <div className="mt-6 flex flex-wrap gap-2">
-              <button onClick={save} disabled={busy}
-                className="inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-5 py-2.5 font-semibold btn-glow active:scale-95 transition disabled:opacity-60">
-                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save changes
+              <button
+                onClick={save}
+                disabled={busy}
+                className="inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-5 py-2.5 font-semibold btn-glow active:scale-95 transition disabled:opacity-60"
+              >
+                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}{" "}
+                Save changes
               </button>
-              <button onClick={signOut}
-                className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 font-semibold hover:bg-muted active:scale-95 transition">
+              <button
+                onClick={signOut}
+                className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 font-semibold hover:bg-muted active:scale-95 transition"
+              >
                 <LogOut className="h-4 w-4" /> Sign out
               </button>
               {isAdmin && (
-                <Link to="/admin" className="inline-flex items-center gap-2 rounded-full border border-primary text-primary px-5 py-2.5 font-semibold hover:bg-primary/10 active:scale-95 transition">
+                <Link
+                  to="/admin"
+                  className="inline-flex items-center gap-2 rounded-full border border-primary text-primary px-5 py-2.5 font-semibold hover:bg-primary/10 active:scale-95 transition"
+                >
                   <Shield className="h-4 w-4" /> Open Admin
                 </Link>
               )}
@@ -143,7 +215,9 @@ function Profile() {
             </div>
             <div className="rounded-3xl border border-border glass p-5">
               <div className="text-sm font-bold">Stay unscripted</div>
-              <p className="mt-1 text-sm text-muted-foreground">Every session is a fresh page. Do less. Do it well.</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Every session is a fresh page. Do less. Do it well.
+              </p>
             </div>
           </aside>
         </div>
@@ -157,9 +231,7 @@ function Profile() {
                 <BookmarkCheck className="h-6 w-6 text-primary" /> Your bookmarks
               </h2>
             </div>
-            <div className="text-sm text-muted-foreground">
-              {bookmarks.length} saved
-            </div>
+            <div className="text-sm text-muted-foreground">{bookmarks.length} saved</div>
           </div>
 
           {bmLoading ? (
@@ -179,16 +251,24 @@ function Profile() {
                   className="group flex items-center gap-3 rounded-2xl border border-border p-3 hover:border-primary/50 transition"
                 >
                   {b.image_url ? (
-                    <img src={b.image_url} alt="" className="h-12 w-12 rounded-xl object-cover border border-border" />
+                    <img
+                      src={b.image_url}
+                      alt=""
+                      className="h-12 w-12 rounded-xl object-cover border border-border"
+                    />
                   ) : (
                     <div className="h-12 w-12 rounded-xl gradient-primary grid place-items-center text-primary-foreground font-bold">
                       {b.title[0]?.toUpperCase() ?? "★"}
                     </div>
                   )}
                   <div className="min-w-0 flex-1">
-                    <div className="text-[10px] tracking-widest text-muted-foreground uppercase">{b.kind}</div>
+                    <div className="text-[10px] tracking-widest text-muted-foreground uppercase">
+                      {b.kind}
+                    </div>
                     <div className="font-semibold truncate">{b.title}</div>
-                    {b.subtitle && <div className="text-xs text-muted-foreground truncate">{b.subtitle}</div>}
+                    {b.subtitle && (
+                      <div className="text-xs text-muted-foreground truncate">{b.subtitle}</div>
+                    )}
                   </div>
                   {b.url && (
                     <a

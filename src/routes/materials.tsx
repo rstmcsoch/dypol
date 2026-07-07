@@ -25,7 +25,10 @@ export const Route = createFileRoute("/materials")({
   head: () => ({
     meta: [
       { title: "Materials — Dypol" },
-      { name: "description", content: "Curated books, notes, PYQs and modules — all in one launcher." },
+      {
+        name: "description",
+        content: "Curated books, notes, PYQs and modules — all in one launcher.",
+      },
     ],
   }),
   ssr: false,
@@ -143,7 +146,8 @@ function Materials() {
             <div className="text-xs tracking-widest text-muted-foreground">RESULTS</div>
           </div>
           <div className="text-3xl font-bold">
-            {filtered.length} <span className="text-muted-foreground text-lg font-normal italic">materials</span>
+            {filtered.length}{" "}
+            <span className="text-muted-foreground text-lg font-normal italic">materials</span>
           </div>
 
           {isLoading ? (
@@ -182,7 +186,9 @@ function Materials() {
                     <h3 className="mt-1 text-lg font-bold leading-tight">{m.title}</h3>
                     <p className="mt-2 text-sm text-muted-foreground">{m.description}</p>
                     <div className="mt-3">
-                      <span className="inline-block rounded-md bg-muted px-2 py-0.5 text-xs">{m.type}</span>
+                      <span className="inline-block rounded-md bg-muted px-2 py-0.5 text-xs">
+                        {m.type}
+                      </span>
                     </div>
                     {m.image_url ? (
                       <img
@@ -211,10 +217,14 @@ function Materials() {
                           title="Link coming soon"
                           className="flex-1 inline-flex items-center justify-center gap-2 rounded-full gradient-primary text-primary-foreground py-2.5 font-semibold btn-glow opacity-70 cursor-not-allowed"
                         >
-                          <Lock className="h-3.5 w-3.5" /> Access Resource <ArrowRight className="h-4 w-4" />
+                          <Lock className="h-3.5 w-3.5" /> Access Resource{" "}
+                          <ArrowRight className="h-4 w-4" />
                         </button>
                       )}
-                      <ShareButtons title={m.title} url={m.link || (typeof window !== "undefined" ? window.location.href : "")} />
+                      <ShareButtons
+                        title={m.title}
+                        url={m.link || (typeof window !== "undefined" ? window.location.href : "")}
+                      />
                       <BookmarkButton
                         kind="material"
                         refId={m.id}

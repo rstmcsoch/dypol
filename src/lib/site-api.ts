@@ -185,14 +185,19 @@ export function useSaveSiteSettings() {
 
 const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
 
-export async function uploadSiteAsset(file: File, folder: "logo" | "hero" | "misc"): Promise<string> {
+export async function uploadSiteAsset(
+  file: File,
+  folder: "logo" | "hero" | "misc",
+): Promise<string> {
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "png";
   const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
   const { error: upErr } = await supabase.storage
     .from("site-assets")
     .upload(path, file, { upsert: false, contentType: file.type });
   if (upErr) throw upErr;
-  const { data, error } = await supabase.storage.from("site-assets").createSignedUrl(path, TEN_YEARS);
+  const { data, error } = await supabase.storage
+    .from("site-assets")
+    .createSignedUrl(path, TEN_YEARS);
   if (error || !data?.signedUrl) throw error ?? new Error("Failed to sign URL");
   return data.signedUrl;
 }

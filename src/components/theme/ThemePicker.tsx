@@ -26,7 +26,9 @@ export function ThemePicker() {
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="fixed inset-0 z-[100] grid place-items-center bg-black/60 backdrop-blur-md p-4"
             onClick={() => setOpen(false)}
           >
@@ -71,7 +73,15 @@ export function ThemePicker() {
                   onClick={toggleMode}
                   className="flex items-center gap-2 rounded-full px-4 py-2 gradient-primary text-primary-foreground font-medium btn-glow hover:[&]:opacity-95 active:scale-95 transition"
                 >
-                  {mode === "dark" ? <><Sun className="h-4 w-4" /> Light</> : <><Moon className="h-4 w-4" /> Dark</>}
+                  {mode === "dark" ? (
+                    <>
+                      <Sun className="h-4 w-4" /> Light
+                    </>
+                  ) : (
+                    <>
+                      <Moon className="h-4 w-4" /> Dark
+                    </>
+                  )}
                 </button>
               </div>
             </motion.div>
@@ -82,8 +92,18 @@ export function ThemePicker() {
   );
 }
 
-function ThemeCard({ id, name, desc, active, onClick }: {
-  id: ThemeId; name: string; desc: string; active: boolean; onClick: () => void;
+function ThemeCard({
+  id,
+  name,
+  desc,
+  active,
+  onClick,
+}: {
+  id: ThemeId;
+  name: string;
+  desc: string;
+  active: boolean;
+  onClick: () => void;
 }) {
   return (
     <button
