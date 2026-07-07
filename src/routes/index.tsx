@@ -47,12 +47,17 @@ function Home() {
             >
               {s?.hero_headline ?? "DYPOL"}<span className="text-gradient align-top text-4xl md:text-6xl">®</span>
             </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.25 }}
-              className="mt-4 text-lg md:text-2xl font-medium text-muted-foreground max-w-2xl"
-            >
-            <span className="text-gradient font-bold">{s?.tagline ?? "Unscripted Life"}</span>. {s?.hero_subheadline ?? ""}
-            </motion.p>
+            <motion.div
+  initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.25 }}
+  className="mt-4 max-w-2xl"
+>
+  <p className="text-lg md:text-2xl font-medium">
+    <span className="text-gradient font-bold">{s?.tagline ?? "Unscripted Life"}</span>
+  </p>
+  <p className="mt-2 text-lg md:text-2xl font-medium text-muted-foreground">
+    {s?.hero_subheadline ?? ""}
+  </p>
+</motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.35 }}
