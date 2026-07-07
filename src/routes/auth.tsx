@@ -85,6 +85,36 @@ function AuthPage() {
             {mode === "signin" ? "Sign in to Dypol" : "Join Dypol"}
           </h1>
 
+          <button
+            type="button"
+            onClick={async () => {
+              if (busy) return;
+              setBusy(true);
+              try {
+                const result = await lovable.auth.signInWithOAuth("google", {
+                  redirect_uri: window.location.origin,
+                });
+                if (result.error) throw result.error instanceof Error ? result.error : new Error(String(result.error));
+                if (result.redirected) return;
+                toast.success("Signed in with Google");
+                navigate({ to: "/" });
+              } catch (err) {
+                toast.error(err instanceof Error ? err.message : "Google sign-in failed");
+              } finally {
+                setBusy(false);
+              }
+            }}
+            disabled={busy}
+            className="mt-6 w-full flex items-center justify-center gap-2.5 rounded-2xl border border-border bg-background hover:bg-muted py-3 font-semibold transition active:scale-95 disabled:opacity-60"
+          >
+            <GoogleIcon className="h-4 w-4" />
+            Continue with Google
+          </button>
+
+          <div className="my-5 flex items-center gap-3 text-[10px] tracking-widest text-muted-foreground">
+            <div className="h-px flex-1 bg-border" /> OR EMAIL <div className="h-px flex-1 bg-border" />
+          </div>
+
           <form onSubmit={submit} className="mt-6 space-y-3">
             {mode === "signup" && (
               <label className="block">
