@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Heart, Info, Lock, ArrowUpRight, Settings, Loader2 } from "lucide-react";
+import { Info, Lock, ArrowUpRight, Settings, Loader2 } from "lucide-react";
 import { usePortals } from "@/lib/site-api";
 import { useAuth } from "@/hooks/use-auth";
+import { BookmarkButton } from "@/components/BookmarkButton";
+import { ShareButtons } from "@/components/ShareButtons";
 
 export const Route = createFileRoute("/portals")({
   head: () => ({
@@ -91,31 +93,36 @@ function Portals() {
                       {p.link_count} LINK{p.link_count === 1 ? "" : "S"}
                     </div>
                   </div>
-                  <button
-                    className="grid h-9 w-9 shrink-0 place-items-center rounded-full hover:bg-muted transition active:scale-90"
-                    aria-label="favorite"
-                  >
-                    <Heart className="h-4 w-4 text-muted-foreground group-hover:text-primary transition" />
-                  </button>
+                  <BookmarkButton
+                    kind="portal"
+                    refId={p.id}
+                    title={p.name}
+                    subtitle={p.description}
+                    url={p.link}
+                    imageUrl={p.logo_url}
+                  />
                 </div>
-                {p.link ? (
-                  <a
-                    href={p.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-full gradient-primary text-primary-foreground py-2.5 font-semibold btn-glow hover:opacity-95 active:scale-95 transition"
-                  >
-                    Open Portal <ArrowUpRight className="h-4 w-4" />
-                  </a>
-                ) : (
-                  <button
-                    disabled
-                    title="Coming soon"
-                    className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-full bg-muted py-2.5 font-semibold opacity-80 cursor-not-allowed"
-                  >
-                    <Lock className="h-3.5 w-3.5" /> Open Portal <ArrowUpRight className="h-4 w-4" />
-                  </button>
-                )}
+                <div className="mt-5 flex items-center gap-2">
+                  {p.link ? (
+                    <a
+                      href={p.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 inline-flex items-center justify-center gap-2 rounded-full gradient-primary text-primary-foreground py-2.5 font-semibold btn-glow hover:opacity-95 active:scale-95 transition"
+                    >
+                      Open Portal <ArrowUpRight className="h-4 w-4" />
+                    </a>
+                  ) : (
+                    <button
+                      disabled
+                      title="Coming soon"
+                      className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-muted py-2.5 font-semibold opacity-80 cursor-not-allowed"
+                    >
+                      <Lock className="h-3.5 w-3.5" /> Open Portal <ArrowUpRight className="h-4 w-4" />
+                    </button>
+                  )}
+                  <ShareButtons title={p.name} url={p.link || (typeof window !== "undefined" ? window.location.href : "")} />
+                </div>
               </motion.div>
             ))}
           </div>

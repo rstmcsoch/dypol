@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      bookmarks: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string | null
+          kind: string
+          ref_id: string | null
+          subtitle: string | null
+          title: string
+          url: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          kind: string
+          ref_id?: string | null
+          subtitle?: string | null
+          title: string
+          url?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          kind?: string
+          ref_id?: string | null
+          subtitle?: string | null
+          title?: string
+          url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       materials: {
         Row: {
           created_at: string

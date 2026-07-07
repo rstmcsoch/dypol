@@ -1,9 +1,11 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LogOut, Save, Sparkles, Target, Calendar, Loader2, Shield } from "lucide-react";
+import { LogOut, Save, Sparkles, Target, Calendar, Loader2, Shield, BookmarkCheck, Trash2, ExternalLink, Bookmark as BookmarkIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import { ExamCountdown } from "@/components/ExamCountdown";
+import { useBookmarks, useDeleteBookmark } from "@/lib/bookmarks";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({ meta: [{ title: "Profile — Dypol" }] }),
@@ -31,6 +33,8 @@ function Profile() {
   const [name, setName] = useState("");
   const [target, setTarget] = useState<string>("JEE 2027");
   const [busy, setBusy] = useState(false);
+  const { data: bookmarks = [], isLoading: bmLoading } = useBookmarks(user?.id);
+  const delBookmark = useDeleteBookmark(user?.id);
 
   useEffect(() => {
     if (loading) return;
@@ -89,6 +93,11 @@ function Profile() {
           </div>
         </div>
 
+        {/* Exam countdown — only for signed-in users with a target */}
+        <div className="mt-6">
+          <ExamCountdown target={target} />
+        </div>
+
         <div className="mt-6 grid gap-6 md:grid-cols-[1.5fr_1fr]">
           <section className="rounded-3xl border border-border glass p-6">
             <h2 className="text-2xl font-bold">Edit profile</h2>
@@ -138,6 +147,72 @@ function Profile() {
             </div>
           </aside>
         </div>
+
+        {/* Bookmarks */}
+        <section className="mt-8 rounded-3xl border border-border glass p-6">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <div className="text-xs tracking-widest text-primary">✦ SAVED</div>
+              <h2 className="mt-1 text-2xl font-bold flex items-center gap-2">
+                <BookmarkCheck className="h-6 w-6 text-primary" /> Your bookmarks
+              </h2>
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {bookmarks.length} saved
+            </div>
+          </div>
+
+          {bmLoading ? (
+            <div className="mt-8 flex justify-center text-muted-foreground">
+              <Loader2 className="h-6 w-6 animate-spin" />
+            </div>
+          ) : bookmarks.length === 0 ? (
+            <div className="mt-6 rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
+              <BookmarkIcon className="mx-auto h-6 w-6 mb-2" />
+              Nothing saved yet. Tap the bookmark icon on any material or portal to save it here.
+            </div>
+          ) : (
+            <ul className="mt-5 grid gap-3 sm:grid-cols-2">
+              {bookmarks.map((b) => (
+                <li
+                  key={b.id}
+                  className="group flex items-center gap-3 rounded-2xl border border-border p-3 hover:border-primary/50 transition"
+                >
+                  {b.image_url ? (
+                    <img src={b.image_url} alt="" className="h-12 w-12 rounded-xl object-cover border border-border" />
+                  ) : (
+                    <div className="h-12 w-12 rounded-xl gradient-primary grid place-items-center text-primary-foreground font-bold">
+                      {b.title[0]?.toUpperCase() ?? "★"}
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[10px] tracking-widest text-muted-foreground uppercase">{b.kind}</div>
+                    <div className="font-semibold truncate">{b.title}</div>
+                    {b.subtitle && <div className="text-xs text-muted-foreground truncate">{b.subtitle}</div>}
+                  </div>
+                  {b.url && (
+                    <a
+                      href={b.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="grid h-9 w-9 place-items-center rounded-full hover:bg-muted text-muted-foreground hover:text-primary transition active:scale-90"
+                      title="Open"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                    </a>
+                  )}
+                  <button
+                    onClick={() => delBookmark.mutate(b.id)}
+                    className="grid h-9 w-9 place-items-center rounded-full hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition active:scale-90"
+                    title="Remove"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       </div>
     </main>
   );
