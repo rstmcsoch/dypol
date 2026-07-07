@@ -1,9 +1,8 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Camera, LogOut, Save, Sparkles, Target, Calendar, Loader2, Shield } from "lucide-react";
+import { LogOut, Save, Sparkles, Target, Calendar, Loader2, Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { uploadSiteAsset } from "@/lib/site-api";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/profile")({
@@ -32,7 +31,6 @@ function Profile() {
   const [name, setName] = useState("");
   const [target, setTarget] = useState<string>("JEE 2027");
   const [busy, setBusy] = useState(false);
-  const [avatarBusy, setAvatarBusy] = useState(false);
 
   useEffect(() => {
     if (loading) return;
@@ -64,20 +62,6 @@ function Profile() {
 
   const signOut = async () => { await supabase.auth.signOut(); navigate({ to: "/auth" }); };
 
-  const onAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0]; if (!f) return;
-    setAvatarBusy(true);
-    try {
-      const url = await uploadSiteAsset(f, "misc");
-      const { error } = await supabase.from("profiles").upsert({ id: user.id, avatar_url: url });
-      if (error) throw error;
-      setProfile((p) => (p ? { ...p, avatar_url: url } : p));
-      toast.success("Avatar updated");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Upload failed");
-    } finally { setAvatarBusy(false); }
-  };
-
   const initial = (name || user.email || "?")[0]?.toUpperCase();
   const joined = profile?.created_at ?? user.created_at;
 
@@ -91,11 +75,6 @@ function Profile() {
               <div className="h-28 w-28 rounded-full gradient-primary grid place-items-center text-4xl font-black text-primary-foreground overflow-hidden">
                 {profile?.avatar_url ? <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" /> : initial}
               </div>
-              <label className="absolute -bottom-1 -right-1 grid h-10 w-10 place-items-center rounded-full glass-strong cursor-pointer hover:scale-110 active:scale-95 transition">
-                {avatarBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
-                <input type="file" accept="image/*" onChange={onAvatar} className="hidden" disabled={avatarBusy} />
-              </label>
-              <div className="mt-2 text-center text-xs text-muted-foreground">Upload photo</div>
             </div>
             <div className="min-w-0">
               <div className="inline-flex items-center gap-1.5 rounded-full glass px-3 py-0.5 text-xs font-semibold text-primary">
