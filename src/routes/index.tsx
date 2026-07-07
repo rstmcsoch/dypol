@@ -51,7 +51,7 @@ function Home() {
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.25 }}
               className="mt-4 text-lg md:text-2xl font-medium text-muted-foreground max-w-2xl"
             >
-              Live <span className="text-gradient font-bold">{s?.tagline ?? "Unscripted Life"}</span>. {s?.hero_subheadline ?? ""}
+            <span className="text-gradient font-bold">{s?.tagline ?? "Unscripted Life"}</span>. {s?.hero_subheadline ?? ""}
             </motion.p>
 
             <motion.div
