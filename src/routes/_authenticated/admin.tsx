@@ -498,6 +498,142 @@ function AccountTab() {
   );
 }
 
+/* ================== NAVIGATION ================== */
+
+function NavigationTab() {
+  const { data: items = [], isLoading } = useNavItems();
+  const save = useSaveNavItem();
+  const del = useDeleteNavItem();
+  const [editing, setEditing] = useState<Partial<NavItem> | null>(null);
+
+  if (isLoading) return <Loading />;
+
+  const move = async (item: NavItem, dir: -1 | 1) => {
+    const sorted = [...items].sort((a, b) => a.sort_order - b.sort_order);
+    const i = sorted.findIndex((n) => n.id === item.id);
+    const j = i + dir;
+    if (j < 0 || j >= sorted.length) return;
+    const other = sorted[j];
+    try {
+      await save.mutateAsync({ id: item.id, sort_order: other.sort_order });
+      await save.mutateAsync({ id: other.id, sort_order: item.sort_order });
+    } catch (e) { toast.error(e instanceof Error ? e.message : "Reorder failed"); }
+  };
+
+  const toggle = async (item: NavItem) => {
+    try {
+      await save.mutateAsync({ id: item.id, enabled: !item.enabled });
+    } catch (e) { toast.error(e instanceof Error ? e.message : "Save failed"); }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-muted-foreground">
+          {items.length} nav sections · shown top nav (desktop) & bottom bar (mobile, first 6)
+        </div>
+        <button
+          onClick={() => setEditing({
+            label: "", href: "/", icon: "Sparkles",
+            sort_order: (items.at(-1)?.sort_order ?? 0) + 10,
+            enabled: true, external: false,
+          })}
+          className="inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-4 py-2 text-sm font-semibold btn-glow active:scale-95 transition"
+        >
+          <Plus className="h-4 w-4" /> Add section
+        </button>
+      </div>
+
+      <ul className="grid gap-2">
+        {items.map((item) => {
+          const Icon = getNavIcon(item.icon);
+          return (
+            <li key={item.id} className="flex items-center gap-3 rounded-2xl border border-border glass p-3">
+              <div className="grid h-10 w-10 place-items-center rounded-xl gradient-primary text-primary-foreground">
+                <Icon className="h-5 w-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="font-semibold truncate flex items-center gap-2">
+                  {item.label}
+                  {!item.enabled && <span className="text-[10px] rounded-full bg-muted px-2 py-0.5 text-muted-foreground">HIDDEN</span>}
+                  {item.external && <span className="text-[10px] rounded-full bg-primary/10 px-2 py-0.5 text-primary">EXTERNAL</span>}
+                </div>
+                <div className="text-xs text-muted-foreground truncate">{item.href}</div>
+              </div>
+              <div className="flex items-center gap-1">
+                <button onClick={() => move(item, -1)} title="Move up" className="grid h-8 w-8 place-items-center rounded-lg hover:bg-muted"><ArrowUp className="h-4 w-4" /></button>
+                <button onClick={() => move(item, 1)} title="Move down" className="grid h-8 w-8 place-items-center rounded-lg hover:bg-muted"><ArrowDown className="h-4 w-4" /></button>
+                <button onClick={() => toggle(item)} title={item.enabled ? "Hide" : "Show"} className="grid h-8 w-8 place-items-center rounded-lg hover:bg-muted">
+                  {item.enabled ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                </button>
+                <button onClick={() => setEditing(item)} className="rounded-lg px-3 py-1.5 text-xs font-semibold hover:bg-primary/10 hover:text-primary transition">Edit</button>
+                <button
+                  onClick={async () => {
+                    if (!confirm(`Delete nav section "${item.label}"?`)) return;
+                    try { await del.mutateAsync(item.id); toast.success("Deleted"); }
+                    catch (e) { toast.error(e instanceof Error ? e.message : "Delete failed"); }
+                  }}
+                  className="grid h-8 w-8 place-items-center rounded-lg hover:bg-destructive/10 hover:text-destructive"
+                  title="Delete"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+
+      {editing && (
+        <Modal onClose={() => setEditing(null)} title={editing.id ? "Edit nav section" : "New nav section"}>
+          <div className="grid gap-3">
+            <TextField label="Label" value={editing.label ?? ""} onChange={(v) => setEditing({ ...editing, label: v })} />
+            <TextField
+              label={editing.external ? "URL (external)" : "Path (internal, e.g. /materials)"}
+              value={editing.href ?? ""}
+              onChange={(v) => setEditing({ ...editing, href: v })}
+              placeholder={editing.external ? "https://…" : "/materials"}
+            />
+            <div className="grid grid-cols-2 gap-2">
+              <SelectField label="Icon" value={editing.icon ?? "Sparkles"} options={NAV_ICON_NAMES} onChange={(v) => setEditing({ ...editing, icon: v })} />
+              <TextField label="Sort order" value={String(editing.sort_order ?? 100)} onChange={(v) => setEditing({ ...editing, sort_order: Number(v) || 0 })} />
+            </div>
+            <div className="flex flex-wrap gap-4 text-sm">
+              <label className="inline-flex items-center gap-2">
+                <input type="checkbox" checked={!!editing.enabled} onChange={(e) => setEditing({ ...editing, enabled: e.target.checked })} /> Visible
+              </label>
+              <label className="inline-flex items-center gap-2">
+                <input type="checkbox" checked={!!editing.external} onChange={(e) => setEditing({ ...editing, external: e.target.checked })} /> External link (opens in new tab)
+              </label>
+            </div>
+            <div className="rounded-xl border border-border p-3 text-xs text-muted-foreground">
+              Preview: <span className="inline-flex items-center gap-1.5 font-semibold text-foreground">
+                {(() => { const I = getNavIcon(editing.icon); return <I className="h-4 w-4" />; })()}
+                {editing.label || "Label"}
+              </span>
+            </div>
+          </div>
+          <div className="mt-5 flex justify-end gap-2">
+            <button onClick={() => setEditing(null)} className="rounded-full border border-border px-4 py-2 text-sm font-semibold hover:bg-muted">Cancel</button>
+            <button
+              onClick={async () => {
+                try { await save.mutateAsync(editing); toast.success("Saved"); setEditing(null); }
+                catch (e) { toast.error(e instanceof Error ? e.message : "Save failed"); }
+              }}
+              disabled={save.isPending}
+              className="inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-5 py-2 text-sm font-semibold btn-glow disabled:opacity-60"
+            >
+              {save.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save
+            </button>
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+}
+
+
+
 /* ================== Shared bits ================== */
 
 function Loading() {
