@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
   Loader2, Plus, Trash2, Save, LogOut, Image as ImageIcon, ExternalLink,
-  ArrowLeft, Sparkles, Layers, Settings2, ShieldAlert,
+  ArrowLeft, Sparkles, Layers, Settings2, ShieldAlert, Menu as MenuIcon,
+  ArrowUp, ArrowDown, Eye, EyeOff,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -14,6 +15,8 @@ import {
   useSaveSiteSettings, uploadSiteAsset,
   type Material, type Portal, type SiteSettings,
 } from "@/lib/site-api";
+import { useNavItems, useSaveNavItem, useDeleteNavItem, type NavItem } from "@/lib/nav-items";
+import { NAV_ICON_NAMES, getNavIcon } from "@/lib/nav-icons";
 import { RESOURCE_TYPES, TIERS } from "@/lib/data";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -21,7 +24,8 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: Admin,
 });
 
-type Tab = "site" | "materials" | "portals" | "account";
+type Tab = "site" | "materials" | "portals" | "navigation" | "account";
+
 
 function Admin() {
   const { user, isAdmin, loading } = useAuth();
