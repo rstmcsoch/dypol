@@ -1,18 +1,13 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Home, BookOpen, LayoutGrid, LifeBuoy, User, Shield, LogIn } from "lucide-react";
+import { Shield, LogIn } from "lucide-react";
 import { motion } from "framer-motion";
 import { ThemePicker } from "@/components/theme/ThemePicker";
 import { useAuth } from "@/hooks/use-auth";
 import { useSiteSettings } from "@/lib/site-api";
+import { useNavItems, type NavItem } from "@/lib/nav-items";
+import { getNavIcon } from "@/lib/nav-icons";
 
-const NAV = [
-  { to: "/", label: "Home", icon: Home },
-  { to: "/materials", label: "Materials", icon: BookOpen },
-  { to: "/portals", label: "Portals", icon: LayoutGrid },
-  { to: "/support", label: "Support", icon: LifeBuoy },
-  { to: "/profile", label: "Profile", icon: User },
-] as const;
 
 function useLayout() {
   const [isBottom, setIsBottom] = useState(false);
