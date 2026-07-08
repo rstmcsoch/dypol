@@ -72,30 +72,60 @@ function AuthChip() {
   return null;
 }
 
+function useDynamicNav(): NavItem[] {
+  const { data } = useNavItems();
+  return (data ?? []).filter((n) => n.enabled);
+}
+
+function isActive(pathname: string, href: string) {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(href + "/");
+}
+
+function NavLinkEl({
+  item, className, children,
+}: { item: NavItem; className?: string; children: React.ReactNode }) {
+  if (item.external || /^https?:\/\//i.test(item.href)) {
+    return (
+      <a href={item.href} target="_blank" rel="noopener noreferrer" className={className}>
+        {children}
+      </a>
+    );
+  }
+  return (
+    // Cast lets admins add any internal route path without TS route-tree constraints.
+    <Link to={item.href as unknown as "/"} className={className}>
+      {children}
+    </Link>
+  );
+}
+
 export function AppNav() {
   const isBottom = useLayout();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const items = useDynamicNav();
 
   if (pathname === "/welcome" || pathname === "/onboarding" || pathname === "/auth") return null;
 
-  if (isBottom) return <BottomNav pathname={pathname} />;
-  return <TopNav pathname={pathname} />;
+  if (isBottom) return <BottomNav pathname={pathname} items={items} />;
+  return <TopNav pathname={pathname} items={items} />;
 }
 
-function TopNav({ pathname }: { pathname: string }) {
+function TopNav({ pathname, items }: { pathname: string; items: NavItem[] }) {
   return (
     <header className="sticky top-0 z-50 w-full px-4 pt-4">
       <div className="mx-auto flex max-w-6xl items-center gap-3 rounded-full glass-strong px-3 py-2">
         <Link to="/" className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-muted/30 transition">
           <Brand />
         </Link>
-        <nav className="flex-1 flex items-center justify-center gap-1">
-          {NAV.map(({ to, label, icon: Icon }) => {
-            const active = pathname === to || (to !== "/" && pathname.startsWith(to));
+        <nav className="flex-1 flex items-center justify-center gap-1 flex-wrap">
+          {items.map((item) => {
+            const Icon = getNavIcon(item.icon);
+            const active = !item.external && isActive(pathname, item.href);
             return (
-              <Link
-                key={to}
-                to={to}
+              <NavLinkEl
+                key={item.id}
+                item={item}
                 className="relative rounded-full px-4 py-2 text-sm font-medium transition-colors hover:text-foreground"
               >
                 {active && (
@@ -106,9 +136,9 @@ function TopNav({ pathname }: { pathname: string }) {
                   />
                 )}
                 <span className={`relative z-10 flex items-center gap-1.5 ${active ? "text-primary-foreground" : "text-muted-foreground"}`}>
-                  <Icon className="h-3.5 w-3.5" /> {label}
+                  <Icon className="h-3.5 w-3.5" /> {item.label}
                 </span>
-              </Link>
+              </NavLinkEl>
             );
           })}
         </nav>
@@ -121,7 +151,8 @@ function TopNav({ pathname }: { pathname: string }) {
   );
 }
 
-function BottomNav({ pathname }: { pathname: string }) {
+function BottomNav({ pathname, items }: { pathname: string; items: NavItem[] }) {
+  const cols = Math.min(Math.max(items.length, 1), 6);
   return (
     <>
       <header className="sticky top-0 z-40 w-full px-4 pt-3 pb-2">
@@ -137,13 +168,17 @@ function BottomNav({ pathname }: { pathname: string }) {
       </header>
 
       <nav className="fixed bottom-3 left-3 right-3 z-50 rounded-3xl glass-strong px-2 py-2 shadow-2xl">
-        <ul className="grid grid-cols-5 gap-1">
-          {NAV.map(({ to, label, icon: Icon }) => {
-            const active = pathname === to || (to !== "/" && pathname.startsWith(to));
+        <ul
+          className="grid gap-1"
+          style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
+        >
+          {items.slice(0, 6).map((item) => {
+            const Icon = getNavIcon(item.icon);
+            const active = !item.external && isActive(pathname, item.href);
             return (
-              <li key={to}>
-                <Link
-                  to={to}
+              <li key={item.id}>
+                <NavLinkEl
+                  item={item}
                   className="group relative flex flex-col items-center gap-0.5 rounded-2xl py-2.5 px-1 overflow-hidden active:scale-95 transition"
                 >
                   {active && (
@@ -157,10 +192,10 @@ function BottomNav({ pathname }: { pathname: string }) {
                     style={{ background: "radial-gradient(circle at center, rgb(255 255 255 / 0.35), transparent 60%)" }}
                   />
                   <Icon className={`relative z-10 h-5 w-5 ${active ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"}`} />
-                  <span className={`relative z-10 text-[10px] font-medium ${active ? "text-primary-foreground" : "text-muted-foreground"}`}>
-                    {label}
+                  <span className={`relative z-10 text-[10px] font-medium truncate max-w-full ${active ? "text-primary-foreground" : "text-muted-foreground"}`}>
+                    {item.label}
                   </span>
-                </Link>
+                </NavLinkEl>
               </li>
             );
           })}
@@ -170,3 +205,4 @@ function BottomNav({ pathname }: { pathname: string }) {
     </>
   );
 }
+
