@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, Headphones, Sparkles, Copy, Check, Settings } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSiteSettings } from "@/lib/site-api";
 import { useAuth } from "@/hooks/use-auth";
+import { ExamCountdown } from "@/components/ExamCountdown";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   ssr: false,
@@ -11,9 +13,17 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
   const { data: s } = useSiteSettings();
   const [copied, setCopied] = useState(false);
+  const [examTarget, setExamTarget] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) { setExamTarget(null); return; }
+    supabase.from("profiles").select("target").eq("id", user.id).maybeSingle()
+      .then(({ data }) => setExamTarget(data?.target ?? null));
+  }, [user?.id]);
+
   const promoCode = s?.promo_code ?? "UNSCRIPTED10";
   const copy = async () => {
     await navigator.clipboard.writeText(promoCode);
@@ -75,13 +85,6 @@ function Home() {
               </Link>
             </motion.div>
 
-            {s?.hero_image_url ? (
-              <img src={s.hero_image_url} alt="" className="mt-10 aspect-[16/8] w-full rounded-3xl object-cover border border-border" />
-            ) : (
-              <div className="mt-10 aspect-[16/8] w-full rounded-3xl border-2 border-dashed border-border/60 grid place-items-center text-xs text-muted-foreground">
-                hero image slot {isAdmin && <span className="ml-2">— add one in <Link to="/admin" className="text-primary underline">Admin</Link></span>}
-              </div>
-            )}
           </div>
 
           <motion.aside
@@ -101,7 +104,26 @@ function Home() {
                 {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               </button>
             </div>
+          </motion.aside>
+        </div>
 
+        {/* Exam countdown — signed-in users with an exam target */}
+        {user && examTarget && (
+          <div className="mt-8">
+            <ExamCountdown target={examTarget} />
+          </div>
+        )}
+
+        {/* Below-the-line: hero image + secondary cards */}
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+          {s?.hero_image_url ? (
+            <img src={s.hero_image_url} alt="" className="aspect-[16/8] w-full rounded-3xl object-cover border border-border" />
+          ) : (
+            <div className="aspect-[16/8] w-full rounded-3xl border-2 border-dashed border-border/60 grid place-items-center text-xs text-muted-foreground">
+              hero image slot {isAdmin && <span className="ml-2">— add one in <Link to="/admin" className="text-primary underline">Admin</Link></span>}
+            </div>
+          )}
+          <div className="space-y-4">
             <div className="grid grid-cols-3 gap-3">
               {[
                 { top: "FREE", bot: "Access" },
@@ -114,18 +136,21 @@ function Home() {
                 </div>
               ))}
             </div>
-
             <div className="rounded-3xl border border-border glass p-5">
               <div className="text-sm font-semibold">Welcome to {s?.site_title ?? "Dypol"}</div>
               <p className="mt-1 text-xs text-muted-foreground">
                 A calm space to gather your resources and just do the work.
               </p>
-              <Link to="/auth" className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:gap-2 transition-all">
-                Sign in <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
+              {!user && (
+                <Link to="/auth" className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:gap-2 transition-all">
+                  Sign in <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              )}
             </div>
-          </motion.aside>
+          </div>
         </div>
+
+
 
         <footer className="mt-24 border-t border-border pt-8 grid gap-6 md:grid-cols-4 text-sm">
           <div>
@@ -152,19 +177,30 @@ function Home() {
           <div>
             <div className="text-xs tracking-widest text-muted-foreground">LEGAL</div>
             <ul className="mt-3 space-y-2 text-muted-foreground">
-              <li>Copyright & Terms</li>
-              <li>DMCA Policy</li>
-              <li>Privacy Policy</li>
+              {s?.legal_terms_url ? (
+                <li><a href={s.legal_terms_url} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">Copyright & Terms</a></li>
+              ) : <li className="opacity-60">Copyright & Terms</li>}
+              {s?.legal_dmca_url ? (
+                <li><a href={s.legal_dmca_url} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">DMCA Policy</a></li>
+              ) : <li className="opacity-60">DMCA Policy</li>}
+              {s?.legal_privacy_url ? (
+                <li><a href={s.legal_privacy_url} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">Privacy Policy</a></li>
+              ) : <li className="opacity-60">Privacy Policy</li>}
             </ul>
           </div>
           <div>
             <div className="text-xs tracking-widest text-muted-foreground">CONTACT</div>
             <ul className="mt-3 space-y-2 text-muted-foreground">
-              {s?.support_email && <li>{s.support_email}</li>}
-              {s?.support_whatsapp && <li>{s.support_whatsapp}</li>}
+              {s?.support_email && (
+                <li><a href={`mailto:${s.support_email}`} className="hover:text-primary transition break-all">{s.support_email}</a></li>
+              )}
+              {s?.support_whatsapp && (
+                <li><a href={`https://wa.me/${s.support_whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">{s.support_whatsapp}</a></li>
+              )}
               <li><Link to="/support" className="hover:text-primary transition">Support / Donate</Link></li>
             </ul>
           </div>
+
         </footer>
         <div className="mt-6 flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
           <div>{s?.footer_copyright ?? "© 2026 DYPOL. All rights reserved."}</div>

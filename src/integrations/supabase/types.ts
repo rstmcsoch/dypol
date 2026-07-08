@@ -95,6 +95,42 @@ export type Database = {
         }
         Relationships: []
       }
+      nav_items: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          external: boolean
+          href: string
+          icon: string
+          id: string
+          label: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          external?: boolean
+          href: string
+          icon?: string
+          id?: string
+          label: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          external?: boolean
+          href?: string
+          icon?: string
+          id?: string
+          label?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       portals: {
         Row: {
           created_at: string
@@ -173,6 +209,9 @@ export type Database = {
           hero_image_url: string | null
           hero_subheadline: string
           key: string
+          legal_dmca_url: string | null
+          legal_privacy_url: string | null
+          legal_terms_url: string | null
           logo_url: string | null
           promo_body: string
           promo_code: string
@@ -192,6 +231,9 @@ export type Database = {
           hero_image_url?: string | null
           hero_subheadline?: string
           key: string
+          legal_dmca_url?: string | null
+          legal_privacy_url?: string | null
+          legal_terms_url?: string | null
           logo_url?: string | null
           promo_body?: string
           promo_code?: string
@@ -211,6 +253,9 @@ export type Database = {
           hero_image_url?: string | null
           hero_subheadline?: string
           key?: string
+          legal_dmca_url?: string | null
+          legal_privacy_url?: string | null
+          legal_terms_url?: string | null
           logo_url?: string | null
           promo_body?: string
           promo_code?: string

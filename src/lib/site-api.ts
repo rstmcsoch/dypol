@@ -42,6 +42,9 @@ export interface SiteSettings {
   footer_tagline: string;
   footer_about: string;
   footer_copyright: string;
+  legal_terms_url: string | null;
+  legal_dmca_url: string | null;
+  legal_privacy_url: string | null;
 }
 
 export const materialsQO = queryOptions({
