@@ -93,10 +93,8 @@ function Profile() {
           </div>
         </div>
 
-        {/* Exam countdown — only for signed-in users with a target */}
-        <div className="mt-6">
-          <ExamCountdown target={target} />
-        </div>
+
+
 
         <div className="mt-6 grid gap-6 md:grid-cols-[1.5fr_1fr]">
           <section className="rounded-3xl border border-border glass p-6">
