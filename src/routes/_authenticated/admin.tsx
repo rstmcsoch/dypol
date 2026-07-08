@@ -209,6 +209,14 @@ function SiteTab() {
         <TextField label="Copyright line" value={form.footer_copyright ?? ""} onChange={(v) => update("footer_copyright", v)} />
       </Section>
 
+      <Section title="Legal links (footer)">
+        <TextField label="Copyright & Terms URL" placeholder="https://…" value={form.legal_terms_url ?? ""} onChange={(v) => update("legal_terms_url", v || null)} />
+        <TextField label="DMCA Policy URL" placeholder="https://…" value={form.legal_dmca_url ?? ""} onChange={(v) => update("legal_dmca_url", v || null)} />
+        <TextField label="Privacy Policy URL" placeholder="https://…" value={form.legal_privacy_url ?? ""} onChange={(v) => update("legal_privacy_url", v || null)} />
+        <p className="text-xs text-muted-foreground">Leave blank to keep the label greyed-out (non-clickable).</p>
+      </Section>
+
+
       <div className="md:col-span-2 flex justify-end">
         <button
           onClick={onSave}
