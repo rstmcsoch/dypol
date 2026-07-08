@@ -100,6 +100,7 @@ function Admin() {
             { k: "site", label: "Site", icon: Settings2 },
             { k: "materials", label: "Materials", icon: Layers },
             { k: "portals", label: "Portals", icon: Sparkles },
+            { k: "navigation", label: "Navigation", icon: MenuIcon },
             { k: "account", label: "Account", icon: LogOut },
           ].map((t) => {
             const active = tab === t.k;
@@ -122,8 +123,10 @@ function Admin() {
           {tab === "site" && <SiteTab />}
           {tab === "materials" && <MaterialsTab />}
           {tab === "portals" && <PortalsTab />}
+          {tab === "navigation" && <NavigationTab />}
           {tab === "account" && <AccountTab />}
         </div>
+
       </div>
     </main>
   );
