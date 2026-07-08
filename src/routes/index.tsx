@@ -85,14 +85,71 @@ function Home() {
               </Link>
             </motion.div>
 
-            {s?.hero_image_url ? (
-              <img src={s.hero_image_url} alt="" className="mt-10 aspect-[16/8] w-full rounded-3xl object-cover border border-border" />
-            ) : (
-              <div className="mt-10 aspect-[16/8] w-full rounded-3xl border-2 border-dashed border-border/60 grid place-items-center text-xs text-muted-foreground">
-                hero image slot {isAdmin && <span className="ml-2">— add one in <Link to="/admin" className="text-primary underline">Admin</Link></span>}
-              </div>
-            )}
           </div>
+
+          <motion.aside
+            initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
+            className="space-y-4"
+          >
+            <div className="relative rounded-3xl border border-border glass p-6">
+              <span className="absolute -top-2 right-4 rounded-full gradient-primary px-3 py-0.5 text-xs font-bold text-primary-foreground">LIMITED</span>
+              <div className="text-xs text-muted-foreground tracking-widest">PROMO ACTIVE</div>
+              <div className="mt-2 text-4xl font-black text-gradient">{s?.promo_headline ?? "10% OFF"}</div>
+              <p className="text-sm text-muted-foreground mt-1">{s?.promo_body ?? ""}</p>
+              <button
+                onClick={copy}
+                className="mt-4 w-full flex items-center justify-between rounded-2xl border border-border px-4 py-3 font-mono text-primary hover:bg-muted active:scale-[0.99] transition"
+              >
+                <span>{promoCode}</span>
+                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              </button>
+            </div>
+          </motion.aside>
+        </div>
+
+        {/* Exam countdown — signed-in users with an exam target */}
+        {user && examTarget && (
+          <div className="mt-8">
+            <ExamCountdown target={examTarget} />
+          </div>
+        )}
+
+        {/* Below-the-line: hero image + secondary cards */}
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+          {s?.hero_image_url ? (
+            <img src={s.hero_image_url} alt="" className="aspect-[16/8] w-full rounded-3xl object-cover border border-border" />
+          ) : (
+            <div className="aspect-[16/8] w-full rounded-3xl border-2 border-dashed border-border/60 grid place-items-center text-xs text-muted-foreground">
+              hero image slot {isAdmin && <span className="ml-2">— add one in <Link to="/admin" className="text-primary underline">Admin</Link></span>}
+            </div>
+          )}
+          <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { top: "FREE", bot: "Access" },
+                { top: "NO", bot: "Signup*" },
+                { top: "DAILY", bot: "Updates" },
+              ].map((x) => (
+                <div key={x.top} className="rounded-2xl border border-border p-4 hover:border-primary/50 transition">
+                  <div className="text-xs text-muted-foreground">{x.top}</div>
+                  <div className="mt-1 font-semibold">{x.bot}</div>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-3xl border border-border glass p-5">
+              <div className="text-sm font-semibold">Welcome to {s?.site_title ?? "Dypol"}</div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                A calm space to gather your resources and just do the work.
+              </p>
+              {!user && (
+                <Link to="/auth" className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:gap-2 transition-all">
+                  Sign in <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+
 
           <motion.aside
             initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
