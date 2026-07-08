@@ -177,19 +177,30 @@ function Home() {
           <div>
             <div className="text-xs tracking-widest text-muted-foreground">LEGAL</div>
             <ul className="mt-3 space-y-2 text-muted-foreground">
-              <li>Copyright & Terms</li>
-              <li>DMCA Policy</li>
-              <li>Privacy Policy</li>
+              {s?.legal_terms_url ? (
+                <li><a href={s.legal_terms_url} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">Copyright & Terms</a></li>
+              ) : <li className="opacity-60">Copyright & Terms</li>}
+              {s?.legal_dmca_url ? (
+                <li><a href={s.legal_dmca_url} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">DMCA Policy</a></li>
+              ) : <li className="opacity-60">DMCA Policy</li>}
+              {s?.legal_privacy_url ? (
+                <li><a href={s.legal_privacy_url} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">Privacy Policy</a></li>
+              ) : <li className="opacity-60">Privacy Policy</li>}
             </ul>
           </div>
           <div>
             <div className="text-xs tracking-widest text-muted-foreground">CONTACT</div>
             <ul className="mt-3 space-y-2 text-muted-foreground">
-              {s?.support_email && <li>{s.support_email}</li>}
-              {s?.support_whatsapp && <li>{s.support_whatsapp}</li>}
+              {s?.support_email && (
+                <li><a href={`mailto:${s.support_email}`} className="hover:text-primary transition break-all">{s.support_email}</a></li>
+              )}
+              {s?.support_whatsapp && (
+                <li><a href={`https://wa.me/${s.support_whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">{s.support_whatsapp}</a></li>
+              )}
               <li><Link to="/support" className="hover:text-primary transition">Support / Donate</Link></li>
             </ul>
           </div>
+
         </footer>
         <div className="mt-6 flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
           <div>{s?.footer_copyright ?? "© 2026 DYPOL. All rights reserved."}</div>
