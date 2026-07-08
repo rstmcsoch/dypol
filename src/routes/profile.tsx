@@ -4,7 +4,7 @@ import { LogOut, Save, Sparkles, Target, Calendar, Loader2, Shield, BookmarkChec
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
-import { ExamCountdown } from "@/components/ExamCountdown";
+
 import { useBookmarks, useDeleteBookmark } from "@/lib/bookmarks";
 
 export const Route = createFileRoute("/profile")({
