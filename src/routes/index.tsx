@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, Headphones, Sparkles, Copy, Check, Settings } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSiteSettings } from "@/lib/site-api";
 import { useAuth } from "@/hooks/use-auth";
+import { ExamCountdown } from "@/components/ExamCountdown";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   ssr: false,
@@ -11,9 +13,17 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
   const { data: s } = useSiteSettings();
   const [copied, setCopied] = useState(false);
+  const [examTarget, setExamTarget] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) { setExamTarget(null); return; }
+    supabase.from("profiles").select("target").eq("id", user.id).maybeSingle()
+      .then(({ data }) => setExamTarget(data?.target ?? null));
+  }, [user?.id]);
+
   const promoCode = s?.promo_code ?? "UNSCRIPTED10";
   const copy = async () => {
     await navigator.clipboard.writeText(promoCode);
