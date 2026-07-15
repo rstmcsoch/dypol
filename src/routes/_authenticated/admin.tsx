@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import {
   Loader2, Plus, Trash2, Save, LogOut, Image as ImageIcon, ExternalLink,
   ArrowLeft, Sparkles, Layers, Settings2, ShieldAlert, Menu as MenuIcon,
-  ArrowUp, ArrowDown, Eye, EyeOff,
+  ArrowUp, ArrowDown, Eye, EyeOff, Package, Wand2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -18,13 +18,17 @@ import {
 import { useNavItems, useSaveNavItem, useDeleteNavItem, type NavItem } from "@/lib/nav-items";
 import { NAV_ICON_NAMES, getNavIcon } from "@/lib/nav-icons";
 import { RESOURCE_TYPES, TIERS } from "@/lib/data";
+import { useEssentials, useSaveEssential, useDeleteEssential, type Essential } from "@/lib/essentials";
+import { fetchLinkMetadata } from "@/lib/essentials.functions";
+import { useServerFn } from "@tanstack/react-start";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Dypol" }] }),
   component: Admin,
 });
 
-type Tab = "site" | "materials" | "portals" | "navigation" | "account";
+type Tab = "site" | "materials" | "portals" | "essentials" | "navigation" | "account";
+
 
 
 function Admin() {
@@ -100,6 +104,7 @@ function Admin() {
             { k: "site", label: "Site", icon: Settings2 },
             { k: "materials", label: "Materials", icon: Layers },
             { k: "portals", label: "Portals", icon: Sparkles },
+            { k: "essentials", label: "Essentials", icon: Package },
             { k: "navigation", label: "Navigation", icon: MenuIcon },
             { k: "account", label: "Account", icon: LogOut },
           ].map((t) => {
@@ -123,6 +128,7 @@ function Admin() {
           {tab === "site" && <SiteTab />}
           {tab === "materials" && <MaterialsTab />}
           {tab === "portals" && <PortalsTab />}
+          {tab === "essentials" && <EssentialsTab />}
           {tab === "navigation" && <NavigationTab />}
           {tab === "account" && <AccountTab />}
         </div>
@@ -131,6 +137,7 @@ function Admin() {
     </main>
   );
 }
+
 
 /* ================== SITE ================== */
 
