@@ -457,7 +457,159 @@ function PortalsTab() {
   );
 }
 
+/* ================== ESSENTIALS ================== */
+
+function EssentialsTab() {
+  const { data: items = [], isLoading } = useEssentials();
+  const save = useSaveEssential();
+  const del = useDeleteEssential();
+  const fetchMeta = useServerFn(fetchLinkMetadata);
+  const [editing, setEditing] = useState<Partial<Essential> | null>(null);
+  const [fetching, setFetching] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  if (isLoading) return <Loading />;
+
+  const autofill = async () => {
+    if (!editing?.url) {
+      toast.error("Paste a product URL first");
+      return;
+    }
+    setFetching(true);
+    try {
+      const meta = await fetchMeta({ data: { url: editing.url } });
+      setEditing({
+        ...editing,
+        title: editing.title || meta.title || editing.title || "",
+        description: editing.description || meta.description || "",
+        image_url: editing.image_url || meta.image,
+        price: editing.price || meta.price,
+        source: editing.source || meta.source,
+      });
+      toast.success("Fetched product info");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Fetch failed");
+    } finally {
+      setFetching(false);
+    }
+  };
+
+  const onImageFile = async (file: File | undefined) => {
+    if (!file || !editing) return;
+    setUploading(true);
+    try {
+      const url = await uploadSiteAsset(file, "misc");
+      setEditing({ ...editing, image_url: url });
+    } catch (e) { toast.error(e instanceof Error ? e.message : "Upload failed"); }
+    finally { setUploading(false); }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-muted-foreground">{items.length} products</div>
+        <button
+          onClick={() => setEditing({ title: "", description: "", url: "", sort_order: 1000 })}
+          className="inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-4 py-2 text-sm font-semibold btn-glow active:scale-95 transition"
+        >
+          <Plus className="h-4 w-4" /> Add product
+        </button>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        {items.map((p) => (
+          <div key={p.id} className="rounded-2xl border border-border glass p-4 flex items-start gap-3">
+            {p.image_url ? (
+              <img src={p.image_url} alt="" className="h-16 w-16 rounded-xl object-cover border border-border" />
+            ) : (
+              <div className="h-16 w-16 rounded-xl border border-dashed border-border/60 grid place-items-center text-muted-foreground">
+                <Package className="h-4 w-4" />
+              </div>
+            )}
+            <div className="min-w-0 flex-1">
+              <div className="font-bold truncate">{p.title}</div>
+              <div className="text-xs text-muted-foreground line-clamp-2">{p.description}</div>
+              <div className="mt-1 flex items-center gap-2 text-xs">
+                {p.price && <span className="font-semibold text-primary">{p.price}</span>}
+                {p.source && <span className="text-muted-foreground">· {p.source}</span>}
+              </div>
+              {p.url && (
+                <a href={p.url} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-[11px] text-primary hover:underline">
+                  open <ExternalLink className="h-3 w-3" />
+                </a>
+              )}
+            </div>
+            <div className="flex flex-col gap-1">
+              <button onClick={() => setEditing(p)} className="rounded-lg px-3 py-1 text-xs font-semibold hover:bg-primary/10 hover:text-primary transition">Edit</button>
+              <button
+                onClick={async () => {
+                  if (!confirm(`Delete "${p.title}"?`)) return;
+                  try { await del.mutateAsync(p.id); toast.success("Deleted"); }
+                  catch (e) { toast.error(e instanceof Error ? e.message : "Delete failed"); }
+                }}
+                className="rounded-lg px-3 py-1 text-xs hover:bg-destructive/10 hover:text-destructive transition inline-flex items-center gap-1"
+              >
+                <Trash2 className="h-3 w-3" /> Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {editing && (
+        <Modal onClose={() => setEditing(null)} title={editing.id ? "Edit product" : "New product"}>
+          <div className="grid gap-3">
+            <div>
+              <TextField label="Product URL" value={editing.url ?? ""} onChange={(v) => setEditing({ ...editing, url: v })} placeholder="https://amazon.in/..." />
+              <button
+                onClick={autofill}
+                disabled={fetching || !editing.url}
+                className="mt-2 inline-flex items-center gap-2 rounded-full border border-primary/40 text-primary px-4 py-1.5 text-xs font-semibold hover:bg-primary/10 active:scale-95 transition disabled:opacity-50"
+              >
+                {fetching ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Wand2 className="h-3.5 w-3.5" />}
+                {fetching ? "Fetching…" : "Auto-fill from link"}
+              </button>
+            </div>
+            <TextField label="Title" value={editing.title ?? ""} onChange={(v) => setEditing({ ...editing, title: v })} />
+            <TextArea label="Description" value={editing.description ?? ""} onChange={(v) => setEditing({ ...editing, description: v })} />
+            <div className="grid grid-cols-2 gap-2">
+              <TextField label="Price" value={editing.price ?? ""} onChange={(v) => setEditing({ ...editing, price: v || null })} placeholder="₹499" />
+              <TextField label="Source" value={editing.source ?? ""} onChange={(v) => setEditing({ ...editing, source: v || null })} placeholder="amazon.in" />
+            </div>
+            <TextField label="Sort order (smaller = higher)" value={String(editing.sort_order ?? 1000)} onChange={(v) => setEditing({ ...editing, sort_order: Number(v) || 0 })} />
+            <ImageField
+              label="Product image"
+              url={editing.image_url ?? null}
+              uploading={uploading}
+              onFile={onImageFile}
+              onClear={() => setEditing({ ...editing, image_url: null })}
+            />
+            <p className="text-[11px] text-muted-foreground">
+              Tip: paste the URL and hit <strong>Auto-fill</strong> — we'll grab title, description, image & price from the page.
+            </p>
+          </div>
+          <div className="mt-5 flex justify-end gap-2">
+            <button onClick={() => setEditing(null)} className="rounded-full border border-border px-4 py-2 text-sm font-semibold hover:bg-muted">Cancel</button>
+            <button
+              onClick={async () => {
+                if (!editing.url) { toast.error("URL is required"); return; }
+                try { await save.mutateAsync(editing); toast.success("Saved"); setEditing(null); }
+                catch (e) { toast.error(e instanceof Error ? e.message : "Save failed"); }
+              }}
+              disabled={save.isPending}
+              className="inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-5 py-2 text-sm font-semibold btn-glow disabled:opacity-60"
+            >
+              {save.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save
+            </button>
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+}
+
 /* ================== ACCOUNT ================== */
+
 
 function AccountTab() {
   const { user } = useAuth();
