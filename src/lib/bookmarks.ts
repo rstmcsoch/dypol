@@ -1,7 +1,7 @@
 import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export type BookmarkKind = "material" | "portal" | "link";
+export type BookmarkKind = "material" | "portal" | "link" | "essential";
 
 export interface Bookmark {
   id: string;
