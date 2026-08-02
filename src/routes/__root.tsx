@@ -119,7 +119,7 @@ function RootComponent() {
             <div className="absolute bottom-0 right-1/4 h-96 w-96 rounded-full gradient-primary blur-[140px] opacity-60" />
           </div>
           <AppNav />
-          <Outlet />
+          <div className="pb-28 lg:pb-0"><Outlet /></div>
           <Toaster position="top-right" richColors />
         </div>
       </ThemeProvider>
