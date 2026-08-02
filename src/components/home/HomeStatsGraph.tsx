@@ -45,7 +45,7 @@ function useCountUp(target: number, run: boolean, ms = 1200) {
 export function HomeStatsGraph() {
   const { data } = useHomeStats();
   const stats = (data ?? []).filter((s) => s.enabled);
-  const [ref, inView] = useEnterOnce<HTMLDivElement>();
+  const [inView, setInView] = useState(false);
 
   if (!stats.length) return null;
   const max = Math.max(...stats.map((s) => s.value), 1);
@@ -53,13 +53,17 @@ export function HomeStatsGraph() {
   return (
     <section aria-label="Statistics" className="mt-14">
       <SectionHeading kicker="BY THE NUMBERS" title="Growing every day" sub="Animated as you scroll." />
-      <div ref={ref} className="mt-5 rounded-3xl border border-border glass p-5 sm:p-8">
+      <motion.div
+        onViewportEnter={() => setInView(true)}
+        viewport={{ once: true, amount: 0.2 }}
+        className="mt-5 rounded-3xl border border-border glass p-5 sm:p-8"
+      >
         <div className="grid gap-6 sm:gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((s, idx) => (
             <StatBar key={s.id} stat={s} max={max} inView={inView} delay={idx * 0.12} />
           ))}
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
