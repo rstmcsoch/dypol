@@ -103,6 +103,7 @@ function Admin() {
         <div className="mt-6 flex gap-1 rounded-2xl border border-border glass p-1 overflow-x-auto">
           {[
             { k: "site", label: "Site", icon: Settings2 },
+            { k: "home", label: "Home", icon: LayoutTemplate },
             { k: "materials", label: "Materials", icon: Layers },
             { k: "portals", label: "Portals", icon: Sparkles },
             { k: "essentials", label: "Essentials", icon: Package },
