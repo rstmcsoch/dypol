@@ -128,6 +128,7 @@ function Admin() {
 
         <div className="mt-6">
           {tab === "site" && <SiteTab />}
+          {tab === "home" && <HomeTab />}
           {tab === "materials" && <MaterialsTab />}
           {tab === "portals" && <PortalsTab />}
           {tab === "essentials" && <EssentialsTab />}
