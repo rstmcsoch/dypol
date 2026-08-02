@@ -150,6 +150,12 @@ function Home() {
           </div>
         </div>
 
+        <HomeCarousel />
+        <HomeStatsGraph />
+        <HomePostsMarquee />
+
+
+
 
 
         <footer className="mt-24 border-t border-border pt-8 grid gap-6 md:grid-cols-4 text-sm">
