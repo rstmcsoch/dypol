@@ -6,6 +6,9 @@ import { useSiteSettings } from "@/lib/site-api";
 import { useAuth } from "@/hooks/use-auth";
 import { ExamCountdown } from "@/components/ExamCountdown";
 import { supabase } from "@/integrations/supabase/client";
+import { HomeCarousel } from "@/components/home/HomeCarousel";
+import { HomeStatsGraph } from "@/components/home/HomeStatsGraph";
+import { HomePostsMarquee } from "@/components/home/HomePostsMarquee";
 
 export const Route = createFileRoute("/")({
   ssr: false,
