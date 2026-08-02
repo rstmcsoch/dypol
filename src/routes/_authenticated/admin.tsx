@@ -21,13 +21,14 @@ import { RESOURCE_TYPES, TIERS } from "@/lib/data";
 import { useEssentials, useSaveEssential, useDeleteEssential, type Essential } from "@/lib/essentials";
 import { fetchLinkMetadata } from "@/lib/essentials.functions";
 import { useServerFn } from "@tanstack/react-start";
+import { HomeTab } from "@/components/admin/HomeTab";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Dypol" }] }),
   component: Admin,
 });
 
-type Tab = "site" | "materials" | "portals" | "essentials" | "navigation" | "account";
+type Tab = "site" | "home" | "materials" | "portals" | "essentials" | "navigation" | "account";
 
 
 
