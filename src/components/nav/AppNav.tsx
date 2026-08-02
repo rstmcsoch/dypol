@@ -201,7 +201,7 @@ function BottomNav({ pathname, items }: { pathname: string; items: NavItem[] }) 
           })}
         </ul>
       </nav>
-      <div aria-hidden className="h-24" />
+      
     </>
   );
 }

@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import {
   Loader2, Plus, Trash2, Save, LogOut, Image as ImageIcon, ExternalLink,
   ArrowLeft, Sparkles, Layers, Settings2, ShieldAlert, Menu as MenuIcon,
-  ArrowUp, ArrowDown, Eye, EyeOff, Package, Wand2,
+  ArrowUp, ArrowDown, Eye, EyeOff, Package, Wand2, LayoutTemplate,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -21,13 +21,14 @@ import { RESOURCE_TYPES, TIERS } from "@/lib/data";
 import { useEssentials, useSaveEssential, useDeleteEssential, type Essential } from "@/lib/essentials";
 import { fetchLinkMetadata } from "@/lib/essentials.functions";
 import { useServerFn } from "@tanstack/react-start";
+import { HomeTab } from "@/components/admin/HomeTab";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Dypol" }] }),
   component: Admin,
 });
 
-type Tab = "site" | "materials" | "portals" | "essentials" | "navigation" | "account";
+type Tab = "site" | "home" | "materials" | "portals" | "essentials" | "navigation" | "account";
 
 
 
@@ -102,6 +103,7 @@ function Admin() {
         <div className="mt-6 flex gap-1 rounded-2xl border border-border glass p-1 overflow-x-auto">
           {[
             { k: "site", label: "Site", icon: Settings2 },
+            { k: "home", label: "Home", icon: LayoutTemplate },
             { k: "materials", label: "Materials", icon: Layers },
             { k: "portals", label: "Portals", icon: Sparkles },
             { k: "essentials", label: "Essentials", icon: Package },
@@ -126,6 +128,7 @@ function Admin() {
 
         <div className="mt-6">
           {tab === "site" && <SiteTab />}
+          {tab === "home" && <HomeTab />}
           {tab === "materials" && <MaterialsTab />}
           {tab === "portals" && <PortalsTab />}
           {tab === "essentials" && <EssentialsTab />}

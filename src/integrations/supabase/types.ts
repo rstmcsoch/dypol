@@ -89,6 +89,114 @@ export type Database = {
         }
         Relationships: []
       }
+      home_posts: {
+        Row: {
+          avatar_url: string | null
+          bio: string
+          created_at: string
+          enabled: boolean
+          id: string
+          link: string
+          name: string
+          role_title: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          link?: string
+          name?: string
+          role_title?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          link?: string
+          name?: string
+          role_title?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      home_slides: {
+        Row: {
+          caption: string
+          created_at: string
+          enabled: boolean
+          id: string
+          image_url: string | null
+          link: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          caption?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          image_url?: string | null
+          link?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          caption?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          image_url?: string | null
+          link?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      home_stats: {
+        Row: {
+          caption: string
+          created_at: string
+          enabled: boolean
+          id: string
+          label: string
+          sort_order: number
+          unit: string
+          updated_at: string
+          value: number
+        }
+        Insert: {
+          caption?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          label?: string
+          sort_order?: number
+          unit?: string
+          updated_at?: string
+          value?: number
+        }
+        Update: {
+          caption?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          label?: string
+          sort_order?: number
+          unit?: string
+          updated_at?: string
+          value?: number
+        }
+        Relationships: []
+      }
       materials: {
         Row: {
           created_at: string
