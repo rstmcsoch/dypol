@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useHomeStats } from "@/lib/home-sections";
 import { SectionHeading } from "./HomeCarousel";
