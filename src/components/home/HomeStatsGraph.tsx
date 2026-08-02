@@ -45,8 +45,7 @@ function useCountUp(target: number, run: boolean, ms = 1200) {
 export function HomeStatsGraph() {
   const { data } = useHomeStats();
   const stats = (data ?? []).filter((s) => s.enabled);
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.35 });
+  const [ref, inView] = useEnterOnce<HTMLDivElement>();
 
   if (!stats.length) return null;
   const max = Math.max(...stats.map((s) => s.value), 1);
