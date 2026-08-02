@@ -28,14 +28,13 @@ export function HomeStatsGraph() {
   const [inView, setInView] = useState(false);
 
   if (!stats.length) return null;
-  console.log('DBG stats', JSON.stringify(stats));
   const max = Math.max(...stats.map((s) => s.value), 1);
 
   return (
     <section aria-label="Statistics" className="mt-14">
       <SectionHeading kicker="BY THE NUMBERS" title="Growing every day" sub="Animated as you scroll." />
       <motion.div
-        onViewportEnter={() => { console.log('DBG viewport enter'); setInView(true); }}
+        onViewportEnter={() => setInView(true)}
         viewport={{ once: true, amount: 0.2 }}
         className="mt-5 rounded-3xl border border-border glass p-5 sm:p-8"
       >
