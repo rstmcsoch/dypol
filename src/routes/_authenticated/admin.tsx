@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import {
   Loader2, Plus, Trash2, Save, LogOut, Image as ImageIcon, ExternalLink,
   ArrowLeft, Sparkles, Layers, Settings2, ShieldAlert, Menu as MenuIcon,
-  ArrowUp, ArrowDown, Eye, EyeOff, Package, Wand2,
+  ArrowUp, ArrowDown, Eye, EyeOff, Package, Wand2, LayoutTemplate,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
