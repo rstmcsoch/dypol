@@ -142,7 +142,27 @@ function firstBodyImage(html: string): string | null {
   return null;
 }
 
+const BLOCKED_HOST =
+  /^(localhost|127\.|0\.|10\.|169\.254\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.|\[?::1\]?$|\[?f[cd])/i;
+
+/** Reject non-http(s) schemes and private/loopback/link-local targets (SSRF guard). */
+function assertPublicHttpUrl(target: string): void {
+  let u: URL;
+  try {
+    u = new URL(target);
+  } catch {
+    throw new Error("Invalid URL");
+  }
+  if (u.protocol !== "http:" && u.protocol !== "https:") throw new Error("Only http(s) URLs are allowed");
+  const host = u.hostname.toLowerCase();
+  if (!host || host.endsWith(".local") || host.endsWith(".internal") || host === "metadata.google.internal") {
+    throw new Error("Target host is not allowed");
+  }
+  if (BLOCKED_HOST.test(host)) throw new Error("Target host is not allowed");
+}
+
 export async function fetchLinkMeta(target: string): Promise<FetchedMetaResult> {
+  assertPublicHttpUrl(target);
   let res: Response;
   try {
     res = await fetch(target, {
