@@ -11,13 +11,21 @@ function newKey(value: string) {
  * Uses auth.getUser(token) (a live Auth API check) instead of local JWT claim
  * verification, which fails on projects without asymmetric signing keys.
  */
-export async function requireAdminFromRequest(): Promise<string> {
+export async function requireAdminFromRequest(explicitToken?: string): Promise<string> {
   const url = process.env["SUPABASE_URL"];
   const key = process.env["SUPABASE_PUBLISHABLE_KEY"] ?? process.env["SUPABASE_ANON_KEY"];
   if (!url || !key) throw new Error("Server is not configured for authentication");
 
-  const authHeader = getRequest()?.headers.get("authorization") ?? "";
-  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
+  let token = (explicitToken ?? "").trim();
+  if (!token) {
+    let authHeader = "";
+    try {
+      authHeader = getRequest()?.headers.get("authorization") ?? "";
+    } catch {
+      authHeader = "";
+    }
+    token = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
+  }
   if (!token) throw new Error("Please sign in as an admin to use this feature");
 
   const supabase = createClient<Database>(url, key, {
