@@ -17,11 +17,13 @@ export const fetchLinkMetadata = createServerFn({ method: "POST" })
     return data;
   })
   .handler(async ({ data, context }): Promise<FetchedMeta> => {
-    const { data: isAdmin, error } = await context.supabase.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "admin",
-    });
-    if (error || !isAdmin) throw new Error("Forbidden");
+    const { data: roleRow } = await context.supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", context.userId)
+      .eq("role", "admin")
+      .maybeSingle();
+    if (!roleRow) throw new Error("Forbidden");
 
     const { fetchLinkMeta } = await import("./link-meta.server");
     return await fetchLinkMeta(data.url.trim());
