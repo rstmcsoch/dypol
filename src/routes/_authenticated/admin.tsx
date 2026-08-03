@@ -480,7 +480,11 @@ function EssentialsTab() {
     }
     setFetching(true);
     try {
-      const meta = await fetchMeta({ data: { url: editing.url } });
+      const { data: sess } = await supabase.auth.getSession();
+      const meta = await fetchMeta({
+        data: { url: editing.url, token: sess.session?.access_token },
+      });
+
       setEditing({
         ...editing,
         title: editing.title || meta.title || editing.title || "",
