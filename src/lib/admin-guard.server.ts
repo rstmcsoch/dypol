@@ -50,7 +50,11 @@ export async function requireAdminFromRequest(explicitToken?: string): Promise<s
   });
 
   const { data: userData, error: userError } = await supabase.auth.getUser(token);
-  if (userError || !userData?.user) throw new Error("Please sign in as an admin to use this feature");
+  if (userError || !userData?.user) {
+    throw new Error(
+      `Session rejected by auth server (${userError?.message ?? "no user"}) — sign out and sign in again`,
+    );
+  }
 
   const { data: roleRow } = await supabase
     .from("user_roles")
