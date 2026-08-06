@@ -180,23 +180,31 @@ function Home() {
               <li><Link to="/materials" className="hover:text-primary transition">Materials</Link></li>
               <li><Link to="/portals" className="hover:text-primary transition">Portals</Link></li>
               <li><Link to="/support" className="hover:text-primary transition">Support</Link></li>
+              <li><Link to="/about" className="hover:text-primary transition">About</Link></li>
               <li><Link to="/profile" className="hover:text-primary transition">Profile</Link></li>
             </ul>
           </div>
           <div>
             <div className="text-xs tracking-widest text-muted-foreground">LEGAL</div>
             <ul className="mt-3 space-y-2 text-muted-foreground">
-              {s?.legal_terms_url ? (
-                <li><a href={s.legal_terms_url} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">Copyright & Terms</a></li>
-              ) : <li className="opacity-60">Copyright & Terms</li>}
-              {s?.legal_dmca_url ? (
-                <li><a href={s.legal_dmca_url} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">DMCA Policy</a></li>
-              ) : <li className="opacity-60">DMCA Policy</li>}
-              {s?.legal_privacy_url ? (
-                <li><a href={s.legal_privacy_url} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">Privacy Policy</a></li>
-              ) : <li className="opacity-60">Privacy Policy</li>}
+              <li>
+                {s?.legal_terms_url
+                  ? <a href={s.legal_terms_url} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">Copyright & Terms</a>
+                  : <Link to="/terms" className="hover:text-primary transition">Copyright & Terms</Link>}
+              </li>
+              <li>
+                {s?.legal_dmca_url
+                  ? <a href={s.legal_dmca_url} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">DMCA Policy</a>
+                  : <Link to="/dmca" className="hover:text-primary transition">DMCA Policy</Link>}
+              </li>
+              <li>
+                {s?.legal_privacy_url
+                  ? <a href={s.legal_privacy_url} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">Privacy Policy</a>
+                  : <Link to="/privacy" className="hover:text-primary transition">Privacy Policy</Link>}
+              </li>
             </ul>
           </div>
+
           <div>
             <div className="text-xs tracking-widest text-muted-foreground">CONTACT</div>
             <ul className="mt-3 space-y-2 text-muted-foreground">
