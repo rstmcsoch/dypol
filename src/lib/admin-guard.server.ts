@@ -12,9 +12,14 @@ function newKey(value: string) {
  * verification, which fails on projects without asymmetric signing keys.
  */
 export async function requireAdminFromRequest(explicitToken?: string): Promise<string> {
-  const url = process.env["SUPABASE_URL"];
-  const key = process.env["SUPABASE_PUBLISHABLE_KEY"] ?? process.env["SUPABASE_ANON_KEY"];
-  if (!url || !key) throw new Error("Server is not configured for authentication");
+  const url =
+    process.env["SUPABASE_URL"] ??
+    import.meta.env["VITE_SUPABASE_URL"];
+  const key =
+    process.env["SUPABASE_PUBLISHABLE_KEY"] ??
+    process.env["SUPABASE_ANON_KEY"] ??
+    import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
+  if (!url || !key) throw new Error("Auth check unavailable: backend keys missing on the server");
 
   let token = (explicitToken ?? "").trim();
   if (!token) {
@@ -26,7 +31,7 @@ export async function requireAdminFromRequest(explicitToken?: string): Promise<s
     }
     token = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
   }
-  if (!token) throw new Error("Please sign in as an admin to use this feature");
+  if (!token) throw new Error("Your session didn't reach the server — reload the page and try again");
 
   const supabase = createClient<Database>(url, key, {
     global: {
