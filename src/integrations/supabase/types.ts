@@ -347,6 +347,42 @@ export type Database = {
         }
         Relationships: []
       }
+      site_pages: {
+        Row: {
+          body: string
+          created_at: string
+          hero_image_url: string | null
+          id: string
+          slug: string
+          sort_order: number
+          subtitle: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          hero_image_url?: string | null
+          id?: string
+          slug: string
+          sort_order?: number
+          subtitle?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          hero_image_url?: string | null
+          id?: string
+          slug?: string
+          sort_order?: number
+          subtitle?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           footer_about: string

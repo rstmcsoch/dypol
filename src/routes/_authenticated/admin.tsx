@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import {
   Loader2, Plus, Trash2, Save, LogOut, Image as ImageIcon, ExternalLink,
   ArrowLeft, Sparkles, Layers, Settings2, ShieldAlert, Menu as MenuIcon,
-  ArrowUp, ArrowDown, Eye, EyeOff, Package, Wand2, LayoutTemplate,
+  ArrowUp, ArrowDown, Eye, EyeOff, Package, Wand2, LayoutTemplate, FileText,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -22,13 +22,14 @@ import { useEssentials, useSaveEssential, useDeleteEssential, type Essential } f
 import { fetchLinkMetadata } from "@/lib/essentials.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { HomeTab } from "@/components/admin/HomeTab";
+import { PagesTab } from "@/components/admin/PagesTab";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Dypol" }] }),
   component: Admin,
 });
 
-type Tab = "site" | "home" | "materials" | "portals" | "essentials" | "navigation" | "account";
+type Tab = "site" | "home" | "materials" | "portals" | "essentials" | "pages" | "navigation" | "account";
 
 
 
@@ -107,6 +108,7 @@ function Admin() {
             { k: "materials", label: "Materials", icon: Layers },
             { k: "portals", label: "Portals", icon: Sparkles },
             { k: "essentials", label: "Essentials", icon: Package },
+            { k: "pages", label: "Pages", icon: FileText },
             { k: "navigation", label: "Navigation", icon: MenuIcon },
             { k: "account", label: "Account", icon: LogOut },
           ].map((t) => {
@@ -132,6 +134,7 @@ function Admin() {
           {tab === "materials" && <MaterialsTab />}
           {tab === "portals" && <PortalsTab />}
           {tab === "essentials" && <EssentialsTab />}
+          {tab === "pages" && <PagesTab />}
           {tab === "navigation" && <NavigationTab />}
           {tab === "account" && <AccountTab />}
         </div>
