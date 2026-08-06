@@ -480,9 +480,17 @@ function EssentialsTab() {
     }
     setFetching(true);
     try {
-      const { data: sess } = await supabase.auth.getSession();
+      let { data: sess } = await supabase.auth.getSession();
+      if (!sess.session?.access_token) {
+        ({ data: sess } = await supabase.auth.refreshSession());
+      }
+      const token = sess.session?.access_token;
+      if (!token) {
+        toast.error("Your session expired — please sign in again");
+        return;
+      }
       const meta = await fetchMeta({
-        data: { url: editing.url, token: sess.session?.access_token },
+        data: { url: editing.url, token },
       });
 
       setEditing({
