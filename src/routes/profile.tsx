@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
 import { useBookmarks, useDeleteBookmark } from "@/lib/bookmarks";
+import { SubmitMaterial } from "@/components/profile/SubmitMaterial";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({ meta: [{ title: "Profile — Dypol" }] }),
@@ -211,6 +212,8 @@ function Profile() {
             </ul>
           )}
         </section>
+
+        <SubmitMaterial userId={user.id} email={user.email} />
       </div>
     </main>
   );

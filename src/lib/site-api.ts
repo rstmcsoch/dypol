@@ -11,6 +11,7 @@ export interface Material {
   description: string;
   link: string;
   image_url: string | null;
+  credit_name: string | null;
   sort_order: number;
 }
 
@@ -22,8 +23,10 @@ export interface Portal {
   link: string;
   logo_url: string | null;
   link_count: number;
+  credit_name: string | null;
   sort_order: number;
 }
+
 
 export interface SiteSettings {
   key: string;
