@@ -89,6 +89,11 @@ function Portals() {
                   <div className="min-w-0 flex-1">
                     <h3 className="font-bold text-lg truncate">{p.name}</h3>
                     <p className="text-sm text-muted-foreground">{p.description}</p>
+                    {p.credit_name && (
+                      <div className="mt-2 inline-block rounded-md bg-primary/10 px-2 py-0.5 text-xs text-primary">
+                        Contributed by {p.credit_name}
+                      </div>
+                    )}
                     <div className="mt-2 text-[10px] tracking-widest text-muted-foreground">
                       {p.link_count} LINK{p.link_count === 1 ? "" : "S"}
                     </div>

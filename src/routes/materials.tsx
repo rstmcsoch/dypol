@@ -183,6 +183,11 @@ function Materials() {
                     <p className="mt-2 text-sm text-muted-foreground">{m.description}</p>
                     <div className="mt-3">
                       <span className="inline-block rounded-md bg-muted px-2 py-0.5 text-xs">{m.type}</span>
+                      {m.credit_name && (
+                        <span className="ml-2 inline-block rounded-md bg-primary/10 px-2 py-0.5 text-xs text-primary">
+                          Contributed by {m.credit_name}
+                        </span>
+                      )}
                     </div>
                     {m.image_url ? (
                       <img
