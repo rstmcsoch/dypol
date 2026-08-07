@@ -114,6 +114,7 @@ function Admin() {
             { k: "navigation", label: "Navigation", icon: MenuIcon },
             { k: "submissions", label: "Submissions", icon: Users },
             { k: "account", label: "Account", icon: LogOut },
+          ].map((t) => {
 
             const active = tab === t.k;
             const Icon = t.icon;
