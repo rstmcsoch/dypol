@@ -50,6 +50,60 @@ export type Database = {
         }
         Relationships: []
       }
+      community_submissions: {
+        Row: {
+          admin_notes: string
+          approved_at: string | null
+          created_at: string
+          credit_name: string
+          deleted_at: string | null
+          description: string
+          edited_by_admin: boolean
+          id: string
+          kind: string
+          link: string
+          material_name: string
+          status: string
+          updated_at: string
+          user_email: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string
+          approved_at?: string | null
+          created_at?: string
+          credit_name: string
+          deleted_at?: string | null
+          description: string
+          edited_by_admin?: boolean
+          id?: string
+          kind?: string
+          link?: string
+          material_name: string
+          status?: string
+          updated_at?: string
+          user_email?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string
+          approved_at?: string | null
+          created_at?: string
+          credit_name?: string
+          deleted_at?: string | null
+          description?: string
+          edited_by_admin?: boolean
+          id?: string
+          kind?: string
+          link?: string
+          material_name?: string
+          status?: string
+          updated_at?: string
+          user_email?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       essentials: {
         Row: {
           created_at: string
@@ -200,6 +254,7 @@ export type Database = {
       materials: {
         Row: {
           created_at: string
+          credit_name: string | null
           description: string
           id: string
           image_url: string | null
@@ -214,6 +269,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          credit_name?: string | null
           description?: string
           id?: string
           image_url?: string | null
@@ -228,6 +284,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          credit_name?: string | null
           description?: string
           id?: string
           image_url?: string | null
@@ -278,9 +335,40 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          body: string
+          created_at: string
+          event: string
+          id: string
+          read: boolean
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          event: string
+          id?: string
+          read?: boolean
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          event?: string
+          id?: string
+          read?: boolean
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       portals: {
         Row: {
           created_at: string
+          credit_name: string | null
           description: string
           id: string
           link: string
@@ -293,6 +381,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          credit_name?: string | null
           description?: string
           id?: string
           link?: string
@@ -305,6 +394,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          credit_name?: string | null
           description?: string
           id?: string
           link?: string
