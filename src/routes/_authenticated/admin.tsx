@@ -140,7 +140,9 @@ function Admin() {
           {tab === "essentials" && <EssentialsTab />}
           {tab === "pages" && <PagesTab />}
           {tab === "navigation" && <NavigationTab />}
+          {tab === "submissions" && <SubmissionsTab />}
           {tab === "account" && <AccountTab />}
+
         </div>
 
       </div>
