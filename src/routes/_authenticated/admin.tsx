@@ -23,13 +23,15 @@ import { fetchLinkMetadata } from "@/lib/essentials.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { HomeTab } from "@/components/admin/HomeTab";
 import { PagesTab } from "@/components/admin/PagesTab";
+import { SubmissionsTab } from "@/components/admin/SubmissionsTab";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Dypol" }] }),
   component: Admin,
 });
 
-type Tab = "site" | "home" | "materials" | "portals" | "essentials" | "pages" | "navigation" | "account";
+type Tab = "site" | "home" | "materials" | "portals" | "essentials" | "pages" | "navigation" | "submissions" | "account";
+
 
 
 
