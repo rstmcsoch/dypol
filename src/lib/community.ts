@@ -36,11 +36,12 @@ export function validateSubmission(v: NewSubmission): string | null {
   const credit = v.credit_name.trim();
 
   if (name.length < 3) return "Material / portal name must be at least 3 characters";
-  if (name.length > 150) return "Material / portal name must be under 150 characters";
+  if (name.length > 120) return "Material / portal name must be under 120 characters";
   if (desc.length < 20) return "Description must be at least 20 characters";
-  if (desc.length > 2000) return "Description must be under 2000 characters";
+  if (desc.length > 1000) return "Description must be under 1000 characters";
   if (credit.length < 2) return "Credit name must be at least 2 characters";
-  if (credit.length > 40) return "Credit name must be under 40 characters";
+  if (credit.length > 60) return "Credit name must be under 60 characters";
+  if (!link) return "Please add a link to the resource";
   if (link) {
     try {
       const u = new URL(link);
