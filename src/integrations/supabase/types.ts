@@ -149,6 +149,180 @@ export type Database = {
         }
         Relationships: []
       }
+      dio_ad_completions: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          offer_id: string
+          reference: string
+          reward_amount: number
+          status: string
+          transaction_id: string | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          offer_id: string
+          reference: string
+          reward_amount?: number
+          status?: string
+          transaction_id?: string | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          offer_id?: string
+          reference?: string
+          reward_amount?: number
+          status?: string
+          transaction_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dio_ad_completions_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "dio_ad_offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dio_ad_completions_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "dio_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dio_ad_offers: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string | null
+          description: string
+          ends_at: string | null
+          id: string
+          reward_amount: number
+          sort_order: number
+          starts_at: string | null
+          title: string
+          updated_at: string
+          url: string
+          verification: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          ends_at?: string | null
+          id?: string
+          reward_amount?: number
+          sort_order?: number
+          starts_at?: string | null
+          title?: string
+          updated_at?: string
+          url?: string
+          verification?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          ends_at?: string | null
+          id?: string
+          reward_amount?: number
+          sort_order?: number
+          starts_at?: string | null
+          title?: string
+          updated_at?: string
+          url?: string
+          verification?: string
+        }
+        Relationships: []
+      }
+      dio_transactions: {
+        Row: {
+          ad_completion_id: string | null
+          ad_offer_id: string | null
+          admin_id: string | null
+          amount: number
+          balance_after: number
+          balance_before: number
+          created_at: string
+          id: string
+          item_id: string | null
+          item_kind: string | null
+          reason: string
+          reference: string
+          source: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          ad_completion_id?: string | null
+          ad_offer_id?: string | null
+          admin_id?: string | null
+          amount: number
+          balance_after: number
+          balance_before: number
+          created_at?: string
+          id?: string
+          item_id?: string | null
+          item_kind?: string | null
+          reason?: string
+          reference: string
+          source?: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          ad_completion_id?: string | null
+          ad_offer_id?: string | null
+          admin_id?: string | null
+          amount?: number
+          balance_after?: number
+          balance_before?: number
+          created_at?: string
+          id?: string
+          item_id?: string | null
+          item_kind?: string | null
+          reason?: string
+          reference?: string
+          source?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      dio_wallets: {
+        Row: {
+          balance: number
+          created_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       essentials: {
         Row: {
           created_at: string
@@ -296,11 +470,53 @@ export type Database = {
         }
         Relationships: []
       }
+      material_unlocks: {
+        Row: {
+          amount_paid: number
+          id: string
+          item_id: string
+          item_kind: string
+          status: string
+          transaction_id: string | null
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_paid?: number
+          id?: string
+          item_id: string
+          item_kind: string
+          status?: string
+          transaction_id?: string | null
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_paid?: number
+          id?: string
+          item_id?: string
+          item_kind?: string
+          status?: string
+          transaction_id?: string | null
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "material_unlocks_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "dio_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       materials: {
         Row: {
           created_at: string
           credit_name: string | null
           description: string
+          dio_cost: number
           id: string
           image_url: string | null
           link: string
@@ -316,6 +532,7 @@ export type Database = {
           created_at?: string
           credit_name?: string | null
           description?: string
+          dio_cost?: number
           id?: string
           image_url?: string | null
           link?: string
@@ -331,6 +548,7 @@ export type Database = {
           created_at?: string
           credit_name?: string | null
           description?: string
+          dio_cost?: number
           id?: string
           image_url?: string | null
           link?: string
@@ -415,6 +633,7 @@ export type Database = {
           created_at: string
           credit_name: string | null
           description: string
+          dio_cost: number
           id: string
           link: string
           link_count: number
@@ -428,6 +647,7 @@ export type Database = {
           created_at?: string
           credit_name?: string | null
           description?: string
+          dio_cost?: number
           id?: string
           link?: string
           link_count?: number
@@ -441,6 +661,7 @@ export type Database = {
           created_at?: string
           credit_name?: string | null
           description?: string
+          dio_cost?: number
           id?: string
           link?: string
           link_count?: number
@@ -748,6 +969,78 @@ export type Database = {
     Functions: {
       admin_quote_action: {
         Args: { p_action: string; p_quote_id?: string | null }
+        Returns: Json
+      }
+      dio_ad_award: { Args: { _reference: string }; Returns: Json }
+      dio_ad_start: { Args: { _offer_id: string }; Returns: Json }
+      dio_admin_adjust: {
+        Args: {
+          _amount: number
+          _reason: string
+          _type: string
+          _user_id: string
+        }
+        Returns: Json
+      }
+      dio_admin_pending_completions: {
+        Args: never
+        Returns: {
+          created_at: string
+          email: string
+          id: string
+          offer_id: string
+          offer_title: string
+          reference: string
+          reward_amount: number
+          user_id: string
+        }[]
+      }
+      dio_admin_review_completion: {
+        Args: { _approve: boolean; _completion_id: string }
+        Returns: Json
+      }
+      dio_admin_stats: { Args: never; Returns: Json }
+      dio_admin_transactions: {
+        Args: {
+          _admin_id?: string
+          _from?: string
+          _limit?: number
+          _min_amount?: number
+          _source?: string
+          _to?: string
+          _type?: string
+          _user_id?: string
+        }
+        Returns: {
+          ad_offer_id: string
+          admin_email: string
+          admin_id: string
+          amount: number
+          balance_after: number
+          balance_before: number
+          created_at: string
+          email: string
+          id: string
+          item_id: string
+          item_kind: string
+          reason: string
+          reference: string
+          source: string
+          type: string
+          user_id: string
+        }[]
+      }
+      dio_admin_users: {
+        Args: { _limit?: number; _search?: string; _sort?: string }
+        Returns: {
+          balance: number
+          display_name: string
+          email: string
+          user_id: string
+        }[]
+      }
+      dio_unlock: {
+        Args: { _item_id: string; _item_kind: string }
         Returns: Json
       }
       get_active_quotes: {

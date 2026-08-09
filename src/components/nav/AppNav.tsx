@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useSiteSettings } from "@/lib/site-api";
 import { useNavItems, type NavItem } from "@/lib/nav-items";
 import { getNavIcon } from "@/lib/nav-icons";
+import { DioBalance } from "@/components/dio/DioBits";
 
 
 function useLayout() {
@@ -143,6 +144,7 @@ function TopNav({ pathname, items }: { pathname: string; items: NavItem[] }) {
           })}
         </nav>
         <div className="flex items-center gap-2">
+          <DioBalance />
           <AuthChip />
           <ThemePicker />
         </div>
@@ -161,6 +163,7 @@ function BottomNav({ pathname, items }: { pathname: string; items: NavItem[] }) 
             <Brand />
           </Link>
           <div className="flex items-center gap-2">
+            <DioBalance compact />
             <AuthChip />
             <ThemePicker />
           </div>
