@@ -78,7 +78,7 @@ export function SubmitMaterial({ userId, email }: { userId: string; email: strin
 
       <div className="mt-6 grid gap-4 md:grid-cols-2">
         <div className="md:col-span-2">
-          <label className="text-xs tracking-widest text-muted-foreground">MATERIAL / PORTAL NAME *</label>
+          <label className="text-xs tracking-widest text-muted-foreground">MATERIAL NAME *</label>
           <input
             value={form.material_name}
             onChange={set("material_name")}
@@ -92,15 +92,15 @@ export function SubmitMaterial({ userId, email }: { userId: string; email: strin
           <textarea
             value={form.description}
             onChange={set("description")}
-            maxLength={2000}
+            maxLength={1000}
             rows={4}
             placeholder="What is it, who is it for, why is it useful? (min 20 characters)"
             className="mt-2 w-full rounded-2xl border border-border bg-transparent px-4 py-3 outline-none focus:border-primary transition resize-y"
           />
-          <div className="mt-1 text-right text-[10px] text-muted-foreground">{form.description.length}/2000</div>
+          <div className="mt-1 text-right text-[10px] text-muted-foreground">{form.description.length}/1000</div>
         </div>
         <div>
-          <label className="text-xs tracking-widest text-muted-foreground">URL / LINK (OPTIONAL)</label>
+          <label className="text-xs tracking-widest text-muted-foreground">URL / LINK (*)</label>
           <input
             value={form.link}
             onChange={set("link")}
