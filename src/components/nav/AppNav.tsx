@@ -163,6 +163,7 @@ function BottomNav({ pathname, items }: { pathname: string; items: NavItem[] }) 
             <Brand />
           </Link>
           <div className="flex items-center gap-2">
+            <DioBalance compact />
             <AuthChip />
             <ThemePicker />
           </div>
