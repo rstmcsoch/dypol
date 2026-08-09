@@ -18,6 +18,7 @@ import { Route as PortalsRouteImport } from './routes/portals'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as MaterialsRouteImport } from './routes/materials'
 import { Route as EssentialsRouteImport } from './routes/essentials'
+import { Route as EarnDioRouteImport } from './routes/earnDio'
 import { Route as DmcaRouteImport } from './routes/dmca'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
@@ -70,6 +71,11 @@ const EssentialsRoute = EssentialsRouteImport.update({
   path: '/essentials',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EarnDioRoute = EarnDioRouteImport.update({
+  id: '/earnDio',
+  path: '/earnDio',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DmcaRoute = DmcaRouteImport.update({
   id: '/dmca',
   path: '/dmca',
@@ -105,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/dmca': typeof DmcaRoute
+  '/earnDio': typeof EarnDioRoute
   '/essentials': typeof EssentialsRoute
   '/materials': typeof MaterialsRoute
   '/onboarding': typeof OnboardingRoute
@@ -121,6 +128,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/dmca': typeof DmcaRoute
+  '/earnDio': typeof EarnDioRoute
   '/essentials': typeof EssentialsRoute
   '/materials': typeof MaterialsRoute
   '/onboarding': typeof OnboardingRoute
@@ -139,6 +147,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/dmca': typeof DmcaRoute
+  '/earnDio': typeof EarnDioRoute
   '/essentials': typeof EssentialsRoute
   '/materials': typeof MaterialsRoute
   '/onboarding': typeof OnboardingRoute
@@ -157,6 +166,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/dmca'
+    | '/earnDio'
     | '/essentials'
     | '/materials'
     | '/onboarding'
@@ -173,6 +183,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/dmca'
+    | '/earnDio'
     | '/essentials'
     | '/materials'
     | '/onboarding'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/dmca'
+    | '/earnDio'
     | '/essentials'
     | '/materials'
     | '/onboarding'
@@ -208,6 +220,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   DmcaRoute: typeof DmcaRoute
+  EarnDioRoute: typeof EarnDioRoute
   EssentialsRoute: typeof EssentialsRoute
   MaterialsRoute: typeof MaterialsRoute
   OnboardingRoute: typeof OnboardingRoute
@@ -284,6 +297,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EssentialsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/earnDio': {
+      id: '/earnDio'
+      path: '/earnDio'
+      fullPath: '/earnDio'
+      preLoaderRoute: typeof EarnDioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dmca': {
       id: '/dmca'
       path: '/dmca'
@@ -346,6 +366,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   DmcaRoute: DmcaRoute,
+  EarnDioRoute: EarnDioRoute,
   EssentialsRoute: EssentialsRoute,
   MaterialsRoute: MaterialsRoute,
   OnboardingRoute: OnboardingRoute,
@@ -359,13 +380,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
