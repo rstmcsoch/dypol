@@ -201,24 +201,13 @@ function Materials() {
                       </div>
                     )}
                     <div className="mt-4 flex items-center gap-2">
-                      {m.link ? (
-                        <a
-                          href={m.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 inline-flex items-center justify-center gap-2 rounded-full gradient-primary text-primary-foreground py-2.5 font-semibold btn-glow hover:opacity-95 active:scale-95 transition"
-                        >
-                          Access Resource <ArrowRight className="h-4 w-4" />
-                        </a>
-                      ) : (
-                        <button
-                          disabled
-                          title="Link coming soon"
-                          className="flex-1 inline-flex items-center justify-center gap-2 rounded-full gradient-primary text-primary-foreground py-2.5 font-semibold btn-glow opacity-70 cursor-not-allowed"
-                        >
-                          <Lock className="h-3.5 w-3.5" /> Access Resource <ArrowRight className="h-4 w-4" />
-                        </button>
-                      )}
+                      <AccessButton
+                        kind="material"
+                        itemId={m.id}
+                        cost={m.dio_cost ?? 0}
+                        link={m.link}
+                        label="Access Resource"
+                      />
                       <ShareButtons title={m.title} url={m.link || (typeof window !== "undefined" ? window.location.href : "")} />
                       <BookmarkButton
                         kind="material"
