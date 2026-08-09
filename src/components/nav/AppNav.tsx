@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useSiteSettings } from "@/lib/site-api";
 import { useNavItems, type NavItem } from "@/lib/nav-items";
 import { getNavIcon } from "@/lib/nav-icons";
+import { DioBalance } from "@/components/dio/DioBits";
 
 
 function useLayout() {
