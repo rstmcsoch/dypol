@@ -5,6 +5,7 @@ import { usePortals } from "@/lib/site-api";
 import { useAuth } from "@/hooks/use-auth";
 import { BookmarkButton } from "@/components/BookmarkButton";
 import { ShareButtons } from "@/components/ShareButtons";
+import { AccessButton } from "@/components/dio/AccessButton";
 
 export const Route = createFileRoute("/portals")({
   head: () => ({
