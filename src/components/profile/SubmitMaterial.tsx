@@ -115,7 +115,7 @@ export function SubmitMaterial({ userId, email }: { userId: string; email: strin
             value={form.credit_name}
             onChange={set("credit_name")}
             maxLength={40}
-            placeholder="Shown publicly, e.g. Rustam"
+            placeholder="Shown publicly, e.g. Shanaya"
             className="mt-2 w-full rounded-2xl border border-border bg-transparent px-4 py-3 outline-none focus:border-primary transition"
           />
         </div>
