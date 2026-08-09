@@ -5,6 +5,7 @@ import { usePortals } from "@/lib/site-api";
 import { useAuth } from "@/hooks/use-auth";
 import { BookmarkButton } from "@/components/BookmarkButton";
 import { ShareButtons } from "@/components/ShareButtons";
+import { AccessButton } from "@/components/dio/AccessButton";
 
 export const Route = createFileRoute("/portals")({
   head: () => ({
@@ -108,24 +109,14 @@ function Portals() {
                   />
                 </div>
                 <div className="mt-5 flex items-center gap-2">
-                  {p.link ? (
-                    <a
-                      href={p.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 inline-flex items-center justify-center gap-2 rounded-full gradient-primary text-primary-foreground py-2.5 font-semibold btn-glow hover:opacity-95 active:scale-95 transition"
-                    >
-                      Open Portal <ArrowUpRight className="h-4 w-4" />
-                    </a>
-                  ) : (
-                    <button
-                      disabled
-                      title="Coming soon"
-                      className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-muted py-2.5 font-semibold opacity-80 cursor-not-allowed"
-                    >
-                      <Lock className="h-3.5 w-3.5" /> Open Portal <ArrowUpRight className="h-4 w-4" />
-                    </button>
-                  )}
+                  <AccessButton
+                    kind="portal"
+                    itemId={p.id}
+                    cost={p.dio_cost ?? 0}
+                    link={p.link}
+                    label="Open Portal"
+                    icon={<ArrowUpRight className="h-4 w-4" />}
+                  />
                   <ShareButtons title={p.name} url={p.link || (typeof window !== "undefined" ? window.location.href : "")} />
                 </div>
               </motion.div>

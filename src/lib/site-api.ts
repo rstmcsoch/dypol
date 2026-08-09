@@ -12,6 +12,7 @@ export interface Material {
   link: string;
   image_url: string | null;
   credit_name: string | null;
+  dio_cost: number;
   sort_order: number;
 }
 
@@ -24,6 +25,7 @@ export interface Portal {
   logo_url: string | null;
   link_count: number;
   credit_name: string | null;
+  dio_cost: number;
   sort_order: number;
 }
 
@@ -120,6 +122,7 @@ export function useSaveMaterial() {
           link: m.link ?? "",
           slug: m.slug ?? null,
           image_url: m.image_url ?? null,
+          dio_cost: m.dio_cost ?? 0,
           sort_order: m.sort_order ?? 1000,
         });
         if (error) throw error;
@@ -155,6 +158,7 @@ export function useSavePortal() {
           link: p.link ?? "",
           logo_url: p.logo_url ?? null,
           link_count: p.link_count ?? 0,
+          dio_cost: p.dio_cost ?? 0,
           slug: p.slug ?? null,
           sort_order: p.sort_order ?? 1000,
         });
