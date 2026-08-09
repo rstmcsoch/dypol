@@ -143,6 +143,7 @@ function TopNav({ pathname, items }: { pathname: string; items: NavItem[] }) {
           })}
         </nav>
         <div className="flex items-center gap-2">
+          <DioBalance />
           <AuthChip />
           <ThemePicker />
         </div>
