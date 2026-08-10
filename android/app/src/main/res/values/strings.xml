@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Dypol</string>
+    <string name="title_activity_main">Dypol</string>
+    <string name="package_name">com.dypollabs.dypol</string>
+    <string name="custom_url_scheme">com.dypollabs.dypol</string>
+</resources>

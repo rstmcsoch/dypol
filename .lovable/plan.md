@@ -20,7 +20,8 @@ Right now everything (materials, portals, logo, hero, site copy) lives in TypeSc
 
 ### 3. Frontend rewire (public reads)
 
-- Replace hard-coded imports from `src/lib/data.ts` in `materials.tsx`, `portals.tsx`, `index.tsx`, `__root.tsx`, `support.tsx` with public Supabase reads through TanStack Query.
+- Replace hard-coded imports from `src/lib/data.ts` in `materials.tsx`, `portals.tsx`, `index.tsx`, `__root.tscd /workspaces/dypol
+x`, `support.tsx` with public Supabase reads through TanStack Query.
 - Logo slot, hero image slot, site title, tagline, footer, and support contacts all read from `site_settings`.
 - Public routes stay SSR-friendly (server publishable client with narrow `TO anon` SELECT policies).
 
