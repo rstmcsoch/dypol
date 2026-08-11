@@ -104,6 +104,51 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_quotes: {
+        Row: {
+          author: string
+          category: string
+          created_at: string
+          display_count: number
+          end_at: string | null
+          id: string
+          last_displayed_at: string | null
+          sort_order: number
+          start_at: string | null
+          status: string
+          text: string
+          updated_at: string
+        }
+        Insert: {
+          author?: string
+          category?: string
+          created_at?: string
+          display_count?: number
+          end_at?: string | null
+          id?: string
+          last_displayed_at?: string | null
+          sort_order?: number
+          start_at?: string | null
+          status?: string
+          text: string
+          updated_at?: string
+        }
+        Update: {
+          author?: string
+          category?: string
+          created_at?: string
+          display_count?: number
+          end_at?: string | null
+          id?: string
+          last_displayed_at?: string | null
+          sort_order?: number
+          start_at?: string | null
+          status?: string
+          text?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       essentials: {
         Row: {
           created_at: string
@@ -437,6 +482,139 @@ export type Database = {
         }
         Relationships: []
       }
+      quote_history: {
+        Row: {
+          id: string
+          mode: string
+          period_key: string
+          quote_id: string
+          shown_at: string
+        }
+        Insert: {
+          id?: string
+          mode?: string
+          period_key: string
+          quote_id: string
+          shown_at?: string
+        }
+        Update: {
+          id?: string
+          mode?: string
+          period_key?: string
+          quote_id?: string
+          shown_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_history_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "daily_quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quote_settings: {
+        Row: {
+          animation_duration_ms: number
+          animation_enabled: boolean
+          animation_speed: string
+          animation_type: string
+          anti_repeat: boolean
+          avoid_last_count: number
+          card_style: string
+          created_at: string
+          custom_interval_minutes: number
+          display_mode: string
+          enabled: boolean
+          fixed_quote_id: string | null
+          key: string
+          lock_quote: boolean
+          multi_interval_seconds: number
+          multi_layout: string
+          quotes_per_day: number
+          rotation_frequency: string
+          rotation_state: Json
+          scheduling_enabled: boolean
+          selection_mode: string
+          show_author: boolean
+          show_category: boolean
+          show_icon: boolean
+          text_align: string
+          timezone: string
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          animation_duration_ms?: number
+          animation_enabled?: boolean
+          animation_speed?: string
+          animation_type?: string
+          anti_repeat?: boolean
+          avoid_last_count?: number
+          card_style?: string
+          created_at?: string
+          custom_interval_minutes?: number
+          display_mode?: string
+          enabled?: boolean
+          fixed_quote_id?: string | null
+          key: string
+          lock_quote?: boolean
+          multi_interval_seconds?: number
+          multi_layout?: string
+          quotes_per_day?: number
+          rotation_frequency?: string
+          rotation_state?: Json
+          scheduling_enabled?: boolean
+          selection_mode?: string
+          show_author?: boolean
+          show_category?: boolean
+          show_icon?: boolean
+          text_align?: string
+          timezone?: string
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          animation_duration_ms?: number
+          animation_enabled?: boolean
+          animation_speed?: string
+          animation_type?: string
+          anti_repeat?: boolean
+          avoid_last_count?: number
+          card_style?: string
+          created_at?: string
+          custom_interval_minutes?: number
+          display_mode?: string
+          enabled?: boolean
+          fixed_quote_id?: string | null
+          key?: string
+          lock_quote?: boolean
+          multi_interval_seconds?: number
+          multi_layout?: string
+          quotes_per_day?: number
+          rotation_frequency?: string
+          rotation_state?: Json
+          scheduling_enabled?: boolean
+          selection_mode?: string
+          show_author?: boolean
+          show_category?: boolean
+          show_icon?: boolean
+          text_align?: string
+          timezone?: string
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_settings_fixed_quote_id_fkey"
+            columns: ["fixed_quote_id"]
+            isOneToOne: false
+            referencedRelation: "daily_quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       site_pages: {
         Row: {
           body: string
@@ -568,6 +746,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_quote_action: {
+        Args: { p_action: string; p_quote_id?: string | null }
+        Returns: Json
+      }
+      get_active_quotes: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
