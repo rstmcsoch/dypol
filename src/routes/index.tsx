@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { HomeCarousel } from "@/components/home/HomeCarousel";
 import { HomeStatsGraph } from "@/components/home/HomeStatsGraph";
 import { HomePostsMarquee } from "@/components/home/HomePostsMarquee";
+import { DailyQuoteCard } from "@/components/quotes/QuoteCard";
 
 export const Route = createFileRoute("/")({
   ssr: false,
@@ -109,6 +110,9 @@ function Home() {
             </div>
           </motion.aside>
         </div>
+
+        {/* Daily quote — configured from Admin → Daily Quotes */}
+        <DailyQuoteCard className="mt-8" />
 
         {/* Exam countdown — signed-in users with an exam target */}
         {user && examTarget && (
