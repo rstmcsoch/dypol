@@ -36,8 +36,8 @@ function Home() {
   };
 
   return (
-    <main className="px-4 md:px-8 pt-6 pb-16">
-      <div className="mx-auto max-w-6xl">
+    <main className="px-4 md:px-8 pt-6 pb-8">
+      <div className="mx-auto max-w-6xl min-w-0">
         <div className="flex items-center justify-between">
           <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
@@ -57,9 +57,9 @@ function Home() {
           <div>
             <motion.h1
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
-              className="font-display text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.85]"
+              className="hero-title"
             >
-              {s?.hero_headline ?? "DYPOL"}<span className="text-gradient align-top text-4xl md:text-6xl">®</span>
+              {s?.hero_headline ?? "DYPOL"}<span className="text-gradient align-top text-[0.4em]">®</span>
             </motion.h1>
             <motion.div
   initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.25 }}
@@ -75,7 +75,7 @@ function Home() {
 
             <motion.div
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.35 }}
-              className="mt-8 flex flex-wrap gap-3"
+              className="mt-8 flex flex-wrap gap-2 sm:gap-3"
             >
               <Link to="/materials" className="group inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-6 py-3 font-semibold btn-glow hover:[&]:opacity-95 hover:-translate-y-0.5 active:scale-95 transition">
                 <BookOpen className="h-4 w-4" /> BROWSE MATERIALS

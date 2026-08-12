@@ -55,12 +55,12 @@ export function SubmitMaterial({ userId, email }: { userId: string; email: strin
     setForm((f) => ({ ...f, [k]: e.target.value }));
 
   return (
-    <section className="mt-8 rounded-3xl border border-border glass p-6">
+    <section className="mt-8 rounded-3xl border border-border glass p-5 sm:p-6 min-w-0">
       <div className="flex items-start justify-between flex-wrap gap-3">
         <div>
           <div className="text-xs tracking-widest text-primary">✦ CONTRIBUTE</div>
-          <h2 className="mt-1 text-2xl font-bold flex items-center gap-2">
-            <Upload className="h-6 w-6 text-primary" /> Submit Study Material
+          <h2 className="mt-1 text-xl sm:text-2xl font-bold flex items-center gap-2">
+            <Upload className="h-6 w-6 shrink-0 text-primary" /> Submit Study Material
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Share a material, portal or resource link. Nothing goes public until the Dypol team approves it.

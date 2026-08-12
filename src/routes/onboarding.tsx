@@ -32,7 +32,7 @@ function Onboarding() {
   };
 
   return (
-    <main className="min-h-[calc(100vh-6rem)] px-4 grid place-items-center">
+    <main className="min-h-[100dvh] px-4 py-8 grid place-items-center">
       <div className="w-full max-w-lg">
         <div className="flex items-center justify-center gap-3">
           <div data-slot="logo" className="h-10 w-10 rounded-xl gradient-primary grid place-items-center text-primary-foreground font-black">D</div>

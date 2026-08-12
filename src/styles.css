@@ -273,14 +273,26 @@
 
 @layer base {
   * { border-color: var(--color-border); }
-  html { font-family: var(--font-sans); }
+  html {
+    font-family: var(--font-sans);
+    overflow-x: clip;
+    max-width: 100%;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    min-height: 100dvh;
+    overflow-x: clip;
+    max-width: 100%;
   }
-  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
+  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; overflow-wrap: anywhere; }
+  img, video, canvas, svg { max-width: 100%; height: auto; }
+  :root { color-scheme: light; }
+  .dark { color-scheme: dark; }
 }
 
 /* ================= Utilities ================= */
@@ -322,5 +334,111 @@
   transition: border-color 0.2s ease;
   &:focus {
     border-color: var(--primary);
+  }
+}
+
+@utility page-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  font-size: clamp(1.75rem, 6.4vw + 0.4rem, 4.5rem);
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+@utility hero-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  font-size: clamp(2.15rem, 12vw, 8rem);
+  line-height: 0.9;
+  overflow-wrap: anywhere;
+}
+
+/* ================= App chrome: header, bottom nav, theme menu ================= */
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --app-bottom-nav-h: 0px;
+}
+
+html[data-nav="bottom"] {
+  --app-bottom-nav-h: calc(4.15rem + var(--safe-bottom));
+}
+
+/* Assume a bottom nav on phones before JS hydrates, to avoid content jump. */
+@media (max-width: 899px), (orientation: portrait) {
+  html:not([data-nav="top"]):not([data-nav="none"]) {
+    --app-bottom-nav-h: calc(4.15rem + var(--safe-bottom));
+  }
+}
+
+.app-shell {
+  min-height: 100dvh;
+  max-width: 100dvw;
+  overflow-x: clip;
+}
+
+.app-content {
+  padding-bottom: calc(var(--app-bottom-nav-h) + 1.25rem);
+  min-width: 0;
+}
+
+.app-top-header {
+  padding-top: max(0.65rem, var(--safe-top));
+  padding-left: max(0.75rem, var(--safe-left));
+  padding-right: max(0.75rem, var(--safe-right));
+  padding-bottom: 0.45rem;
+}
+
+/* Permanently visible bottom nav — never hide on scroll.
+   Nearly-opaque fill so Android backdrop-filter glitches can't make it vanish. */
+.app-bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  width: 100%;
+  max-width: 100dvw;
+  padding: 0.2rem 0.35rem calc(0.25rem + var(--safe-bottom));
+  background: color-mix(in oklab, var(--background) 94%, transparent);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -8px 24px -16px color-mix(in oklab, var(--foreground) 20%, transparent);
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  isolation: isolate;
+}
+
+@supports ((backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))) {
+  .app-bottom-nav {
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+  }
+}
+
+.theme-menu {
+  position: fixed;
+  top: calc(var(--safe-top) + 3.6rem);
+  right: max(0.75rem, var(--safe-right));
+  z-index: 80;
+  width: min(20.5rem, calc(100dvw - 1.5rem));
+  max-height: min(70dvh, calc(100dvh - var(--safe-top) - var(--safe-bottom) - 5.5rem));
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.85rem;
+  border-radius: 1.1rem;
+  box-shadow: 0 18px 48px -20px color-mix(in oklab, var(--foreground) 35%, transparent);
+}
+
+@media (min-width: 900px) and (orientation: landscape) {
+  .theme-menu {
+    top: calc(var(--safe-top) + 4.4rem);
   }
 }

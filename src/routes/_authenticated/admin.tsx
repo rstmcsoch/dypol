@@ -53,7 +53,7 @@ function Admin() {
 
   if (!isAdmin) {
     return (
-      <main className="px-4 pt-10 pb-16">
+      <main className="px-4 pt-10 pb-8">
         <div className="mx-auto max-w-lg rounded-3xl border border-border glass-strong p-8 text-center">
           <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-primary/10 text-primary">
             <ShieldAlert className="h-6 w-6" />
@@ -83,14 +83,14 @@ function Admin() {
   }
 
   return (
-    <main className="px-4 md:px-8 pt-6 pb-16">
-      <div className="mx-auto max-w-6xl">
+    <main className="px-4 md:px-8 pt-6 pb-8">
+      <div className="mx-auto max-w-6xl min-w-0">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <div>
             <Link to="/" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition">
               <ArrowLeft className="h-3 w-3" /> Back to site
             </Link>
-            <h1 className="mt-1 font-display text-4xl md:text-5xl font-black">Admin</h1>
+            <h1 className="mt-1 font-display text-[clamp(1.75rem,6vw,3rem)] font-black">Admin</h1>
             <p className="text-sm text-muted-foreground">
               Signed in as <span className="text-foreground font-semibold">{user?.email}</span>
             </p>
@@ -941,10 +941,10 @@ function ImageField({ label, url, uploading, onFile, onClear }: { label: string;
 
 function Modal({ title, children, onClose }: { title: string; children: React.ReactNode; onClose: () => void }) {
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-background/70 backdrop-blur-sm p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 grid place-items-center bg-background/70 backdrop-blur-sm p-4" style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }} onClick={onClose}>
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-lg rounded-3xl border border-border glass-strong p-6 max-h-[90vh] overflow-y-auto"
+        className="w-full max-w-lg rounded-3xl border border-border glass-strong p-5 sm:p-6 max-h-[min(90dvh,calc(100dvh-2rem))] overflow-y-auto overflow-x-hidden"
       >
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-bold">{title}</h3>

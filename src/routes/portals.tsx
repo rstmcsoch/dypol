@@ -23,8 +23,8 @@ function Portals() {
   const { data: portals = [], isLoading } = usePortals();
 
   return (
-    <main className="px-4 md:px-8 pt-6 pb-16">
-      <div className="mx-auto max-w-7xl">
+    <main className="px-4 md:px-8 pt-6 pb-8">
+      <div className="mx-auto max-w-7xl min-w-0">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -42,7 +42,7 @@ function Portals() {
             </Link>
           )}
         </div>
-        <h1 className="mt-4 font-display text-5xl md:text-7xl font-black tracking-tighter">
+        <h1 className="page-title mt-4">
           All your study apps. <span className="text-muted-foreground">One launcher.</span>
         </h1>
         <p className="mt-4 max-w-2xl text-muted-foreground">
@@ -73,7 +73,7 @@ function Portals() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: Math.min(i * 0.03, 0.3) }}
-                className="group relative rounded-3xl border border-border glass p-5 hover:border-primary/50 hover:-translate-y-1 transition-all"
+                className="group relative min-w-0 rounded-3xl border border-border glass p-4 sm:p-5 hover:border-primary/50 hover:-translate-y-1 transition-all"
               >
                 <div className="flex items-start gap-4">
                   {p.logo_url ? (

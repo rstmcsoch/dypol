@@ -76,12 +76,12 @@ function EarnDio() {
   }
 
   return (
-    <main className="px-4 pt-6 pb-24 md:px-8">
-      <div className="mx-auto max-w-3xl">
+    <main className="px-4 pt-6 pb-8 md:px-8">
+      <div className="mx-auto max-w-3xl min-w-0">
         <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
+          <div className="min-w-0">
             <div className="text-xs tracking-widest text-[#e8b23a]">✦ DIO</div>
-            <h1 className="mt-2 font-display text-5xl font-black tracking-tighter md:text-6xl">Earn Dio</h1>
+            <h1 className="page-title mt-2">Earn Dio</h1>
             <p className="mt-3 max-w-md text-muted-foreground">
               Complete sponsored activities and use your Dio to unlock useful resources. Calm, optional, no pressure.
             </p>

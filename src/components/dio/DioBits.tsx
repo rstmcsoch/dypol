@@ -15,19 +15,19 @@ export function DioStar({ className = "text-[11px]" }: { className?: string }) {
   );
 }
 
-/** Top-right Dio balance chip. Guests see ✦ 0 Dio and are sent to sign-up. */
+/** Top-right Dio balance chip. Hidden for guests — they should not see DIO Rewards. */
 export function DioBalance({ compact = false }: { compact?: boolean }) {
   const { user, loading } = useAuth();
   const { data: balance } = useDioBalance(user?.id);
   const value = user ? (balance ?? 0) : 0;
 
-  if (loading) return null;
+  if (loading || !user) return null;
 
   return (
     <Link
-      to={user ? "/earnDio" : "/auth"}
-      title={user ? "Your Dio — tap to earn more" : "Sign up to start earning Dio"}
-      className="inline-flex items-center gap-1.5 rounded-full border border-[#e8b23a]/35 bg-[#e8b23a]/10 px-3 py-1.5 text-xs transition hover:border-[#e8b23a]/70 hover:bg-[#e8b23a]/15 active:scale-95"
+      to="/earnDio"
+      title="Your Dio — tap to earn more"
+      className="inline-flex min-w-0 max-w-[46vw] sm:max-w-none shrink items-center gap-1 sm:gap-1.5 rounded-full border border-[#e8b23a]/35 bg-[#e8b23a]/10 px-2 sm:px-3 py-1.5 text-xs transition hover:border-[#e8b23a]/70 hover:bg-[#e8b23a]/15 active:scale-95"
     >
       <DioStar className="text-sm" />
       <AnimatePresence mode="popLayout" initial={false}>
@@ -42,7 +42,9 @@ export function DioBalance({ compact = false }: { compact?: boolean }) {
           {formatDio(value)}
         </motion.span>
       </AnimatePresence>
-      {!compact && <span className="font-medium text-muted-foreground">Dio</span>}
+      <span className={`font-medium text-muted-foreground ${compact ? "hidden min-[360px]:inline" : ""}`}>
+        Dio
+      </span>
     </Link>
   );
 }

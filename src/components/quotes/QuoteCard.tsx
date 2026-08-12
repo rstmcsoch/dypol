@@ -95,7 +95,7 @@ export function QuoteCardView({
       className={a.text_align === "center" ? "text-center" : "text-left"}
     >
       <p
-        className={`text-base md:text-lg font-medium leading-relaxed font-display tracking-tight ${
+        className={`text-base md:text-lg font-medium leading-relaxed font-display tracking-tight break-words ${
           onGradient ? "text-primary-foreground" : ""
         }`}
       >

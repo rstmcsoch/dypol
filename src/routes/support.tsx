@@ -20,8 +20,8 @@ function Support() {
   const { data: s } = useSiteSettings();
 
   return (
-    <main className="px-4 md:px-8 pt-6 pb-16">
-      <div className="mx-auto max-w-4xl">
+    <main className="px-4 md:px-8 pt-6 pb-8">
+      <div className="mx-auto max-w-4xl min-w-0">
         <div className="flex items-center justify-between">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
             className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-xs font-semibold text-primary">

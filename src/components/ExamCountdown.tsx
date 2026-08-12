@@ -73,7 +73,7 @@ export function ExamCountdown({ target }: Props) {
             key={label}
             className="rounded-2xl border border-border bg-background/40 backdrop-blur px-2 py-4 text-center"
           >
-            <div className="font-display text-3xl sm:text-5xl font-black tabular-nums leading-none">
+            <div className="font-display text-[clamp(1.15rem,6vw,3rem)] font-black tabular-nums leading-none">
               {val.toString().padStart(2, "0")}
             </div>
             <div className="mt-1.5 text-[10px] sm:text-xs tracking-widest text-muted-foreground">
