@@ -355,7 +355,15 @@
   overflow-wrap: anywhere;
 }
 
-/* ================= App chrome: header, bottom nav, theme menu ================= */
+@utility scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ================= App chrome: floating glass header, docked bottom nav, theme menu ================= */
 :root {
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
@@ -364,14 +372,15 @@
   --app-bottom-nav-h: 0px;
 }
 
+/* Height reserved for the floating bottom dock: dock height + gaps + safe-area */
 html[data-nav="bottom"] {
-  --app-bottom-nav-h: calc(4.15rem + var(--safe-bottom));
+  --app-bottom-nav-h: calc(5.25rem + var(--safe-bottom));
 }
 
-/* Assume a bottom nav on phones before JS hydrates, to avoid content jump. */
+/* Assume a bottom dock on phones before JS hydrates, to avoid content jump. */
 @media (max-width: 899px), (orientation: portrait) {
   html:not([data-nav="top"]):not([data-nav="none"]) {
-    --app-bottom-nav-h: calc(4.15rem + var(--safe-bottom));
+    --app-bottom-nav-h: calc(5.25rem + var(--safe-bottom));
   }
 }
 
@@ -382,19 +391,106 @@ html[data-nav="bottom"] {
 }
 
 .app-content {
-  padding-bottom: calc(var(--app-bottom-nav-h) + 1.25rem);
+  padding-bottom: calc(var(--app-bottom-nav-h) + 1rem);
   min-width: 0;
 }
 
+/* Floating glass header — sticky, inset, pill, glass-strong with elevated shadow */
 .app-top-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  width: 100%;
+  pointer-events: none;
   padding-top: max(0.65rem, var(--safe-top));
   padding-left: max(0.75rem, var(--safe-left));
   padding-right: max(0.75rem, var(--safe-right));
-  padding-bottom: 0.45rem;
+  padding-bottom: 0.6rem;
 }
 
-/* Permanently visible bottom nav — never hide on scroll.
-   Nearly-opaque fill so Android backdrop-filter glitches can't make it vanish. */
+.app-top-header-inner {
+  pointer-events: auto;
+  border-radius: 9999px;
+  background: rgb(var(--glass-tint) / 0.78);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgb(var(--glass-tint) / 0.28);
+  box-shadow:
+    0 10px 30px -14px oklch(0 0 0 / 0.28),
+    0 4px 14px -8px oklch(0 0 0 / 0.16),
+    inset 0 1px 0 rgb(255 255 255 / 0.18);
+  transform: translate3d(0, 0, 0);
+  transition: box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.dark .app-top-header-inner {
+  background: rgb(var(--glass-tint) / 0.76);
+  border-color: rgb(255 255 255 / 0.08);
+  box-shadow:
+    0 12px 36px -16px oklch(0 0 0 / 0.65),
+    0 6px 18px -10px oklch(0 0 0 / 0.5),
+    inset 0 1px 0 rgb(255 255 255 / 0.08);
+}
+
+/* Optional subtle lift on hover for desktop */
+@media (hover: hover) {
+  .app-top-header-inner:hover {
+    box-shadow:
+      0 14px 38px -16px oklch(0 0 0 / 0.32),
+      0 6px 18px -10px oklch(0 0 0 / 0.18),
+      inset 0 1px 0 rgb(255 255 255 / 0.2);
+  }
+  .dark .app-top-header-inner:hover {
+    box-shadow:
+      0 16px 42px -18px oklch(0 0 0 / 0.7),
+      0 8px 22px -12px oklch(0 0 0 / 0.55),
+      inset 0 1px 0 rgb(255 255 255 / 0.10);
+  }
+}
+
+/* Floating bottom dock — centered, pill, glassy, permanently visible */
+.app-bottom-dock-wrap {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  padding: 0 max(0.75rem, var(--safe-right)) calc(0.85rem + var(--safe-bottom)) max(0.75rem, var(--safe-left));
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+}
+
+.app-bottom-dock {
+  pointer-events: auto;
+  width: min(38rem, 100%);
+  max-width: calc(100dvw - 1rem);
+  border-radius: 9999px;
+  background: rgb(var(--glass-tint) / 0.84);
+  backdrop-filter: blur(32px) saturate(190%);
+  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  border: 1px solid rgb(var(--glass-tint) / 0.32);
+  box-shadow:
+    0 16px 40px -16px oklch(0 0 0 / 0.38),
+    0 8px 20px -12px oklch(0 0 0 / 0.22),
+    inset 0 1px 0 rgb(255 255 255 / 0.20);
+  padding: 0.38rem 0.45rem;
+  will-change: transform;
+}
+
+.dark .app-bottom-dock {
+  background: rgb(var(--glass-tint) / 0.80);
+  border-color: rgb(255 255 255 / 0.10);
+  box-shadow:
+    0 18px 44px -18px oklch(0 0 0 / 0.68),
+    0 10px 24px -14px oklch(0 0 0 / 0.50),
+    inset 0 1px 0 rgb(255 255 255 / 0.10);
+}
+
+/* Legacy fallback: if any old class lingers, hide the old full-width bar.
+   The new dock-wrap already provides the nav. */
 .app-bottom-nav {
   position: fixed;
   left: 0;
@@ -406,39 +502,30 @@ html[data-nav="bottom"] {
   padding: 0.2rem 0.35rem calc(0.25rem + var(--safe-bottom));
   background: color-mix(in oklab, var(--background) 94%, transparent);
   border-top: 1px solid var(--border);
-  box-shadow: 0 -8px 24px -16px color-mix(in oklab, var(--foreground) 20%, transparent);
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  isolation: isolate;
-}
-
-@supports ((backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))) {
-  .app-bottom-nav {
-    backdrop-filter: blur(16px) saturate(160%);
-    -webkit-backdrop-filter: blur(16px) saturate(160%);
-  }
+  display: none; /* superseded by .app-bottom-dock */
 }
 
 .theme-menu {
   position: fixed;
-  top: calc(var(--safe-top) + 3.6rem);
+  top: calc(var(--safe-top) + 4rem);
   right: max(0.75rem, var(--safe-right));
   z-index: 80;
   width: min(20.5rem, calc(100dvw - 1.5rem));
-  max-height: min(70dvh, calc(100dvh - var(--safe-top) - var(--safe-bottom) - 5.5rem));
+  max-height: min(72dvh, calc(100dvh - var(--safe-top) - var(--safe-bottom) - 5.5rem));
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  padding: 0.85rem;
-  border-radius: 1.1rem;
-  box-shadow: 0 18px 48px -20px color-mix(in oklab, var(--foreground) 35%, transparent);
+  padding: 0.9rem;
+  border-radius: 1.25rem;
+  box-shadow:
+    0 20px 56px -22px oklch(0 0 0 / 0.42),
+    0 8px 20px -14px oklch(0 0 0 / 0.20);
+  border: 1px solid rgb(var(--glass-tint) / 0.30);
 }
 
 @media (min-width: 900px) and (orientation: landscape) {
   .theme-menu {
-    top: calc(var(--safe-top) + 4.4rem);
+    top: calc(var(--safe-top) + 4.8rem);
   }
 }
