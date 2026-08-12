@@ -72,7 +72,7 @@ function AuthChip() {
     return (
       <Link
         to="/auth"
-        className="inline-flex shrink-0 items-center gap-1 sm:gap-1.5 rounded-full border border-border px-2.5 sm:px-3 py-1.5 text-xs font-semibold hover:bg-muted transition"
+        className="inline-flex shrink-0 items-center gap-1 sm:gap-1.5 rounded-full border border-border/80 bg-background/60 px-2.5 sm:px-3 py-1.5 text-xs font-semibold hover:bg-muted/80 backdrop-blur-md transition"
       >
         <LogIn className="h-3.5 w-3.5" />
         <span>Sign in</span>
@@ -83,7 +83,7 @@ function AuthChip() {
     return (
       <Link
         to="/admin"
-        className="inline-flex shrink-0 items-center gap-1 sm:gap-1.5 rounded-full gradient-primary text-primary-foreground text-xs font-semibold px-2 sm:px-3 py-1.5 btn-glow active:scale-95 transition"
+        className="inline-flex shrink-0 items-center gap-1 sm:gap-1.5 rounded-full gradient-primary text-primary-foreground text-xs font-semibold px-2.5 sm:px-3 py-1.5 btn-glow active:scale-95 transition"
         title="Admin"
       >
         <Shield className="h-3.5 w-3.5" />
@@ -153,15 +153,15 @@ export function AppNav() {
 
 function TopNav({ pathname, items }: { pathname: string; items: NavItem[] }) {
   return (
-    <header className="app-top-header sticky top-0 z-50 w-full">
-      <div className="mx-auto flex max-w-6xl min-w-0 items-center gap-2 sm:gap-3 rounded-full glass-strong px-2 sm:px-3 py-2">
+    <header className="app-top-header">
+      <div className="app-top-header-inner mx-auto flex max-w-6xl min-w-0 items-center gap-2 sm:gap-3 rounded-full glass-strong px-2.5 sm:px-4 py-2.5">
         <Link
           to="/"
-          className="flex min-w-0 items-center gap-2 px-2 sm:px-3 py-1.5 rounded-full hover:bg-muted/30 transition"
+          className="flex min-w-0 items-center gap-2 px-2 sm:px-2.5 py-1 rounded-full hover:bg-muted/30 transition shrink-0"
         >
           <Brand />
         </Link>
-        <nav className="flex-1 flex items-center justify-center gap-1 flex-wrap min-w-0">
+        <nav className="flex-1 flex items-center justify-center gap-0.5 sm:gap-1 min-w-0 overflow-x-auto scrollbar-none [mask-image:linear-gradient(to_right,transparent,black_12px,black_calc(100%-12px),transparent)] sm:[mask-image:none]">
           {items.map((item) => {
             const Icon = getNavIcon(item.icon);
             const active = !item.external && isActive(pathname, item.href);
@@ -169,12 +169,12 @@ function TopNav({ pathname, items }: { pathname: string; items: NavItem[] }) {
               <NavLinkEl
                 key={item.id}
                 item={item}
-                className="relative rounded-full px-3 lg:px-4 py-2 text-sm font-medium transition-colors hover:text-foreground"
+                className="relative whitespace-nowrap rounded-full px-2.5 sm:px-3 lg:px-4 py-2 text-[13px] sm:text-sm font-medium transition-colors hover:text-foreground shrink-0"
               >
                 {active && (
                   <motion.span
                     layoutId="topnav-active"
-                    className="absolute inset-0 rounded-full gradient-primary opacity-90"
+                    className="absolute inset-0 rounded-full gradient-primary opacity-95 shadow-[0_2px_10px_-2px_color-mix(in_oklab,var(--primary)_60%,transparent)]"
                     transition={{ type: "spring", damping: 22, stiffness: 250 }}
                   />
                 )}
@@ -197,50 +197,52 @@ function BottomNav({ pathname, items }: { pathname: string; items: NavItem[] }) 
   const cols = Math.min(Math.max(items.length, 1), 6);
   return (
     <>
-      <header className="app-top-header sticky top-0 z-40 w-full">
-        <div className="mx-auto flex min-w-0 items-center justify-between gap-1.5 rounded-full glass-strong px-2 sm:px-3 py-1.5 sm:py-2">
-          <Link to="/" className="flex min-w-0 items-center gap-1.5 sm:gap-2 px-1 sm:px-2">
+      <header className="app-top-header">
+        <div className="app-top-header-inner mx-auto flex min-w-0 items-center justify-between gap-1.5 rounded-full glass-strong px-2.5 sm:px-3.5 py-2 sm:py-2.5">
+          <Link to="/" className="flex min-w-0 items-center gap-1.5 sm:gap-2 pl-1 pr-2 py-0.5 shrink-0">
             <Brand />
           </Link>
           <HeaderActions />
         </div>
       </header>
 
-      <nav className="app-bottom-nav" aria-label="Primary">
-        <ul
-          className="grid gap-0.5 px-1"
-          style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
-        >
-          {items.slice(0, 6).map((item) => {
-            const Icon = getNavIcon(item.icon);
-            const active = !item.external && isActive(pathname, item.href);
-            return (
-              <li key={item.id} className="min-w-0">
-                <NavLinkEl
-                  item={item}
-                  className="group relative flex flex-col items-center gap-0.5 rounded-2xl py-2 px-0.5 overflow-hidden active:scale-95 transition touch-manipulation"
-                >
-                  {active && (
-                    <motion.span
-                      layoutId="bottomnav-active"
-                      className="absolute inset-1 rounded-2xl gradient-primary opacity-90"
-                      transition={{ type: "spring", damping: 22, stiffness: 250 }}
-                    />
-                  )}
-                  <Icon
-                    className={`relative z-10 h-5 w-5 shrink-0 ${active ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"}`}
-                  />
-                  <span
-                    className={`relative z-10 text-[10px] font-medium truncate max-w-full px-0.5 ${active ? "text-primary-foreground" : "text-muted-foreground"}`}
+      <div className="app-bottom-dock-wrap">
+        <nav className="app-bottom-dock" aria-label="Primary">
+          <ul
+            className="grid gap-0.5"
+            style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
+          >
+            {items.slice(0, 6).map((item) => {
+              const Icon = getNavIcon(item.icon);
+              const active = !item.external && isActive(pathname, item.href);
+              return (
+                <li key={item.id} className="min-w-0">
+                  <NavLinkEl
+                    item={item}
+                    className="group relative flex flex-col items-center justify-center gap-0.5 rounded-full py-2.5 px-1 sm:px-2 min-h-[3.25rem] overflow-hidden active:scale-[0.96] transition-all duration-150 touch-manipulation"
                   >
-                    {item.label}
-                  </span>
-                </NavLinkEl>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
+                    {active && (
+                      <motion.span
+                        layoutId="bottomnav-active"
+                        className="absolute inset-1 rounded-full gradient-primary opacity-95 shadow-[0_4px_14px_-4px_color-mix(in_oklab,var(--primary)_70%,transparent)]"
+                        transition={{ type: "spring", damping: 24, stiffness: 280 }}
+                      />
+                    )}
+                    <Icon
+                      className={`relative z-10 h-[22px] w-[22px] shrink-0 transition-colors ${active ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground group-active:text-foreground"}`}
+                    />
+                    <span
+                      className={`relative z-10 text-[10px] font-medium leading-none tracking-tight truncate max-w-full px-0.5 transition-colors ${active ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"}`}
+                    >
+                      {item.label}
+                    </span>
+                  </NavLinkEl>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      </div>
     </>
   );
 }
