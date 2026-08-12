@@ -225,7 +225,7 @@ function BottomNav({ pathname, items }: { pathname: string; items: NavItem[] }) 
                       <motion.span
                         layoutId="bottomnav-active"
                         className="absolute inset-1 rounded-full gradient-primary opacity-95 shadow-[0_4px_14px_-4px_color-mix(in_oklab,var(--primary)_70%,transparent)]"
-                        transition={{ type: "spring", damping: 24, stiffness: 280 }}
+                        transition={{ type: "spring", damping: 22, stiffness: 250 }}
                       />
                     )}
                     <Icon
