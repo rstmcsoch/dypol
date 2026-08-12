@@ -7,6 +7,8 @@ import { toast } from "sonner";
 
 import { useBookmarks, useDeleteBookmark } from "@/lib/bookmarks";
 import { SubmitMaterial } from "@/components/profile/SubmitMaterial";
+import { DIO_TX_LABEL, formatDio, useDioBalance, useDioHistory } from "@/lib/dio";
+import { DioStar } from "@/components/dio/DioBits";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({ meta: [{ title: "Profile — Dypol" }] }),
@@ -27,6 +29,17 @@ interface ProfileRow {
   created_at: string;
 }
 
+/** "Today" / "Yesterday" / "Aug 5" — calm relative dates for the Dio history list. */
+function relativeDay(iso: string) {
+  const d = new Date(iso);
+  const now = new Date();
+  const startOfDay = (x: Date) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const days = Math.round((startOfDay(now) - startOfDay(d)) / 86_400_000);
+  if (days === 0) return "Today";
+  if (days === 1) return "Yesterday";
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
 function Profile() {
   const navigate = useNavigate();
   const { user, isAdmin, loading } = useAuth();
@@ -36,6 +49,8 @@ function Profile() {
   const [busy, setBusy] = useState(false);
   const { data: bookmarks = [], isLoading: bmLoading } = useBookmarks(user?.id);
   const delBookmark = useDeleteBookmark(user?.id);
+  const { data: dioBalance } = useDioBalance(user?.id);
+  const { data: dioTxs = [], isLoading: dioLoading } = useDioHistory(user?.id);
 
   useEffect(() => {
     if (loading) return;
@@ -92,6 +107,16 @@ function Profile() {
               </div>
             </div>
           </div>
+          {/* Dio balance — bottom-right of the profile card */}
+          <Link
+            to="/earnDio"
+            title="Your Dio balance — tap to earn more"
+            className="absolute bottom-4 right-5 inline-flex items-center gap-1.5 rounded-full border border-[#e8b23a]/40 bg-[#e8b23a]/10 px-3.5 py-1.5 text-sm font-bold transition hover:border-[#e8b23a]/70 hover:bg-[#e8b23a]/15 active:scale-95 md:bottom-6 md:right-8"
+          >
+            <DioStar className="text-sm" />
+            <span className="tabular-nums">{formatDio(dioBalance ?? 0)}</span>
+            <span className="text-xs font-medium text-muted-foreground">Dio</span>
+          </Link>
         </div>
 
 
@@ -146,6 +171,48 @@ function Profile() {
             </div>
           </aside>
         </div>
+
+        {/* Dio history */}
+        <section className="mt-8 rounded-3xl border border-border glass p-6">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <div className="text-xs tracking-widest text-[#e8b23a]">✦ DIO</div>
+              <h2 className="mt-1 text-2xl font-bold">Dio history</h2>
+            </div>
+            <Link to="/earnDio" className="inline-flex items-center gap-1.5 rounded-full border border-[#e8b23a]/40 bg-[#e8b23a]/10 px-4 py-2 text-sm font-semibold transition hover:bg-[#e8b23a]/15 active:scale-95">
+              <DioStar /> Earn Dio
+            </Link>
+          </div>
+
+          {dioLoading ? (
+            <div className="mt-8 flex justify-center text-muted-foreground">
+              <Loader2 className="h-6 w-6 animate-spin" />
+            </div>
+          ) : dioTxs.length === 0 ? (
+            <div className="mt-6 rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
+              No Dio activity yet. Complete a sponsored activity on the Earn Dio page to get started.
+            </div>
+          ) : (
+            <ul className="mt-5 space-y-2">
+              {dioTxs.map((t) => (
+                <li key={t.id} className="flex items-center gap-3 rounded-2xl border border-border px-4 py-3">
+                  <span className={`shrink-0 font-bold tabular-nums ${t.amount > 0 ? "text-[#e8b23a]" : "text-muted-foreground"}`}>
+                    ✦ {t.amount > 0 ? `+${formatDio(t.amount)}` : `−${formatDio(Math.abs(t.amount))}`}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate font-semibold">{t.reason || DIO_TX_LABEL[t.type] || t.type}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {DIO_TX_LABEL[t.type] ?? t.type} · {relativeDay(t.created_at)}
+                    </div>
+                  </div>
+                  <span className="shrink-0 text-xs tabular-nums text-muted-foreground" title="Balance after this transaction">
+                    → ✦ {formatDio(t.balance_after)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
 
         {/* Bookmarks */}
         <section className="mt-8 rounded-3xl border border-border glass p-6">
