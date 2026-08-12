@@ -124,7 +124,7 @@ export function SectionHeading({ kicker, title, sub }: { kicker: string; title: 
   return (
     <div>
       <div className="text-xs tracking-widest text-primary">{kicker}</div>
-      <h2 className="mt-1 font-display text-3xl md:text-4xl font-black tracking-tight">{title}</h2>
+      <h2 className="mt-1 font-display text-[clamp(1.4rem,4vw,2.25rem)] font-black tracking-tight">{title}</h2>
       {sub && <p className="mt-1 text-sm text-muted-foreground">{sub}</p>}
     </div>
   );

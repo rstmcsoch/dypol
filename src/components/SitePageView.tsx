@@ -73,8 +73,8 @@ export function SitePageView({ slug, fallbackTitle }: { slug: string; fallbackTi
   const { data: page, isLoading } = useSitePage(slug);
 
   return (
-    <main className="px-4 md:px-8 pt-6 pb-20">
-      <div className="mx-auto max-w-3xl">
+    <main className="px-4 md:px-8 pt-6 pb-8">
+      <div className="mx-auto max-w-3xl min-w-0">
         <div className="flex items-center justify-between gap-3">
           <Link
             to="/"
@@ -103,7 +103,7 @@ export function SitePageView({ slug, fallbackTitle }: { slug: string; fallbackTi
             transition={{ duration: 0.5 }}
             className="mt-5"
           >
-            <h1 className="font-display text-4xl md:text-6xl font-black tracking-tighter leading-[0.9]">
+            <h1 className="page-title">
               {page?.title ?? fallbackTitle}
               <span className="text-gradient">.</span>
             </h1>

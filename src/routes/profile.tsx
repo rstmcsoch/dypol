@@ -86,56 +86,61 @@ function Profile() {
   const joined = profile?.created_at ?? user.created_at;
 
   return (
-    <main className="px-4 md:px-8 pt-6 pb-16">
-      <div className="mx-auto max-w-5xl">
-        <div className="relative overflow-hidden rounded-3xl border border-border glass-strong p-6 md:p-8">
+    <main className="px-4 md:px-8 pt-6 pb-8">
+      <div className="mx-auto max-w-5xl min-w-0">
+        <div className="relative overflow-hidden rounded-3xl border border-border glass-strong p-5 sm:p-6 md:p-8">
           <div aria-hidden className="absolute inset-0 -z-10 opacity-40 gradient-primary" />
-          <div className="grid gap-6 md:grid-cols-[auto_1fr] items-center">
-            <div className="relative">
-              <div className="h-28 w-28 rounded-full gradient-primary grid place-items-center text-4xl font-black text-primary-foreground overflow-hidden">
+          <div className="flex flex-col items-center text-center gap-4 md:grid md:grid-cols-[auto_1fr] md:items-center md:text-left md:gap-6">
+            <div className="relative shrink-0">
+              <div className="h-24 w-24 sm:h-28 sm:w-28 rounded-full gradient-primary grid place-items-center text-4xl font-black text-primary-foreground overflow-hidden">
                 {profile?.avatar_url ? <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" /> : initial}
               </div>
             </div>
-            <div className="min-w-0">
+            <div className="min-w-0 w-full">
               <div className="inline-flex items-center gap-1.5 rounded-full glass px-3 py-0.5 text-xs font-semibold text-primary">
                 {isAdmin ? <><Shield className="h-3 w-3" /> ADMIN</> : <><Sparkles className="h-3 w-3" /> MEMBER</>}
               </div>
-              <h1 className="mt-2 font-display text-5xl md:text-6xl font-black truncate">{name || user.email}</h1>
-              <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                <span className="inline-flex items-center gap-1.5"><Target className="h-4 w-4" /> {target}</span>
-                <span className="inline-flex items-center gap-1.5"><Calendar className="h-4 w-4" /> Joined {new Date(joined).toLocaleDateString()}</span>
+              <h1 className="mt-2 font-display font-black tracking-tight text-[clamp(1.65rem,7vw,3.5rem)] break-words">
+                {name || user.email}
+              </h1>
+              <Link
+                to="/earnDio"
+                title="Your Dio balance — tap to earn more"
+                className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-[#e8b23a]/40 bg-[#e8b23a]/10 px-3.5 py-1.5 text-sm font-bold transition hover:border-[#e8b23a]/70 hover:bg-[#e8b23a]/15 active:scale-95"
+              >
+                <DioStar className="text-sm" />
+                <span className="tabular-nums">{formatDio(dioBalance ?? 0)}</span>
+                <span className="text-xs font-medium text-muted-foreground">Dio</span>
+              </Link>
+              <div className="mt-3 flex flex-col items-center gap-1.5 text-sm text-muted-foreground md:items-start sm:flex-row sm:flex-wrap sm:gap-x-4 sm:gap-y-1">
+                <span className="inline-flex items-center gap-1.5 min-w-0">
+                  <Target className="h-4 w-4 shrink-0" /> <span className="break-words">{target}</span>
+                </span>
+                <span className="inline-flex items-center gap-1.5 min-w-0">
+                  <Calendar className="h-4 w-4 shrink-0" /> <span className="break-words">Joined {new Date(joined).toLocaleDateString()}</span>
+                </span>
               </div>
             </div>
           </div>
-          {/* Dio balance — bottom-right of the profile card */}
-          <Link
-            to="/earnDio"
-            title="Your Dio balance — tap to earn more"
-            className="absolute bottom-4 right-5 inline-flex items-center gap-1.5 rounded-full border border-[#e8b23a]/40 bg-[#e8b23a]/10 px-3.5 py-1.5 text-sm font-bold transition hover:border-[#e8b23a]/70 hover:bg-[#e8b23a]/15 active:scale-95 md:bottom-6 md:right-8"
-          >
-            <DioStar className="text-sm" />
-            <span className="tabular-nums">{formatDio(dioBalance ?? 0)}</span>
-            <span className="text-xs font-medium text-muted-foreground">Dio</span>
-          </Link>
         </div>
 
 
 
 
-        <div className="mt-6 grid gap-6 md:grid-cols-[1.5fr_1fr]">
-          <section className="rounded-3xl border border-border glass p-6">
-            <h2 className="text-2xl font-bold">Edit profile</h2>
+        <div className="mt-6 grid gap-6 md:grid-cols-[1.5fr_1fr] min-w-0">
+          <section className="rounded-3xl border border-border glass p-5 sm:p-6 min-w-0">
+            <h2 className="text-xl sm:text-2xl font-bold">Edit profile</h2>
             <div className="mt-6">
               <label className="text-xs tracking-widest text-muted-foreground">DISPLAY NAME</label>
               <input value={name} onChange={(e) => setName(e.target.value)}
-                className="mt-2 w-full rounded-2xl border border-border bg-transparent px-4 py-3 outline-none focus:border-primary transition" />
+                className="mt-2 w-full min-w-0 rounded-2xl border border-border bg-transparent px-4 py-3 outline-none focus:border-primary transition" />
             </div>
             <div className="mt-5">
               <label className="text-xs tracking-widest text-muted-foreground">TARGET EXAM</label>
-              <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <div className="mt-2 grid grid-cols-2 gap-2">
                 {TARGETS.map((t) => (
                   <button key={t} onClick={() => setTarget(t)}
-                    className={`rounded-xl border py-2.5 text-sm font-semibold transition active:scale-95 ${
+                    className={`min-w-0 rounded-xl border px-2 py-2.5 text-sm font-semibold transition active:scale-95 ${
                       target === t ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/50"
                     }`}>
                     {t}
@@ -143,17 +148,17 @@ function Profile() {
                 ))}
               </div>
             </div>
-            <div className="mt-6 flex flex-wrap gap-2">
+            <div className="mt-6 grid grid-cols-1 min-[400px]:grid-cols-2 gap-2 sm:flex sm:flex-wrap">
               <button onClick={save} disabled={busy}
-                className="inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-5 py-2.5 font-semibold btn-glow active:scale-95 transition disabled:opacity-60">
+                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full gradient-primary text-primary-foreground px-5 py-2.5 font-semibold btn-glow active:scale-95 transition disabled:opacity-60">
                 {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save changes
               </button>
               <button onClick={signOut}
-                className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 font-semibold hover:bg-muted active:scale-95 transition">
+                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-border px-5 py-2.5 font-semibold hover:bg-muted active:scale-95 transition">
                 <LogOut className="h-4 w-4" /> Sign out
               </button>
               {isAdmin && (
-                <Link to="/admin" className="inline-flex items-center gap-2 rounded-full border border-primary text-primary px-5 py-2.5 font-semibold hover:bg-primary/10 active:scale-95 transition">
+                <Link to="/admin" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-primary text-primary px-5 py-2.5 font-semibold hover:bg-primary/10 active:scale-95 transition min-[400px]:col-span-2 sm:col-auto">
                   <Shield className="h-4 w-4" /> Open Admin
                 </Link>
               )}
@@ -173,11 +178,11 @@ function Profile() {
         </div>
 
         {/* Dio history */}
-        <section className="mt-8 rounded-3xl border border-border glass p-6">
+        <section className="mt-8 rounded-3xl border border-border glass p-5 sm:p-6 min-w-0">
           <div className="flex items-center justify-between flex-wrap gap-3">
-            <div>
+            <div className="min-w-0">
               <div className="text-xs tracking-widest text-[#e8b23a]">✦ DIO</div>
-              <h2 className="mt-1 text-2xl font-bold">Dio history</h2>
+              <h2 className="mt-1 text-xl sm:text-2xl font-bold">Dio history</h2>
             </div>
             <Link to="/earnDio" className="inline-flex items-center gap-1.5 rounded-full border border-[#e8b23a]/40 bg-[#e8b23a]/10 px-4 py-2 text-sm font-semibold transition hover:bg-[#e8b23a]/15 active:scale-95">
               <DioStar /> Earn Dio
@@ -195,7 +200,7 @@ function Profile() {
           ) : (
             <ul className="mt-5 space-y-2">
               {dioTxs.map((t) => (
-                <li key={t.id} className="flex items-center gap-3 rounded-2xl border border-border px-4 py-3">
+                <li key={t.id} className="flex items-center gap-2 sm:gap-3 rounded-2xl border border-border px-3 sm:px-4 py-3 min-w-0">
                   <span className={`shrink-0 font-bold tabular-nums ${t.amount > 0 ? "text-[#e8b23a]" : "text-muted-foreground"}`}>
                     ✦ {t.amount > 0 ? `+${formatDio(t.amount)}` : `−${formatDio(Math.abs(t.amount))}`}
                   </span>
@@ -215,12 +220,12 @@ function Profile() {
         </section>
 
         {/* Bookmarks */}
-        <section className="mt-8 rounded-3xl border border-border glass p-6">
+        <section className="mt-8 rounded-3xl border border-border glass p-5 sm:p-6 min-w-0">
           <div className="flex items-center justify-between flex-wrap gap-3">
-            <div>
+            <div className="min-w-0">
               <div className="text-xs tracking-widest text-primary">✦ SAVED</div>
-              <h2 className="mt-1 text-2xl font-bold flex items-center gap-2">
-                <BookmarkCheck className="h-6 w-6 text-primary" /> Your bookmarks
+              <h2 className="mt-1 text-xl sm:text-2xl font-bold flex items-center gap-2">
+                <BookmarkCheck className="h-6 w-6 shrink-0 text-primary" /> Your bookmarks
               </h2>
             </div>
             <div className="text-sm text-muted-foreground">

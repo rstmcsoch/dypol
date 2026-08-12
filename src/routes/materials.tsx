@@ -69,8 +69,8 @@ function Materials() {
     setSubjects((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
 
   return (
-    <main className="px-4 md:px-8 pt-6 pb-16">
-      <div className="mx-auto max-w-7xl grid gap-6 lg:grid-cols-[280px_1fr]">
+    <main className="px-4 md:px-8 pt-6 pb-8">
+      <div className="mx-auto max-w-7xl grid gap-6 lg:grid-cols-[280px_1fr] min-w-0">
         <aside className="rounded-3xl border border-border glass p-5 h-fit lg:sticky lg:top-24">
           <div className="text-xs tracking-widest text-muted-foreground">REFINE</div>
           <div className="mt-1 flex items-center gap-2 text-xl font-bold">
@@ -121,14 +121,14 @@ function Materials() {
           </div>
         </aside>
 
-        <section>
-          <div className="rounded-2xl border border-border glass px-4 py-3 flex items-center gap-3">
-            <Search className="h-4 w-4 text-muted-foreground" />
+        <section className="min-w-0">
+          <div className="rounded-2xl border border-border glass px-3 sm:px-4 py-3 flex items-center gap-2 sm:gap-3 min-w-0">
+            <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Search modules, PYQs, books, test series…"
-              className="flex-1 bg-transparent outline-none text-sm"
+              className="min-w-0 flex-1 bg-transparent outline-none text-sm"
             />
             {isAdmin && (
               <Link
@@ -161,7 +161,7 @@ function Materials() {
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: Math.min(i * 0.02, 0.3) }}
-                    className="group rounded-2xl border border-border glass p-5 hover:border-primary/50 hover:-translate-y-1 transition-all"
+                    className="group min-w-0 rounded-2xl border border-border glass p-4 sm:p-5 hover:border-primary/50 hover:-translate-y-1 transition-all"
                   >
                     <div className="flex items-start justify-between">
                       <span
@@ -180,7 +180,7 @@ function Materials() {
                     <div className="mt-4 text-[10px] tracking-widest text-muted-foreground">
                       {m.subject} · JEE
                     </div>
-                    <h3 className="mt-1 text-lg font-bold leading-tight">{m.title}</h3>
+                    <h3 className="mt-1 text-lg font-bold leading-tight break-words">{m.title}</h3>
                     <p className="mt-2 text-sm text-muted-foreground">{m.description}</p>
                     <div className="mt-3">
                       <span className="inline-block rounded-md bg-muted px-2 py-0.5 text-xs">{m.type}</span>
@@ -201,7 +201,7 @@ function Materials() {
                         image slot
                       </div>
                     )}
-                    <div className="mt-4 flex items-center gap-2">
+                    <div className="mt-4 flex items-center gap-2 min-w-0 flex-wrap">
                       <AccessButton
                         kind="material"
                         itemId={m.id}

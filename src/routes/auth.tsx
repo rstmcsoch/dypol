@@ -58,7 +58,7 @@ function AuthPage() {
   };
 
   return (
-    <main className="min-h-[calc(100vh-6rem)] px-4 grid place-items-center">
+    <main className="min-h-[100dvh] px-4 py-8 grid place-items-center">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

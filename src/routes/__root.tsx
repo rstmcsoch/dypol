@@ -19,7 +19,7 @@ function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-black text-gradient">404</h1>
+        <h1 className="text-[clamp(3rem,18vw,4.5rem)] font-black text-gradient">404</h1>
         <h2 className="mt-4 text-xl font-semibold">Page not found</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           This page doesn't exist yet. Head back home and keep it unscripted.
@@ -66,7 +66,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { title: "Dypol — FROM POTENTIAL TO PERFORMANCE" },
       { name: "description", content: "Dypol is your study companion — curated materials, portals, and support, all in one calm launcher." },
       { name: "author", content: "Dypol" },
@@ -88,10 +91,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+const THEME_BOOT = `(function(){try{var t=localStorage.getItem("dypol-theme")||"sunset";var a=localStorage.getItem("dypol-appearance")||localStorage.getItem("dypol-mode")||"system";if(a!=="light"&&a!=="dark"&&a!=="system")a="system";var dark=a==="dark"||(a==="system"&&window.matchMedia("(prefers-color-scheme: dark)").matches);var r=document.documentElement;r.setAttribute("data-theme",t);r.classList.toggle("dark",dark);r.style.colorScheme=dark?"dark":"light";}catch(e){}})();`;
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <head><HeadContent /></head>
+      <head>
+        <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
+      </head>
       <body>{children}<Scripts /></body>
     </html>
   );
@@ -113,13 +121,13 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <div className="min-h-screen bg-background text-foreground relative">
-          <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 opacity-40">
-            <div className="absolute top-0 left-1/4 h-96 w-96 rounded-full gradient-primary blur-[120px]" />
-            <div className="absolute bottom-0 right-1/4 h-96 w-96 rounded-full gradient-primary blur-[140px] opacity-60" />
+        <div className="app-shell bg-background text-foreground relative">
+          <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 opacity-40 overflow-hidden">
+            <div className="absolute top-0 left-1/4 h-96 w-96 max-w-[80vw] rounded-full gradient-primary blur-[120px]" />
+            <div className="absolute bottom-0 right-1/4 h-96 w-96 max-w-[80vw] rounded-full gradient-primary blur-[140px] opacity-60" />
           </div>
           <AppNav />
-          <div className="pb-28 lg:pb-0"><Outlet /></div>
+          <div className="app-content"><Outlet /></div>
           <Toaster position="top-right" richColors />
         </div>
       </ThemeProvider>

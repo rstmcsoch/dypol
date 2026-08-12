@@ -12,13 +12,41 @@ export const THEMES = [
 ] as const;
 
 export type ThemeId = (typeof THEMES)[number]["id"];
+/** User-facing appearance preference. "system" follows prefers-color-scheme. */
+export type Appearance = "light" | "dark" | "system";
+/** Resolved light/dark actually applied to the document. */
 export type Mode = "light" | "dark";
+
+export const THEME_KEY = "dypol-theme";
+export const APPEARANCE_KEY = "dypol-appearance";
+/** Legacy key from when only light/dark were stored. */
+export const MODE_KEY = "dypol-mode";
+
+export function isThemeId(v: string | null): v is ThemeId {
+  return !!v && THEMES.some((t) => t.id === v);
+}
+
+export function isAppearance(v: string | null): v is Appearance {
+  return v === "light" || v === "dark" || v === "system";
+}
+
+export function resolveMode(appearance: Appearance, prefersDark?: boolean): Mode {
+  if (appearance === "light") return "light";
+  if (appearance === "dark") return "dark";
+  if (typeof prefersDark === "boolean") return prefersDark ? "dark" : "light";
+  if (typeof window === "undefined") return "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
 
 export interface ThemeCtx {
   theme: ThemeId;
+  /** User preference: light, dark, or follow the device. */
+  appearance: Appearance;
+  /** Resolved light/dark currently applied. */
   mode: Mode;
   setTheme: (t: ThemeId) => void;
-  setMode: (m: Mode) => void;
+  setAppearance: (a: Appearance) => void;
+  setMode: (m: Appearance | Mode) => void;
   toggleMode: () => void;
 }
 

@@ -22,8 +22,8 @@ function Essentials() {
   const { data: items = [], isLoading } = useEssentials();
 
   return (
-    <main className="px-4 md:px-8 pt-6 pb-16">
-      <div className="mx-auto max-w-7xl">
+    <main className="px-4 md:px-8 pt-6 pb-8">
+      <div className="mx-auto max-w-7xl min-w-0">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -42,7 +42,7 @@ function Essentials() {
           )}
         </div>
 
-        <h1 className="mt-4 font-display text-5xl md:text-7xl font-black tracking-tighter">
+        <h1 className="page-title mt-4">
           Gear up. <span className="text-muted-foreground">Study smart.</span>
         </h1>
         <p className="mt-4 max-w-2xl text-muted-foreground">
@@ -62,22 +62,22 @@ function Essentials() {
             <p className="mt-1 text-sm text-muted-foreground">Check back soon — the shelf is being stocked.</p>
           </div>
         ) : (
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((p, i) => (
               <motion.div
                 key={p.id}
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: Math.min(i * 0.03, 0.3) }}
-                className="group relative rounded-3xl border border-border glass overflow-hidden hover:border-primary/50 hover:-translate-y-1 transition-all flex flex-col"
+                className="group relative w-full max-w-full min-w-0 rounded-3xl border border-border glass overflow-hidden hover:border-primary/50 hover:-translate-y-1 transition-all flex flex-col"
               >
-                <div className="relative aspect-[4/3] bg-muted/30 overflow-hidden">
+                <div className="relative aspect-[4/3] w-full bg-muted/30 overflow-hidden">
                   {p.image_url ? (
                     <img
                       src={p.image_url}
                       alt={p.title}
                       loading="lazy"
-                      className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="h-full w-full object-contain p-2 group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
                     <div className="h-full w-full grid place-items-center text-muted-foreground">
@@ -100,8 +100,8 @@ function Essentials() {
                     </div>
                   )}
                 </div>
-                <div className="p-4 flex flex-col flex-1">
-                  <h3 className="font-bold text-base leading-tight line-clamp-2">{p.title}</h3>
+                <div className="p-4 flex flex-col flex-1 min-w-0">
+                  <h3 className="font-bold text-base leading-tight line-clamp-2 break-words">{p.title}</h3>
                   {p.description && (
                     <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{p.description}</p>
                   )}
