@@ -5,7 +5,7 @@ import {
   Loader2, Plus, Trash2, Save, LogOut, Image as ImageIcon, ExternalLink,
   ArrowLeft, Sparkles, Layers, Settings2, ShieldAlert, Menu as MenuIcon,
   ArrowUp, ArrowDown, Eye, EyeOff, Package, Wand2, LayoutTemplate, FileText, Users,
-  Quote as QuoteIcon,
+  Quote as QuoteIcon, Star as StarIcon,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -26,13 +26,14 @@ import { HomeTab } from "@/components/admin/HomeTab";
 import { PagesTab } from "@/components/admin/PagesTab";
 import { SubmissionsTab } from "@/components/admin/SubmissionsTab";
 import { QuotesTab } from "@/components/admin/quotes/QuotesTab";
+import { DioTab } from "@/components/admin/dio/DioTab";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Dypol" }] }),
   component: Admin,
 });
 
-type Tab = "site" | "home" | "quotes" | "materials" | "portals" | "essentials" | "pages" | "navigation" | "submissions" | "account";
+type Tab = "site" | "home" | "quotes" | "materials" | "portals" | "essentials" | "pages" | "navigation" | "submissions" | "dio" | "account";
 
 
 
@@ -116,6 +117,7 @@ function Admin() {
             { k: "pages", label: "Pages", icon: FileText },
             { k: "navigation", label: "Navigation", icon: MenuIcon },
             { k: "submissions", label: "Submissions", icon: Users },
+            { k: "dio", label: "Dio", icon: StarIcon },
             { k: "account", label: "Account", icon: LogOut },
           ].map((t) => {
 
@@ -145,6 +147,7 @@ function Admin() {
           {tab === "pages" && <PagesTab />}
           {tab === "navigation" && <NavigationTab />}
           {tab === "submissions" && <SubmissionsTab />}
+          {tab === "dio" && <DioTab />}
           {tab === "account" && <AccountTab />}
 
         </div>
@@ -268,7 +271,7 @@ function MaterialsTab() {
       <div className="flex items-center justify-between">
         <div className="text-sm text-muted-foreground">{materials.length} materials</div>
         <button
-          onClick={() => setEditing({ tier: "CORE", subject: "PCM MIX", type: "Books", title: "", description: "", link: "", sort_order: 1000 })}
+          onClick={() => setEditing({ tier: "CORE", subject: "PCM MIX", type: "Books", title: "", description: "", link: "", dio_cost: 0, sort_order: 1000 })}
           className="inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-4 py-2 text-sm font-semibold btn-glow active:scale-95 transition"
         >
           <Plus className="h-4 w-4" /> Add material
@@ -291,7 +294,14 @@ function MaterialsTab() {
               <tr key={m.id} className="border-t border-border hover:bg-muted/30">
                 <td className="p-3">
                   <div className="font-semibold">{m.title}</div>
-                  <div className="text-xs text-muted-foreground">{m.tier}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {m.tier}
+                    {(m.dio_cost ?? 0) > 0 && (
+                      <span className="ml-1.5 inline-flex items-center gap-0.5 rounded-full border border-[#e8b23a]/40 bg-[#e8b23a]/10 px-1.5 py-0.5 text-[10px] font-bold text-[#e8b23a]">
+                        ✦ {m.dio_cost}
+                      </span>
+                    )}
+                  </div>
                 </td>
                 <td className="p-3 hidden md:table-cell">{m.type}</td>
                 <td className="p-3 hidden md:table-cell">{m.subject}</td>
@@ -339,7 +349,13 @@ function MaterialsTab() {
               <TextField label="Subject" value={editing.subject ?? "PCM MIX"} onChange={(v) => setEditing({ ...editing, subject: v })} />
               <SelectField label="Type" value={editing.type ?? "Books"} options={[...RESOURCE_TYPES]} onChange={(v) => setEditing({ ...editing, type: v })} />
             </div>
-            <TextField label="Sort order (smaller = higher)" value={String(editing.sort_order ?? 1000)} onChange={(v) => setEditing({ ...editing, sort_order: Number(v) || 0 })} />
+            <div className="grid grid-cols-2 gap-2">
+              <TextField label="Dio cost (0 = free)" value={String(editing.dio_cost ?? 0)} onChange={(v) => setEditing({ ...editing, dio_cost: Math.max(0, Math.floor(Number(v) || 0)) })} type="number" />
+              <TextField label="Sort order (smaller = higher)" value={String(editing.sort_order ?? 1000)} onChange={(v) => setEditing({ ...editing, sort_order: Number(v) || 0 })} />
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Changing the price never affects students who already unlocked this material — unlocks are permanent.
+            </p>
           </div>
           <div className="mt-5 flex justify-end gap-2">
             <button onClick={() => setEditing(null)} className="rounded-full border border-border px-4 py-2 text-sm font-semibold hover:bg-muted">Cancel</button>
@@ -389,7 +405,7 @@ function PortalsTab() {
       <div className="flex items-center justify-between">
         <div className="text-sm text-muted-foreground">{portals.length} portals</div>
         <button
-          onClick={() => setEditing({ name: "", description: "", link: "", link_count: 0, sort_order: 1000 })}
+          onClick={() => setEditing({ name: "", description: "", link: "", link_count: 0, dio_cost: 0, sort_order: 1000 })}
           className="inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-4 py-2 text-sm font-semibold btn-glow active:scale-95 transition"
         >
           <Plus className="h-4 w-4" /> Add portal
@@ -407,7 +423,14 @@ function PortalsTab() {
               </div>
             )}
             <div className="min-w-0 flex-1">
-              <div className="font-bold truncate">{p.name}</div>
+              <div className="font-bold truncate">
+                {p.name}
+                {(p.dio_cost ?? 0) > 0 && (
+                  <span className="ml-1.5 inline-flex items-center gap-0.5 rounded-full border border-[#e8b23a]/40 bg-[#e8b23a]/10 px-1.5 py-0.5 text-[10px] font-bold text-[#e8b23a]">
+                    ✦ {p.dio_cost}
+                  </span>
+                )}
+              </div>
               <div className="text-xs text-muted-foreground truncate">{p.description}</div>
               <div className="mt-1 text-xs">
                 {p.link ? (
@@ -442,7 +465,8 @@ function PortalsTab() {
             <TextField label="Name" value={editing.name ?? ""} onChange={(v) => setEditing({ ...editing, name: v })} />
             <TextArea label="Description" value={editing.description ?? ""} onChange={(v) => setEditing({ ...editing, description: v })} />
             <TextField label="Link (URL)" value={editing.link ?? ""} onChange={(v) => setEditing({ ...editing, link: v })} placeholder="https://..." />
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 gap-2">
+              <TextField label="Dio cost (0 = free)" value={String(editing.dio_cost ?? 0)} onChange={(v) => setEditing({ ...editing, dio_cost: Math.max(0, Math.floor(Number(v) || 0)) })} type="number" />
               <TextField label="Link count (badge)" value={String(editing.link_count ?? 0)} onChange={(v) => setEditing({ ...editing, link_count: Number(v) || 0 })} />
               <TextField label="Sort order" value={String(editing.sort_order ?? 1000)} onChange={(v) => setEditing({ ...editing, sort_order: Number(v) || 0 })} />
             </div>
