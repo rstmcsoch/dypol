@@ -18,12 +18,14 @@ import { Route as PortalsRouteImport } from './routes/portals'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as MaterialsRouteImport } from './routes/materials'
 import { Route as EssentialsRouteImport } from './routes/essentials'
+import { Route as EarnDioRouteImport } from './routes/earnDio'
 import { Route as DmcaRouteImport } from './routes/dmca'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ApiPublicDioAdPostbackRouteImport } from './routes/api/public/dio/ad-postback'
 
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
@@ -70,6 +72,11 @@ const EssentialsRoute = EssentialsRouteImport.update({
   path: '/essentials',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EarnDioRoute = EarnDioRouteImport.update({
+  id: '/earnDio',
+  path: '/earnDio',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DmcaRoute = DmcaRouteImport.update({
   id: '/dmca',
   path: '/dmca',
@@ -99,12 +106,18 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicDioAdPostbackRoute = ApiPublicDioAdPostbackRouteImport.update({
+  id: '/api/public/dio/ad-postback',
+  path: '/api/public/dio/ad-postback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/dmca': typeof DmcaRoute
+  '/earnDio': typeof EarnDioRoute
   '/essentials': typeof EssentialsRoute
   '/materials': typeof MaterialsRoute
   '/onboarding': typeof OnboardingRoute
@@ -115,12 +128,14 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/welcome': typeof WelcomeRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/api/public/dio/ad-postback': typeof ApiPublicDioAdPostbackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/dmca': typeof DmcaRoute
+  '/earnDio': typeof EarnDioRoute
   '/essentials': typeof EssentialsRoute
   '/materials': typeof MaterialsRoute
   '/onboarding': typeof OnboardingRoute
@@ -131,6 +146,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/welcome': typeof WelcomeRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/api/public/dio/ad-postback': typeof ApiPublicDioAdPostbackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -139,6 +155,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/dmca': typeof DmcaRoute
+  '/earnDio': typeof EarnDioRoute
   '/essentials': typeof EssentialsRoute
   '/materials': typeof MaterialsRoute
   '/onboarding': typeof OnboardingRoute
@@ -149,6 +166,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/welcome': typeof WelcomeRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/api/public/dio/ad-postback': typeof ApiPublicDioAdPostbackRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -157,6 +175,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/dmca'
+    | '/earnDio'
     | '/essentials'
     | '/materials'
     | '/onboarding'
@@ -167,12 +186,14 @@ export interface FileRouteTypes {
     | '/terms'
     | '/welcome'
     | '/admin'
+    | '/api/public/dio/ad-postback'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/auth'
     | '/dmca'
+    | '/earnDio'
     | '/essentials'
     | '/materials'
     | '/onboarding'
@@ -183,6 +204,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/welcome'
     | '/admin'
+    | '/api/public/dio/ad-postback'
   id:
     | '__root__'
     | '/'
@@ -190,6 +212,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/dmca'
+    | '/earnDio'
     | '/essentials'
     | '/materials'
     | '/onboarding'
@@ -200,6 +223,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/welcome'
     | '/_authenticated/admin'
+    | '/api/public/dio/ad-postback'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -208,6 +232,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   DmcaRoute: typeof DmcaRoute
+  EarnDioRoute: typeof EarnDioRoute
   EssentialsRoute: typeof EssentialsRoute
   MaterialsRoute: typeof MaterialsRoute
   OnboardingRoute: typeof OnboardingRoute
@@ -217,6 +242,7 @@ export interface RootRouteChildren {
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
   WelcomeRoute: typeof WelcomeRoute
+  ApiPublicDioAdPostbackRoute: typeof ApiPublicDioAdPostbackRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -284,6 +310,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EssentialsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/earnDio': {
+      id: '/earnDio'
+      path: '/earnDio'
+      fullPath: '/earnDio'
+      preLoaderRoute: typeof EarnDioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dmca': {
       id: '/dmca'
       path: '/dmca'
@@ -326,6 +359,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/dio/ad-postback': {
+      id: '/api/public/dio/ad-postback'
+      path: '/api/public/dio/ad-postback'
+      fullPath: '/api/public/dio/ad-postback'
+      preLoaderRoute: typeof ApiPublicDioAdPostbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -346,6 +386,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   DmcaRoute: DmcaRoute,
+  EarnDioRoute: EarnDioRoute,
   EssentialsRoute: EssentialsRoute,
   MaterialsRoute: MaterialsRoute,
   OnboardingRoute: OnboardingRoute,
@@ -355,6 +396,7 @@ const rootRouteChildren: RootRouteChildren = {
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
   WelcomeRoute: WelcomeRoute,
+  ApiPublicDioAdPostbackRoute: ApiPublicDioAdPostbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
