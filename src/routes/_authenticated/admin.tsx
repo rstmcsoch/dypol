@@ -5,7 +5,7 @@ import {
   Loader2, Plus, Trash2, Save, LogOut, Image as ImageIcon, ExternalLink,
   ArrowLeft, Sparkles, Layers, Settings2, ShieldAlert, Menu as MenuIcon,
   ArrowUp, ArrowDown, Eye, EyeOff, Package, Wand2, LayoutTemplate, FileText, Users,
-  Quote as QuoteIcon, Star as StarIcon,
+  Quote as QuoteIcon, Star as StarIcon, Bot,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -27,13 +27,14 @@ import { PagesTab } from "@/components/admin/PagesTab";
 import { SubmissionsTab } from "@/components/admin/SubmissionsTab";
 import { QuotesTab } from "@/components/admin/quotes/QuotesTab";
 import { DioTab } from "@/components/admin/dio/DioTab";
+import { AssistantTab } from "@/components/admin/AssistantTab";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Dypol" }] }),
   component: Admin,
 });
 
-type Tab = "site" | "home" | "quotes" | "materials" | "portals" | "essentials" | "pages" | "navigation" | "submissions" | "dio" | "account";
+type Tab = "site" | "home" | "quotes" | "materials" | "portals" | "essentials" | "pages" | "navigation" | "submissions" | "dio" | "assistant" | "account";
 
 
 
@@ -118,6 +119,7 @@ function Admin() {
             { k: "navigation", label: "Navigation", icon: MenuIcon },
             { k: "submissions", label: "Submissions", icon: Users },
             { k: "dio", label: "Dio", icon: StarIcon },
+            { k: "assistant", label: "Assistant", icon: Bot },
             { k: "account", label: "Account", icon: LogOut },
           ].map((t) => {
 
@@ -148,6 +150,7 @@ function Admin() {
           {tab === "navigation" && <NavigationTab />}
           {tab === "submissions" && <SubmissionsTab />}
           {tab === "dio" && <DioTab />}
+          {tab === "assistant" && <AssistantTab />}
           {tab === "account" && <AccountTab />}
 
         </div>
