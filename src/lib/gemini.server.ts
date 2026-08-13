@@ -1,7 +1,7 @@
 import { getToken } from "@vercel/connect";
 
 /** Vercel Connect Gemini connector — request credentials only on the server. */
-export const GEMINI_CONNECTOR = "generativelanguage.googleapis.com/dypol";
+export const GEMINI_CONNECTOR = "generativelanguage.googleapis.com/dypol-ai-pchat";
 
 const GEMINI_MODELS = ["gemini-2.5-flash", "gemini-2.0-flash"] as const;
 const GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models";
