@@ -6,13 +6,18 @@ interface Props {
 }
 
 function parseExamDate(target: string): { date: Date; label: string } | null {
-  const m = /^(JEE|NEET)\s+(\d{4})$/i.exec(target.trim());
+  const m = /^(JEE|NEET|MHT CET|WBJEE|UPSC)\s+(\d{4})$/i.exec(target.trim());
   if (!m) return null;
   const exam = m[1].toUpperCase();
   const year = parseInt(m[2], 10);
-  // JEE (Main Session 1) tentative Jan 21; NEET tentative May 2.
+  // Tentative exam dates: JEE (Main Session 1) Jan 21; NEET May 2;
+  // MHT CET Apr 15; WBJEE Apr 23; UPSC prelims Jun 4.
   const date =
-    exam === "JEE" ? new Date(Date.UTC(year, 0, 21, 3, 30)) : new Date(Date.UTC(year, 4, 2, 3, 30));
+    exam === "JEE" ? new Date(Date.UTC(year, 0, 21, 3, 30))
+    : exam === "NEET" ? new Date(Date.UTC(year, 4, 2, 3, 30))
+    : exam === "MHT CET" ? new Date(Date.UTC(year, 3, 15, 3, 30))
+    : exam === "WBJEE" ? new Date(Date.UTC(year, 3, 23, 3, 30))
+    : new Date(Date.UTC(year, 5, 4, 3, 30));
   return { date, label: exam };
 }
 

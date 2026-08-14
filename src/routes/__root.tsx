@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
   createRootRouteWithContext,
+  redirect,
   useRouter,
   HeadContent,
   Scripts,
@@ -14,6 +15,11 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { AppNav } from "@/components/nav/AppNav";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
+import { ActivityTracker } from "@/components/ActivityTracker";
+import { getAccountState, invalidateAccountState } from "@/lib/account";
+
+/** Routes that are reachable without completed onboarding / while blocked. */
+const GUARD_EXEMPT = new Set(["/onboarding", "/auth", "/blocked", "/welcome"]);
 
 function NotFoundComponent() {
   return (
@@ -63,6 +69,34 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  // Global account guard: mandatory onboarding and block enforcement in the
+  // navigation layer. Runs client-side (most routes are ssr:false); the
+  // authoritative enforcement lives in the database (RLS + RPC checks).
+  beforeLoad: async ({ location }) => {
+    if (typeof window === "undefined") return; // server render: skip
+    const path = location.pathname;
+    if (GUARD_EXEMPT.has(path)) return;
+
+    const { data } = await supabase.auth.getSession();
+    const uid = data.session?.user?.id;
+    if (!uid) return;
+
+    try {
+      const state = await getAccountState(uid);
+      // Blocked takes priority over onboarding so blocked users always see
+      // the block screen instead of an onboarding form they cannot complete.
+      if (state.blocked) {
+        throw redirect({ to: "/blocked", replace: true });
+      }
+      if (!state.completed) {
+        throw redirect({ to: "/onboarding", replace: true });
+      }
+    } catch (err) {
+      if (err && typeof err === "object" && "isRedirect" in err) throw err;
+      // Verification failed (network/DB hiccup) — never brick navigation.
+      // Enforcement still applies at the data layer.
+    }
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -112,6 +146,7 @@ function RootComponent() {
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+      invalidateAccountState();
       router.invalidate();
       if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
     });
@@ -128,6 +163,7 @@ function RootComponent() {
           </div>
           <AppNav />
           <div className="app-content"><Outlet /></div>
+          <ActivityTracker />
           <Toaster position="top-right" richColors />
         </div>
       </ThemeProvider>

@@ -1,4 +1,4 @@
-import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface Material {
@@ -13,6 +13,7 @@ export interface Material {
   image_url: string | null;
   credit_name: string | null;
   dio_cost: number;
+  exam_id: string | null;
   sort_order: number;
 }
 
@@ -65,6 +66,83 @@ export const materialsQO = queryOptions({
   },
 });
 
+/* ---------------- Server-side paginated/filtered materials ---------------- */
+
+export interface MaterialsPageFilters {
+  examId: string | null; // null = all exams
+  subjects: string[]; // [] = all subjects
+  type: string | null; // null = all types
+  q: string;
+  page: number;
+  pageSize: number;
+}
+
+export interface MaterialsPage {
+  items: Material[];
+  total: number;
+  page: number;
+  pageSize: number;
+  hasMore: boolean;
+}
+
+const MATERIAL_COLUMNS =
+  "id,slug,tier,subject,type,title,description,link,image_url,credit_name,dio_cost,exam_id,sort_order";
+
+interface MaterialFilterable<T> {
+  eq(column: string, value: unknown): T;
+  in(column: string, values: unknown[]): T;
+  ilike(column: string, pattern: string): T;
+}
+
+function applyMaterialFilters<T extends MaterialFilterable<T>>(
+  query: T,
+  f: MaterialsPageFilters,
+): T {
+  let q = query;
+  if (f.examId) q = q.eq("exam_id", f.examId);
+  if (f.subjects.length) q = q.in("subject", f.subjects);
+  if (f.type) q = q.eq("type", f.type);
+  if (f.q.trim()) q = q.ilike("title", `%${f.q.trim()}%`);
+  return q;
+}
+
+export const materialsPageQO = (f: MaterialsPageFilters) =>
+  queryOptions({
+    queryKey: ["materials", "page", f],
+    placeholderData: keepPreviousData,
+    queryFn: async (): Promise<MaterialsPage> => {
+      const page = Math.max(1, f.page);
+      const pageSize = Math.min(Math.max(1, f.pageSize), 60);
+      const offset = (page - 1) * pageSize;
+
+      const pageQuery = applyMaterialFilters(
+        supabase.from("materials").select(MATERIAL_COLUMNS),
+        f,
+      )
+        .order("sort_order", { ascending: true })
+        .order("created_at", { ascending: true })
+        .range(offset, offset + pageSize - 1);
+
+      const countQuery = applyMaterialFilters(
+        supabase.from("materials").select("id", { count: "exact", head: true }),
+        f,
+      );
+
+      const [pageRes, countRes] = await Promise.all([pageQuery, countQuery]);
+      if (pageRes.error) throw pageRes.error;
+      if (countRes.error) throw countRes.error;
+
+      const total = countRes.count ?? 0;
+      return {
+        items: (pageRes.data ?? []) as Material[],
+        total,
+        page,
+        pageSize,
+        hasMore: offset + (pageRes.data?.length ?? 0) < total,
+      };
+    },
+  });
+
 export const portalsQO = queryOptions({
   queryKey: ["portals"],
   queryFn: async (): Promise<Portal[]> => {
@@ -115,7 +193,7 @@ export function useSaveMaterial() {
       } else {
         const { error } = await supabase.from("materials").insert({
           tier: m.tier ?? "CORE",
-          subject: m.subject ?? "PCM MIX",
+          subject: m.subject ?? "PCM Mix",
           type: m.type ?? "Books",
           title: m.title ?? "Untitled",
           description: m.description ?? "",
@@ -123,6 +201,7 @@ export function useSaveMaterial() {
           slug: m.slug ?? null,
           image_url: m.image_url ?? null,
           dio_cost: m.dio_cost ?? 0,
+          exam_id: m.exam_id ?? null,
           sort_order: m.sort_order ?? 1000,
         });
         if (error) throw error;

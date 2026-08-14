@@ -6,13 +6,13 @@ interface Props {
   compact?: boolean;
 }
 
-/** WhatsApp + Telegram share pills. Card-friendly. */
-export function ShareButtons({ title, url, compact }: Props) {
+/** WhatsApp + Telegram share pills. Card-friendly, fixed 36px icon buttons. */
+export function ShareButtons({ title, url }: Props) {
   const text = `${title} — ${url}`;
   const waHref = `https://wa.me/?text=${encodeURIComponent(text)}`;
   const tgHref = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`;
 
-  const size = compact ? "h-8 w-8" : "h-9 w-9";
+  const size = "h-9 w-9";
 
   return (
     <div className="flex items-center gap-1.5">

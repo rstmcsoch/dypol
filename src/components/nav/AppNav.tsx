@@ -141,7 +141,7 @@ function NavLinkEl({
 
 export function AppNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const hidden = pathname === "/welcome" || pathname === "/onboarding" || pathname === "/auth";
+  const hidden = pathname === "/welcome" || pathname === "/onboarding" || pathname === "/auth" || pathname === "/blocked";
   const isBottom = useLayout(!hidden);
   const items = useDynamicNav();
 

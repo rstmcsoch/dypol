@@ -20,6 +20,7 @@ import { Route as MaterialsRouteImport } from './routes/materials'
 import { Route as EssentialsRouteImport } from './routes/essentials'
 import { Route as EarnDioRouteImport } from './routes/earnDio'
 import { Route as DmcaRouteImport } from './routes/dmca'
+import { Route as BlockedRouteImport } from './routes/blocked'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -82,6 +83,11 @@ const DmcaRoute = DmcaRouteImport.update({
   path: '/dmca',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlockedRoute = BlockedRouteImport.update({
+  id: '/blocked',
+  path: '/blocked',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/blocked': typeof BlockedRoute
   '/dmca': typeof DmcaRoute
   '/earnDio': typeof EarnDioRoute
   '/essentials': typeof EssentialsRoute
@@ -134,6 +141,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/blocked': typeof BlockedRoute
   '/dmca': typeof DmcaRoute
   '/earnDio': typeof EarnDioRoute
   '/essentials': typeof EssentialsRoute
@@ -154,6 +162,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/blocked': typeof BlockedRoute
   '/dmca': typeof DmcaRoute
   '/earnDio': typeof EarnDioRoute
   '/essentials': typeof EssentialsRoute
@@ -174,6 +183,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
+    | '/blocked'
     | '/dmca'
     | '/earnDio'
     | '/essentials'
@@ -192,6 +202,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
+    | '/blocked'
     | '/dmca'
     | '/earnDio'
     | '/essentials'
@@ -211,6 +222,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/about'
     | '/auth'
+    | '/blocked'
     | '/dmca'
     | '/earnDio'
     | '/essentials'
@@ -231,6 +243,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
+  BlockedRoute: typeof BlockedRoute
   DmcaRoute: typeof DmcaRoute
   EarnDioRoute: typeof EarnDioRoute
   EssentialsRoute: typeof EssentialsRoute
@@ -324,6 +337,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DmcaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blocked': {
+      id: '/blocked'
+      path: '/blocked'
+      fullPath: '/blocked'
+      preLoaderRoute: typeof BlockedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -385,6 +405,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
+  BlockedRoute: BlockedRoute,
   DmcaRoute: DmcaRoute,
   EarnDioRoute: EarnDioRoute,
   EssentialsRoute: EssentialsRoute,

@@ -10,6 +10,9 @@ import { useUnlockItem, useUnlockedSet, type ItemKind, unlockKey } from "@/lib/d
  * Access button with Dio gating. The server is the only authority:
  * cost, balance, unlock status and the debit all happen inside one
  * atomic database operation (`dio_unlock`).
+ *
+ * `withBadge={false}` renders only the button (used inside structured
+ * card footers that render their own status badge).
  */
 export function AccessButton({
   kind,
@@ -18,6 +21,7 @@ export function AccessButton({
   link,
   label,
   icon,
+  withBadge = true,
 }: {
   kind: ItemKind;
   itemId: string;
@@ -25,6 +29,7 @@ export function AccessButton({
   link: string;
   label: string;
   icon?: React.ReactNode;
+  withBadge?: boolean;
 }) {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -34,15 +39,15 @@ export function AccessButton({
 
   const unlocked = set.has(unlockKey(kind, itemId));
   const base =
-    "flex-1 inline-flex items-center justify-center gap-2 rounded-full gradient-primary text-primary-foreground py-2.5 font-semibold btn-glow hover:opacity-95 active:scale-95 transition";
+    "flex-1 min-w-0 inline-flex items-center justify-center gap-2 rounded-full gradient-primary text-primary-foreground min-h-10 px-3 py-2 font-semibold btn-glow hover:opacity-95 active:scale-95 transition";
 
   if (!link) {
     return (
       <>
         <button disabled title="Link coming soon" className={`${base} cursor-not-allowed opacity-70`}>
-          <Lock className="h-3.5 w-3.5" /> {label} {icon ?? <ArrowRight className="h-4 w-4" />}
+          <Lock className="h-3.5 w-3.5 shrink-0" /> {label} {icon ?? <ArrowRight className="h-4 w-4 shrink-0" />}
         </button>
-        <DioCostBadge cost={cost} unlocked={unlocked} />
+        {withBadge && <DioCostBadge cost={cost} unlocked={unlocked} />}
       </>
     );
   }
@@ -68,6 +73,16 @@ export function AccessButton({
         if (!res.already) toast.success(`Unlocked for ${cost} Dio.`);
         return;
       }
+      if (res.error === "ACCOUNT_BLOCKED") {
+        toast.error("Your account is blocked. Contact support for help.");
+        navigate({ to: "/blocked", replace: true });
+        return;
+      }
+      if (res.error === "ONBOARDING_REQUIRED") {
+        toast.info("Pick your exam and year first — it takes ten seconds.");
+        navigate({ to: "/onboarding", replace: true });
+        return;
+      }
       if (res.error === "INSUFFICIENT_DIO") {
         toast.error(`You need ${res.needed} more Dio to unlock this.`, {
           action: { label: "Earn Dio", onClick: () => navigate({ to: "/earnDio" }) },
@@ -91,13 +106,13 @@ export function AccessButton({
     <>
       <button onClick={onClick} disabled={busy} className={`${base} disabled:opacity-70`}>
         {busy ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
+          <Loader2 className="h-4 w-4 animate-spin shrink-0" />
         ) : !user || unlocked || cost === 0 ? null : (
-          <DioStar className="text-xs" />
+          <DioStar className="text-xs shrink-0" />
         )}
-        {label} {icon ?? <ArrowRight className="h-4 w-4" />}
+        <span className="truncate">{label}</span> {icon ?? <ArrowRight className="h-4 w-4 shrink-0" />}
       </button>
-      <DioCostBadge cost={cost} unlocked={unlocked} />
+      {withBadge && <DioCostBadge cost={cost} unlocked={unlocked} />}
     </>
   );
 }

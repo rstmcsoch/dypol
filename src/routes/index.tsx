@@ -24,8 +24,15 @@ function Home() {
 
   useEffect(() => {
     if (!user) { setExamTarget(null); return; }
-    supabase.from("profiles").select("target").eq("id", user.id).maybeSingle()
-      .then(({ data }) => setExamTarget(data?.target ?? null));
+    supabase.from("profiles").select("target,selected_exam,preparation_year").eq("id", user.id).maybeSingle()
+      .then(({ data }) => {
+        setExamTarget(
+          data?.target ??
+            (data?.selected_exam && data.preparation_year != null
+              ? `${data.selected_exam} ${data.preparation_year}`
+              : null),
+        );
+      });
   }, [user?.id]);
 
   const promoCode = s?.promo_code ?? "UNSCRIPTED10";
