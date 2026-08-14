@@ -323,6 +323,66 @@ export type Database = {
         }
         Relationships: []
       }
+      exam_years: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          exam_id: string
+          id: string
+          sort_order: number
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          exam_id: string
+          id?: string
+          sort_order?: number
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          exam_id?: string
+          id?: string
+          sort_order?: number
+          updated_at?: string
+          year?: number
+        }
+        Relationships: []
+      }
+      exams: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       essentials: {
         Row: {
           created_at: string
@@ -517,6 +577,7 @@ export type Database = {
           credit_name: string | null
           description: string
           dio_cost: number
+          exam_id: string | null
           id: string
           image_url: string | null
           link: string
@@ -533,6 +594,7 @@ export type Database = {
           credit_name?: string | null
           description?: string
           dio_cost?: number
+          exam_id?: string | null
           id?: string
           image_url?: string | null
           link?: string
@@ -549,6 +611,7 @@ export type Database = {
           credit_name?: string | null
           description?: string
           dio_cost?: number
+          exam_id?: string | null
           id?: string
           image_url?: string | null
           link?: string
@@ -558,6 +621,36 @@ export type Database = {
           tier?: string
           title?: string
           type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      material_filters: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          id: string
+          kind: string
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          kind: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          kind?: string
+          name?: string
+          sort_order?: number
           updated_at?: string
         }
         Relationships: []
@@ -675,31 +768,67 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_status: string
           avatar_url: string | null
+          block_reason: string
+          blocked_at: string | null
+          blocked_by: string | null
+          blocked_until: string | null
           created_at: string
           display_name: string | null
           id: string
           is_guest: boolean
+          last_active_at: string | null
+          onboarding_completed_at: string | null
+          preparation_year: number | null
+          selected_exam: string | null
           target: string | null
+          total_active_seconds: number
+          total_sessions: number
           updated_at: string
+          username: string | null
         }
         Insert: {
+          account_status?: string
           avatar_url?: string | null
+          block_reason?: string
+          blocked_at?: string | null
+          blocked_by?: string | null
+          blocked_until?: string | null
           created_at?: string
           display_name?: string | null
           id: string
           is_guest?: boolean
+          last_active_at?: string | null
+          onboarding_completed_at?: string | null
+          preparation_year?: number | null
+          selected_exam?: string | null
           target?: string | null
+          total_active_seconds?: number
+          total_sessions?: number
           updated_at?: string
+          username?: string | null
         }
         Update: {
+          account_status?: string
           avatar_url?: string | null
+          block_reason?: string
+          blocked_at?: string | null
+          blocked_by?: string | null
+          blocked_until?: string | null
           created_at?: string
           display_name?: string | null
           id?: string
           is_guest?: boolean
+          last_active_at?: string | null
+          onboarding_completed_at?: string | null
+          preparation_year?: number | null
+          selected_exam?: string | null
           target?: string | null
+          total_active_seconds?: number
+          total_sessions?: number
           updated_at?: string
+          username?: string | null
         }
         Relationships: []
       }
@@ -962,15 +1091,80 @@ export type Database = {
         }
         Relationships: []
       }
+      user_sessions: {
+        Row: {
+          active_seconds: number
+          client_id: string
+          ended_at: string | null
+          events: number
+          id: string
+          last_heartbeat_at: string
+          started_at: string
+          user_id: string
+        }
+        Insert: {
+          active_seconds?: number
+          client_id?: string
+          ended_at?: string | null
+          events?: number
+          id?: string
+          last_heartbeat_at?: string
+          started_at?: string
+          user_id: string
+        }
+        Update: {
+          active_seconds?: number
+          client_id?: string
+          ended_at?: string | null
+          events?: number
+          id?: string
+          last_heartbeat_at?: string
+          started_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      activity_begin: { Args: { _client_id?: string }; Returns: string | null }
+      activity_end: { Args: { _delta?: number; _session_id: string }; Returns: Json }
+      activity_heartbeat: { Args: { _delta?: number; _session_id: string }; Returns: Json }
+      admin_block_user: {
+        Args: {
+          _action: string
+          _duration_hours?: number | null
+          _reason?: string | null
+          _start_at?: string | null
+          _user_id: string
+        }
+        Returns: Json
+      }
+      admin_exam_usage: { Args: { _exam_id: string }; Returns: Json }
+      admin_filter_usage: { Args: { _filter_id: string }; Returns: Json }
+      admin_list_users: {
+        Args: {
+          _exam?: string
+          _min_approved?: number
+          _page?: number
+          _page_size?: number
+          _search?: string
+          _sort?: string
+          _status?: string
+        }
+        Returns: Json
+      }
+      admin_user_profile: { Args: { _user_id: string }; Returns: Json }
       admin_quote_action: {
         Args: { p_action: string; p_quote_id?: string | null }
         Returns: Json
       }
+      complete_onboarding: { Args: { _exam_slug: string; _year: number }; Returns: Json }
+      get_onboarding_options: { Args: never; Returns: Json }
+      user_is_blocked: { Args: { _uid: string }; Returns: boolean }
+      user_is_onboarded: { Args: { _uid: string }; Returns: boolean }
       dio_ad_award: { Args: { _reference: string }; Returns: Json }
       dio_ad_start: { Args: { _offer_id: string }; Returns: Json }
       dio_admin_adjust: {

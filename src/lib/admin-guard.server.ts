@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { getRequest } from "@tanstack/react-start/server";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -12,6 +12,14 @@ function newKey(value: string) {
  * verification, which fails on projects without asymmetric signing keys.
  */
 export async function requireAdminFromRequest(explicitToken?: string): Promise<string> {
+  const { userId } = await requireAdminClientFromRequest(explicitToken);
+  return userId;
+}
+
+/** Like requireAdminFromRequest, but also returns a Supabase client bound to the caller's token. */
+export async function requireAdminClientFromRequest(
+  explicitToken?: string,
+): Promise<{ supabase: SupabaseClient<Database>; userId: string }> {
   const url =
     process.env["SUPABASE_URL"] ??
     import.meta.env["VITE_SUPABASE_URL"];
@@ -64,5 +72,5 @@ export async function requireAdminFromRequest(explicitToken?: string): Promise<s
     .maybeSingle();
   if (!roleRow) throw new Error("Admin access required");
 
-  return userData.user.id;
+  return { supabase, userId: userData.user.id };
 }

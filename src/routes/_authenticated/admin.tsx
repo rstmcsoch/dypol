@@ -5,7 +5,7 @@ import {
   Loader2, Plus, Trash2, Save, LogOut, Image as ImageIcon, ExternalLink,
   ArrowLeft, Sparkles, Layers, Settings2, ShieldAlert, Menu as MenuIcon,
   ArrowUp, ArrowDown, Eye, EyeOff, Package, Wand2, LayoutTemplate, FileText, Users,
-  Quote as QuoteIcon, Star as StarIcon, Bot,
+  Quote as QuoteIcon, Star as StarIcon, Bot, UsersRound, GraduationCap, SlidersHorizontal,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -18,8 +18,9 @@ import {
 } from "@/lib/site-api";
 import { useNavItems, useSaveNavItem, useDeleteNavItem, type NavItem } from "@/lib/nav-items";
 import { NAV_ICON_NAMES, getNavIcon } from "@/lib/nav-icons";
-import { RESOURCE_TYPES, TIERS } from "@/lib/data";
+import { TIERS } from "@/lib/data";
 import { useEssentials, useSaveEssential, useDeleteEssential, type Essential } from "@/lib/essentials";
+import { useExams, useMaterialFilters } from "@/lib/taxonomy";
 import { fetchLinkMetadata } from "@/lib/essentials.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { HomeTab } from "@/components/admin/HomeTab";
@@ -28,13 +29,16 @@ import { SubmissionsTab } from "@/components/admin/SubmissionsTab";
 import { QuotesTab } from "@/components/admin/quotes/QuotesTab";
 import { DioTab } from "@/components/admin/dio/DioTab";
 import { AssistantTab } from "@/components/admin/AssistantTab";
+import UsersTab from "@/components/admin/UsersTab";
+import ExamsTab from "@/components/admin/ExamsTab";
+import FiltersTab from "@/components/admin/FiltersTab";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Dypol" }] }),
   component: Admin,
 });
 
-type Tab = "site" | "home" | "quotes" | "materials" | "portals" | "essentials" | "pages" | "navigation" | "submissions" | "dio" | "assistant" | "account";
+type Tab = "site" | "home" | "quotes" | "materials" | "portals" | "essentials" | "pages" | "navigation" | "submissions" | "users" | "exams" | "filters" | "dio" | "assistant" | "account";
 
 
 
@@ -118,6 +122,9 @@ function Admin() {
             { k: "pages", label: "Pages", icon: FileText },
             { k: "navigation", label: "Navigation", icon: MenuIcon },
             { k: "submissions", label: "Submissions", icon: Users },
+            { k: "users", label: "Users", icon: UsersRound },
+            { k: "exams", label: "Exams", icon: GraduationCap },
+            { k: "filters", label: "Filters", icon: SlidersHorizontal },
             { k: "dio", label: "Dio", icon: StarIcon },
             { k: "assistant", label: "Assistant", icon: Bot },
             { k: "account", label: "Account", icon: LogOut },
@@ -149,6 +156,9 @@ function Admin() {
           {tab === "pages" && <PagesTab />}
           {tab === "navigation" && <NavigationTab />}
           {tab === "submissions" && <SubmissionsTab />}
+          {tab === "users" && <UsersTab />}
+          {tab === "exams" && <ExamsTab />}
+          {tab === "filters" && <FiltersTab />}
           {tab === "dio" && <DioTab />}
           {tab === "assistant" && <AssistantTab />}
           {tab === "account" && <AccountTab />}
@@ -263,9 +273,15 @@ function SiteTab() {
 
 function MaterialsTab() {
   const { data: materials = [], isLoading } = useMaterials();
+  const { data: exams = [] } = useExams();
+  const { data: filters = [] } = useMaterialFilters();
   const save = useSaveMaterial();
   const del = useDeleteMaterial();
   const [editing, setEditing] = useState<Partial<Material> | null>(null);
+
+  const subjectOptions = filters.filter((f) => f.kind === "subject").map((f) => f.name);
+  const typeOptions = filters.filter((f) => f.kind === "type").map((f) => f.name);
+  const examName = (id: string | null) => (id ? exams.find((e) => e.id === id)?.name ?? "—" : "—");
 
   if (isLoading) return <Loading />;
 
@@ -274,7 +290,7 @@ function MaterialsTab() {
       <div className="flex items-center justify-between">
         <div className="text-sm text-muted-foreground">{materials.length} materials</div>
         <button
-          onClick={() => setEditing({ tier: "CORE", subject: "PCM MIX", type: "Books", title: "", description: "", link: "", dio_cost: 0, sort_order: 1000 })}
+          onClick={() => setEditing({ tier: "CORE", subject: subjectOptions[0] ?? "PCM Mix", type: "Books", title: "", description: "", link: "", dio_cost: 0, sort_order: 1000, exam_id: exams[0]?.id ?? null })}
           className="inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-4 py-2 text-sm font-semibold btn-glow active:scale-95 transition"
         >
           <Plus className="h-4 w-4" /> Add material
@@ -288,6 +304,7 @@ function MaterialsTab() {
               <th className="text-left p-3">Title</th>
               <th className="text-left p-3 hidden md:table-cell">Type</th>
               <th className="text-left p-3 hidden md:table-cell">Subject</th>
+              <th className="text-left p-3 hidden lg:table-cell">Exam</th>
               <th className="text-left p-3 hidden lg:table-cell">Link</th>
               <th className="text-right p-3">Actions</th>
             </tr>
@@ -308,6 +325,7 @@ function MaterialsTab() {
                 </td>
                 <td className="p-3 hidden md:table-cell">{m.type}</td>
                 <td className="p-3 hidden md:table-cell">{m.subject}</td>
+                <td className="p-3 hidden lg:table-cell">{examName(m.exam_id)}</td>
                 <td className="p-3 hidden lg:table-cell max-w-[200px] truncate">
                   {m.link ? (
                     <a href={m.link} target="_blank" rel="noreferrer" className="text-primary hover:underline inline-flex items-center gap-1">
@@ -347,11 +365,21 @@ function MaterialsTab() {
             <TextField label="Title" value={editing.title ?? ""} onChange={(v) => setEditing({ ...editing, title: v })} />
             <TextArea label="Description" value={editing.description ?? ""} onChange={(v) => setEditing({ ...editing, description: v })} />
             <TextField label="Link (URL)" value={editing.link ?? ""} onChange={(v) => setEditing({ ...editing, link: v })} placeholder="https://..." />
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               <SelectField label="Tier" value={editing.tier ?? "CORE"} options={[...TIERS]} onChange={(v) => setEditing({ ...editing, tier: v })} />
-              <TextField label="Subject" value={editing.subject ?? "PCM MIX"} onChange={(v) => setEditing({ ...editing, subject: v })} />
-              <SelectField label="Type" value={editing.type ?? "Books"} options={[...RESOURCE_TYPES]} onChange={(v) => setEditing({ ...editing, type: v })} />
+              <SelectField label="Subject" value={editing.subject ?? ""} options={subjectOptions} onChange={(v) => setEditing({ ...editing, subject: v })} />
+              <SelectField label="Type" value={editing.type ?? ""} options={typeOptions} onChange={(v) => setEditing({ ...editing, type: v })} />
             </div>
+            <SelectField
+              label="Exam"
+              value={editing.exam_id ?? ""}
+              options={["", ...exams.map((e) => e.id)]}
+              optionLabels={{
+                "": "— No exam —",
+                ...Object.fromEntries(exams.map((e) => [e.id, e.name])),
+              }}
+              onChange={(v) => setEditing({ ...editing, exam_id: v || null })}
+            />
             <div className="grid grid-cols-2 gap-2">
               <TextField label="Dio cost (0 = free)" value={String(editing.dio_cost ?? 0)} onChange={(v) => setEditing({ ...editing, dio_cost: Math.max(0, Math.floor(Number(v) || 0)) })} type="number" />
               <TextField label="Sort order (smaller = higher)" value={String(editing.sort_order ?? 1000)} onChange={(v) => setEditing({ ...editing, sort_order: Number(v) || 0 })} />
@@ -896,7 +924,7 @@ function TextArea({ label, value, onChange }: { label: string; value: string; on
   );
 }
 
-function SelectField({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: string[] }) {
+function SelectField({ label, value, onChange, options, optionLabels }: { label: string; value: string; onChange: (v: string) => void; options: string[]; optionLabels?: Record<string, string> }) {
   return (
     <label className="block">
       <span className="text-xs tracking-widest text-muted-foreground">{label.toUpperCase()}</span>
@@ -906,7 +934,7 @@ function SelectField({ label, value, onChange, options }: { label: string; value
         className="mt-1.5 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary transition"
       >
         {options.map((o) => (
-          <option key={o} value={o}>{o}</option>
+          <option key={o} value={o}>{optionLabels?.[o] ?? o}</option>
         ))}
       </select>
     </label>

@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { LogOut, Save, Sparkles, Target, Calendar, Loader2, Shield, BookmarkCheck, Trash2, ExternalLink, Bookmark as BookmarkIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -9,6 +9,7 @@ import { useBookmarks, useDeleteBookmark } from "@/lib/bookmarks";
 import { SubmitMaterial } from "@/components/profile/SubmitMaterial";
 import { DIO_TX_LABEL, formatDio, useDioBalance, useDioHistory } from "@/lib/dio";
 import { DioStar } from "@/components/dio/DioBits";
+import { useOnboardingOptions } from "@/lib/account";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({ meta: [{ title: "Profile — Dypol" }] }),
@@ -16,17 +17,14 @@ export const Route = createFileRoute("/profile")({
   component: Profile,
 });
 
-const TARGETS = [
-  "JEE 2027", "JEE 2028", "JEE 2029", "JEE 2030",
-  "NEET 2027", "NEET 2028", "NEET 2029", "NEET 2030",
-];
-
 interface ProfileRow {
   id: string;
   display_name: string | null;
   target: string | null;
   avatar_url: string | null;
   created_at: string;
+  selected_exam: string | null;
+  preparation_year: number | null;
 }
 
 /** "Today" / "Yesterday" / "Aug 5" — calm relative dates for the Dio history list. */
@@ -45,12 +43,19 @@ function Profile() {
   const { user, isAdmin, loading } = useAuth();
   const [profile, setProfile] = useState<ProfileRow | null>(null);
   const [name, setName] = useState("");
-  const [target, setTarget] = useState<string>("JEE 2027");
+  const [examSlug, setExamSlug] = useState<string>("");
+  const [year, setYear] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
   const { data: bookmarks = [], isLoading: bmLoading } = useBookmarks(user?.id);
   const delBookmark = useDeleteBookmark(user?.id);
   const { data: dioBalance } = useDioBalance(user?.id);
   const { data: dioTxs = [], isLoading: dioLoading } = useDioHistory(user?.id);
+  const { data: options } = useOnboardingOptions();
+
+  const exams = useMemo(() => options?.exams ?? [], [options]);
+  const selectedExam = exams.find((e) => e.slug === examSlug);
+  const years = selectedExam?.years ?? [];
+  const targetLabel = selectedExam && year ? `${selectedExam.name} ${year}` : "Not set yet";
 
   useEffect(() => {
     if (loading) return;
@@ -59,7 +64,8 @@ function Profile() {
       if (!data) return;
       setProfile(data as ProfileRow);
       setName(data.display_name ?? user.email?.split("@")[0] ?? "");
-      setTarget(data.target ?? "JEE 2027");
+      setExamSlug(data.selected_exam ?? "");
+      setYear(data.preparation_year ?? null);
     });
   }, [user?.id, loading, navigate]);
 
@@ -68,10 +74,18 @@ function Profile() {
   }
 
   const save = async () => {
+    if (!examSlug || year == null) {
+      toast.error("Pick your exam and preparation year");
+      return;
+    }
     setBusy(true);
     try {
       const { error } = await supabase.from("profiles").upsert({
-        id: user.id, display_name: name, target,
+        id: user.id,
+        display_name: name,
+        selected_exam: examSlug,
+        preparation_year: year,
+        target: targetLabel,
       });
       if (error) throw error;
       toast.success("Profile saved");
@@ -114,7 +128,7 @@ function Profile() {
               </Link>
               <div className="mt-3 flex flex-col items-center gap-1.5 text-sm text-muted-foreground md:items-start sm:flex-row sm:flex-wrap sm:gap-x-4 sm:gap-y-1">
                 <span className="inline-flex items-center gap-1.5 min-w-0">
-                  <Target className="h-4 w-4 shrink-0" /> <span className="break-words">{target}</span>
+                  <Target className="h-4 w-4 shrink-0" /> <span className="break-words">{targetLabel}</span>
                 </span>
                 <span className="inline-flex items-center gap-1.5 min-w-0">
                   <Calendar className="h-4 w-4 shrink-0" /> <span className="break-words">Joined {new Date(joined).toLocaleDateString()}</span>
@@ -136,14 +150,27 @@ function Profile() {
                 className="mt-2 w-full min-w-0 rounded-2xl border border-border bg-transparent px-4 py-3 outline-none focus:border-primary transition" />
             </div>
             <div className="mt-5">
-              <label className="text-xs tracking-widest text-muted-foreground">TARGET EXAM</label>
-              <div className="mt-2 grid grid-cols-2 gap-2">
-                {TARGETS.map((t) => (
-                  <button key={t} onClick={() => setTarget(t)}
+              <label className="text-xs tracking-widest text-muted-foreground">EXAM</label>
+              <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {exams.map((e) => (
+                  <button key={e.slug} onClick={() => { setExamSlug(e.slug); setYear(null); }}
                     className={`min-w-0 rounded-xl border px-2 py-2.5 text-sm font-semibold transition active:scale-95 ${
-                      target === t ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/50"
+                      examSlug === e.slug ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/50"
                     }`}>
-                    {t}
+                    {e.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="mt-5">
+              <label className="text-xs tracking-widest text-muted-foreground">PREPARATION YEAR</label>
+              <div className="mt-2 grid grid-cols-3 sm:grid-cols-6 gap-2">
+                {years.map((y) => (
+                  <button key={y} onClick={() => setYear(y)}
+                    className={`min-w-0 rounded-xl border px-2 py-2.5 text-sm font-semibold transition active:scale-95 ${
+                      year === y ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/50"
+                    }`}>
+                    {y}
                   </button>
                 ))}
               </div>
