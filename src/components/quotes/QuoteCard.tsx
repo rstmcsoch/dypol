@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Quote as QuoteIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { usePageVisible, usePrefersReducedMotion } from "@/hooks/use-page-visible";
 import {
   animationDurationMs,
   useActiveQuotes,
@@ -46,6 +47,8 @@ export function QuoteCardView({
   const [direction, setDirection] = useState(1);
   const duration = animationDurationMs(a);
   const count = list.length;
+  const pageVisible = usePageVisible();
+  const reducedMotion = usePrefersReducedMotion();
 
   const single = count <= 1 || multiLayout === "stack";
   const active = list[Math.min(index, Math.max(count - 1, 0))];
@@ -61,11 +64,11 @@ export function QuoteCardView({
   // Automatic layouts: carousel + rotate advance on a timer.
   const auto = !single && (multiLayout === "carousel" || multiLayout === "rotate");
   useEffect(() => {
-    if (!auto || paused || count < 2) return;
+    if (!auto || paused || !pageVisible || reducedMotion || count < 2) return;
     const ms = Math.max(3, multiIntervalSeconds || 8) * 1000;
     const t = setInterval(() => step(1), ms);
     return () => clearInterval(t);
-  }, [auto, paused, count, multiIntervalSeconds, step]);
+  }, [auto, paused, pageVisible, reducedMotion, count, multiIntervalSeconds, step]);
 
   useEffect(() => {
     if (index >= count) setIndex(0);

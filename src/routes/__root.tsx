@@ -157,9 +157,24 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <div className="app-shell bg-background text-foreground relative">
-          <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 opacity-40 overflow-hidden">
-            <div className="absolute top-0 left-1/4 h-96 w-96 max-w-[80vw] rounded-full gradient-primary blur-[120px]" />
-            <div className="absolute bottom-0 right-1/4 h-96 w-96 max-w-[80vw] rounded-full gradient-primary blur-[140px] opacity-60" />
+          {/* Soft ambient glow. Radial gradients are far cheaper than the two
+               giant `filter: blur(120/140px)` surfaces they replace — those
+               sat behind every backdrop-filter layer and kept the GPU busy. */}
+          <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+            <div
+              className="absolute -top-32 left-1/4 h-[40rem] w-[40rem] max-w-[90vw] rounded-full"
+              style={{
+                background: "radial-gradient(circle, var(--grad-a) 0%, transparent 70%)",
+                opacity: 0.4,
+              }}
+            />
+            <div
+              className="absolute -bottom-40 right-1/4 h-[40rem] w-[40rem] max-w-[90vw] rounded-full"
+              style={{
+                background: "radial-gradient(circle, var(--grad-b) 0%, transparent 70%)",
+                opacity: 0.32,
+              }}
+            />
           </div>
           <AppNav />
           <div className="app-content"><Outlet /></div>
