@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { ExternalLink, Pause, Play, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useHomePosts, type HomePost } from "@/lib/home-sections";
+import { usePageVisible, usePrefersReducedMotion } from "@/hooks/use-page-visible";
 import { SectionHeading } from "./HomeCarousel";
 
 export function HomePostsMarquee() {
@@ -9,10 +10,32 @@ export function HomePostsMarquee() {
   const posts = (data ?? []).filter((p) => p.enabled);
   const [paused, setPaused] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const offset = useRef(0);
+  const [inView, setInView] = useState(false);
+  const pageVisible = usePageVisible();
+  const reducedMotion = usePrefersReducedMotion();
+
+  // Only run the 60fps loop while the marquee is actually on screen AND the
+  // tab is visible. A never-ending rAF loop is the main reason the page gets
+  // progressively slower: it forces every backdrop-filter layer above it to
+  // re-blur each frame, exhausting the compositor/GPU over time.
+  useEffect(() => {
+    if (reducedMotion) return;
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return;
+    }
+    const io = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), {
+      rootMargin: "120px 0px",
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [reducedMotion]);
 
   useEffect(() => {
-    if (paused || posts.length < 2) return;
+    if (paused || !inView || !pageVisible || reducedMotion || posts.length < 2) return;
     let raf = 0;
     let last = performance.now();
     const step = (t: number) => {
@@ -28,13 +51,13 @@ export function HomePostsMarquee() {
     };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
-  }, [paused, posts.length]);
+  }, [paused, inView, pageVisible, reducedMotion, posts.length]);
 
   if (!posts.length) return null;
   const loop = posts.length > 1 ? [...posts, ...posts] : posts;
 
   return (
-    <section aria-label="People" className="mt-14">
+    <section ref={sectionRef} aria-label="People" className="mt-14">
       <div className="flex items-end justify-between gap-4">
         <SectionHeading kicker="PEOPLE" title="Behind Dypol" sub="Hover, tap or use the button to pause." />
         <button

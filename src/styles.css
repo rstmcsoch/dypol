@@ -306,12 +306,14 @@
 }
 @utility glass {
   background: rgb(var(--glass-tint) / 0.55);
-  backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
   border: 1px solid rgb(var(--glass-tint) / 0.3);
 }
 @utility glass-strong {
   background: rgb(var(--glass-tint) / 0.75);
-  backdrop-filter: blur(32px) saturate(200%);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
   border: 1px solid rgb(var(--glass-tint) / 0.4);
 }
 @utility btn-glow {
@@ -527,5 +529,18 @@ html[data-nav="bottom"] {
 @media (min-width: 900px) and (orientation: landscape) {
   .theme-menu {
     top: calc(var(--safe-top) + 4.8rem);
+  }
+}
+
+/* Respect the user's reduced-motion preference: drop CSS animations and
+   transitions (the JS-driven loops are already gated by the same setting). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }

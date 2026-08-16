@@ -2,22 +2,25 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Image as ImageIcon, Pause, Play } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useHomeSlides } from "@/lib/home-sections";
+import { usePageVisible, usePrefersReducedMotion } from "@/hooks/use-page-visible";
 
 export function HomeCarousel() {
   const { data } = useHomeSlides();
   const slides = (data ?? []).filter((s) => s.enabled);
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
+  const pageVisible = usePageVisible();
+  const reducedMotion = usePrefersReducedMotion();
 
   const count = slides.length;
   const next = useCallback(() => setI((p) => (count ? (p + 1) % count : 0)), [count]);
   const prev = useCallback(() => setI((p) => (count ? (p - 1 + count) % count : 0)), [count]);
 
   useEffect(() => {
-    if (paused || count < 2) return;
+    if (paused || !pageVisible || reducedMotion || count < 2) return;
     const t = setInterval(next, 4000);
     return () => clearInterval(t);
-  }, [paused, count, next]);
+  }, [paused, pageVisible, reducedMotion, count, next]);
 
   useEffect(() => {
     if (i >= count) setI(0);
