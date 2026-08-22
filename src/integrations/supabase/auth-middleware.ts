@@ -89,20 +89,26 @@ export const requireSupabaseAuth = createMiddleware({ type: 'function' }).server
       }
     );
 
-    const { data, error } = await supabase.auth.getClaims(token);
-    if (error || !data?.claims) {
+    // Validate against the live Auth API (not local JWT verification).
+    // auth.getUser(token) works regardless of the project's signing key type and
+    // only rejects genuinely invalid/revoked tokens. The browser client
+    // (auth-attacher.ts -> ensureFreshAccessToken) is responsible for handing us
+    // a fresh, non-expired access token, so an expired token reaching here is a
+    // true failure rather than a recoverable one.
+    const { data, error } = await supabase.auth.getUser(token);
+    if (error || !data?.user) {
       throw new Error('Unauthorized: Invalid token');
     }
 
-    if (!data.claims.sub) {
+    if (!data.user.id) {
       throw new Error('Unauthorized: No user ID found in token');
     }
 
     return next({
       context: {
         supabase,
-        userId: data.claims.sub,
-        claims: data.claims,
+        userId: data.user.id,
+        user: data.user,
       },
     });
   },

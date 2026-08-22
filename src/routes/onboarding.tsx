@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Sparkles, Check, Loader2, AlertTriangle, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { ensureFreshAccessToken } from "@/integrations/supabase/auth-token";
 import {
   fetchOnboardingOptions,
   getAccountState,
@@ -35,7 +36,11 @@ function Onboarding() {
   const load = async () => {
     setError(null);
     try {
-      const { data } = await supabase.auth.getUser();
+      // Recover an expired access token via the refresh token before checking,
+      // so a brand-new user whose short-lived access token already expired is
+      // not bounced back to /auth mid-onboarding.
+      const token = await ensureFreshAccessToken();
+      const { data } = await supabase.auth.getUser(token ?? undefined);
       if (!data.user) {
         navigate({ to: "/auth", replace: true });
         return;

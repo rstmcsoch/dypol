@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Bot, Loader2, Send, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { ensureFreshAccessToken } from "@/integrations/supabase/auth-token";
 import { askAdminAssistant, type AdminAssistantMessage } from "@/lib/admin-ai.functions";
 
 const STARTERS = [
@@ -34,11 +34,7 @@ export function AssistantTab() {
     setBusy(true);
 
     try {
-      let { data: sess } = await supabase.auth.getSession();
-      if (!sess.session?.access_token) {
-        ({ data: sess } = await supabase.auth.refreshSession());
-      }
-      const token = sess.session?.access_token;
+      const token = await ensureFreshAccessToken();
       if (!token) {
         toast.error("Your session expired — please sign in again");
         setMessages(next.slice(0, -1));
