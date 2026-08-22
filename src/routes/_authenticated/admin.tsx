@@ -17,6 +17,7 @@ import {
   useSaveSiteSettings, uploadSiteAsset,
   type Material, type Portal, type SiteSettings,
 } from "@/lib/site-api";
+import { isValidHttpUrl } from "@/lib/share";
 import { useNavItems, useSaveNavItem, useDeleteNavItem, type NavItem } from "@/lib/nav-items";
 import { NAV_ICON_NAMES, getNavIcon } from "@/lib/nav-icons";
 import { TIERS } from "@/lib/data";
@@ -178,7 +179,7 @@ function SiteTab() {
   const { data: settings, isLoading } = useSiteSettings();
   const save = useSaveSiteSettings();
   const [form, setForm] = useState<Partial<SiteSettings>>({});
-  const [uploading, setUploading] = useState<"logo" | "hero" | null>(null);
+  const [uploading, setUploading] = useState<"logo" | "hero" | "share" | null>(null);
 
   useEffect(() => {
     if (settings) setForm(settings);
@@ -189,12 +190,12 @@ function SiteTab() {
   const update = <K extends keyof SiteSettings>(k: K, v: SiteSettings[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
-  const onFile = async (folder: "logo" | "hero", file: File | undefined) => {
+  const onFile = async (folder: "logo" | "hero" | "share", file: File | undefined) => {
     if (!file) return;
     setUploading(folder);
     try {
       const url = await uploadSiteAsset(file, folder);
-      const key = folder === "logo" ? "logo_url" : "hero_image_url";
+      const key = folder === "logo" ? "logo_url" : folder === "hero" ? "hero_image_url" : "share_image_url";
       update(key, url);
       await save.mutateAsync({ [key]: url });
       toast.success("Image uploaded");
@@ -206,8 +207,17 @@ function SiteTab() {
   };
 
   const onSave = async () => {
+    const patch = { ...form };
+    if (patch.share_link !== undefined) {
+      const link = patch.share_link.trim();
+      if (!isValidHttpUrl(link)) {
+        toast.error("Share link must be a valid URL (e.g. https://dypol.vercel.app)");
+        return;
+      }
+      patch.share_link = link;
+    }
     try {
-      await save.mutateAsync(form);
+      await save.mutateAsync(patch);
       toast.success("Site updated");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Save failed");
@@ -254,6 +264,17 @@ function SiteTab() {
         <TextField label="DMCA Policy URL" placeholder="https://…" value={form.legal_dmca_url ?? ""} onChange={(v) => update("legal_dmca_url", v || null)} />
         <TextField label="Privacy Policy URL" placeholder="https://…" value={form.legal_privacy_url ?? ""} onChange={(v) => update("legal_privacy_url", v || null)} />
         <p className="text-xs text-muted-foreground">Leave blank to keep the label greyed-out (non-clickable).</p>
+      </Section>
+
+      <Section title="Share Content">
+        <TextField label="Share title" value={form.share_title ?? ""} onChange={(v) => update("share_title", v)} placeholder="Dypol" />
+        <TextArea label="Share message" value={form.share_message ?? ""} onChange={(v) => update("share_message", v)} />
+        <TextField label="Share link" placeholder="https://…" value={form.share_link ?? ""} onChange={(v) => update("share_link", v)} />
+        <ImageField label="Share image" url={form.share_image_url ?? null} uploading={uploading === "share"}
+          onFile={(f) => onFile("share", f)}
+          onClear={() => { update("share_image_url", null); save.mutate({ share_image_url: null }); }}
+        />
+        <p className="text-xs text-muted-foreground">Used by the Share button across the site — WhatsApp, Telegram and the device share sheet all receive this content.</p>
       </Section>
 
 
