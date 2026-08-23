@@ -1017,6 +1017,10 @@ export type Database = {
           promo_body: string
           promo_code: string
           promo_headline: string
+          share_image_url: string | null
+          share_link: string
+          share_message: string
+          share_title: string
           site_title: string
           support_body: string
           support_email: string
@@ -1039,6 +1043,10 @@ export type Database = {
           promo_body?: string
           promo_code?: string
           promo_headline?: string
+          share_image_url?: string | null
+          share_link?: string
+          share_message?: string
+          share_title?: string
           site_title?: string
           support_body?: string
           support_email?: string
@@ -1061,6 +1069,10 @@ export type Database = {
           promo_body?: string
           promo_code?: string
           promo_headline?: string
+          share_image_url?: string | null
+          share_link?: string
+          share_message?: string
+          share_title?: string
           site_title?: string
           support_body?: string
           support_email?: string

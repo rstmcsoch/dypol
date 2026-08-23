@@ -51,6 +51,10 @@ export interface SiteSettings {
   legal_terms_url: string | null;
   legal_dmca_url: string | null;
   legal_privacy_url: string | null;
+  share_title: string;
+  share_message: string;
+  share_link: string;
+  share_image_url: string | null;
 }
 
 export const materialsQO = queryOptions({
@@ -274,7 +278,7 @@ export function useSaveSiteSettings() {
 
 const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
 
-export async function uploadSiteAsset(file: File, folder: "logo" | "hero" | "misc"): Promise<string> {
+export async function uploadSiteAsset(file: File, folder: "logo" | "hero" | "share" | "misc"): Promise<string> {
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "png";
   const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
   const { error: upErr } = await supabase.storage

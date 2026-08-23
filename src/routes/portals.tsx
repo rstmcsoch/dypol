@@ -117,7 +117,7 @@ function Portals() {
                     label="Open Portal"
                     icon={<ArrowUpRight className="h-4 w-4" />}
                   />
-                  <ShareButtons title={p.name} url={p.link || (typeof window !== "undefined" ? window.location.href : "")} />
+                  <ShareButtons />
                 </div>
               </motion.div>
             ))}
