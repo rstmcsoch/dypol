@@ -21,15 +21,17 @@ function StatusPill({ status }: { status: SubmissionStatus }) {
   }[status];
   const Icon = map.Icon;
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold ${map.cls}`}>
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold ${map.cls}`}
+    >
       <Icon className="h-3 w-3" /> {map.label}
     </span>
   );
 }
 
-export function SubmitMaterial({ userId, email }: { userId: string; email: string | undefined }) {
+export function SubmitMaterial({ userId }: { userId: string }) {
   const [form, setForm] = useState(EMPTY);
-  const create = useCreateSubmission(userId, email);
+  const create = useCreateSubmission(userId);
   const { data: mine = [], isLoading } = useMySubmissions(userId);
   const { data: notes = [] } = useNotifications(userId);
   const markRead = useMarkNotificationsRead(userId);
@@ -51,8 +53,9 @@ export function SubmitMaterial({ userId, email }: { userId: string; email: strin
     });
   };
 
-  const set = (k: keyof typeof EMPTY) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    setForm((f) => ({ ...f, [k]: e.target.value }));
+  const set =
+    (k: keyof typeof EMPTY) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+      setForm((f) => ({ ...f, [k]: e.target.value }));
 
   return (
     <section className="mt-8 rounded-3xl border border-border glass p-5 sm:p-6 min-w-0">
@@ -63,7 +66,8 @@ export function SubmitMaterial({ userId, email }: { userId: string; email: strin
             <Upload className="h-6 w-6 shrink-0 text-primary" /> Submit Study Material
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Share a material, portal or resource link. Nothing goes public until the Dypol team approves it.
+            Share a material, portal or resource link. Nothing goes public until the Dypol team
+            approves it.
           </p>
         </div>
         {unread > 0 && (
@@ -97,7 +101,9 @@ export function SubmitMaterial({ userId, email }: { userId: string; email: strin
             placeholder="What is it, who is it for, why is it useful? (min 20 characters)"
             className="mt-2 w-full rounded-2xl border border-border bg-transparent px-4 py-3 outline-none focus:border-primary transition resize-y"
           />
-          <div className="mt-1 text-right text-[10px] text-muted-foreground">{form.description.length}/1000</div>
+          <div className="mt-1 text-right text-[10px] text-muted-foreground">
+            {form.description.length}/1000
+          </div>
         </div>
         <div>
           <label className="text-xs tracking-widest text-muted-foreground">URL / LINK (*)</label>
@@ -126,7 +132,12 @@ export function SubmitMaterial({ userId, email }: { userId: string; email: strin
         disabled={create.isPending}
         className="mt-6 inline-flex items-center gap-2 rounded-full gradient-primary text-primary-foreground px-5 py-2.5 font-semibold btn-glow active:scale-95 transition disabled:opacity-60"
       >
-        {create.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />} Submit for review
+        {create.isPending ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <Send className="h-4 w-4" />
+        )}{" "}
+        Submit for review
       </button>
 
       {/* Previous submissions */}

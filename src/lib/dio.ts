@@ -190,6 +190,8 @@ export function useUnlockItem(userId: string | undefined) {
       qc.invalidateQueries({ queryKey: dioKeys.wallet(userId) });
       qc.invalidateQueries({ queryKey: dioKeys.unlocks(userId) });
       qc.invalidateQueries({ queryKey: dioKeys.txs(userId) });
+      qc.invalidateQueries({ queryKey: ["materials"] });
+      qc.invalidateQueries({ queryKey: ["portals"] });
     },
   });
 }

@@ -7,7 +7,6 @@ export type AdminAssistantMessage = {
 
 export type AskAdminAssistantInput = {
   messages: AdminAssistantMessage[];
-  token?: string;
 };
 
 export type AskAdminAssistantResult = {
@@ -40,15 +39,14 @@ function validateAskInput(data: AskAdminAssistantInput): AskAdminAssistantInput 
     throw new Error("The latest message must come from you");
   }
 
-  const token = typeof data.token === "string" ? data.token : undefined;
-  return { messages, token };
+  return { messages };
 }
 
 export const askAdminAssistant = createServerFn({ method: "POST" })
-  .inputValidator((data: AskAdminAssistantInput) => validateAskInput(data))
+  .validator((data: AskAdminAssistantInput) => validateAskInput(data))
   .handler(async ({ data }): Promise<AskAdminAssistantResult> => {
     const { requireAdminFromRequest } = await import("./admin-guard.server");
-    await requireAdminFromRequest(data.token);
+    await requireAdminFromRequest();
 
     const safe = validateAskInput(data);
     const { generateAdminAssistantReply } = await import("./gemini.server");

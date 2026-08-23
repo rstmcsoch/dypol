@@ -8,7 +8,6 @@ import {
   Quote as QuoteIcon, Star as StarIcon, Bot, UsersRound, GraduationCap, SlidersHorizontal,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { ensureFreshAccessToken } from "@/integrations/supabase/auth-token";
 import { useAuth } from "@/hooks/use-auth";
 import {
   useMaterials, usePortals, useSiteSettings,
@@ -570,13 +569,8 @@ function EssentialsTab() {
     }
     setFetching(true);
     try {
-      const token = await ensureFreshAccessToken();
-      if (!token) {
-        toast.error("Your session expired — please sign in again");
-        return;
-      }
       const meta = await fetchMeta({
-        data: { url: editing.url, token },
+        data: { url: editing.url },
       });
 
       setEditing({

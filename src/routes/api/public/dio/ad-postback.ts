@@ -1,5 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createHmac, timingSafeEqual } from "crypto";
+import {
+  BodyTooLargeError,
+  hasValidPostbackSignature,
+  readLimitedPostbackBody,
+} from "@/lib/dio-postback.server";
 
 /**
  * Server-to-server ad completion postback.
@@ -24,8 +28,11 @@ export const Route = createFileRoute("/api/public/dio/ad-postback")({
 
         let body: { reference?: unknown; signature?: unknown };
         try {
-          body = (await request.json()) as typeof body;
-        } catch {
+          body = JSON.parse(await readLimitedPostbackBody(request)) as typeof body;
+        } catch (error) {
+          if (error instanceof BodyTooLargeError) {
+            return json({ ok: false, error: "payload_too_large" }, 413);
+          }
           return json({ ok: false, error: "invalid_json" }, 400);
         }
 
@@ -39,11 +46,7 @@ export const Route = createFileRoute("/api/public/dio/ad-postback")({
           return json({ ok: false, error: "invalid_reference" }, 400);
         }
         if (!signature) return json({ ok: false, error: "missing_signature" }, 401);
-
-        const expected = createHmac("sha256", secret).update(reference).digest("hex");
-        const a = Buffer.from(signature.toLowerCase());
-        const b = Buffer.from(expected);
-        if (a.length !== b.length || !timingSafeEqual(a, b)) {
+        if (!hasValidPostbackSignature(reference, signature, secret)) {
           return json({ ok: false, error: "invalid_signature" }, 401);
         }
 
@@ -64,6 +67,9 @@ export const Route = createFileRoute("/api/public/dio/ad-postback")({
 function json(payload: unknown, status = 200) {
   return new Response(JSON.stringify(payload), {
     status,
-    headers: { "content-type": "application/json" },
+    headers: {
+      "cache-control": "no-store",
+      "content-type": "application/json; charset=utf-8",
+    },
   });
 }
