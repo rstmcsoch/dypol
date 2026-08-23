@@ -6,19 +6,23 @@ import {
   telegramShareHref,
   useShareContent,
   whatsappShareHref,
+  withItemName,
 } from "@/lib/share";
 
 /**
  * Share pills — card-friendly, fixed 36px icon buttons.
  *
- * All content (title, message, link, image) comes from the published
- * Share Content settings (Admin → Site → Share Content); nothing is
- * hard-coded here. The Share button opens the Android/Web share sheet
- * so the user can pick WhatsApp, Telegram, etc.; the dedicated pills
- * deep-link straight into those apps with the same configured content.
+ * The message/link/image come from the published Share Content settings
+ * (Admin → Site → Share Content); nothing is hard-coded here. When an
+ * `itemName` is provided (the human-readable title of the material, portal,
+ * essential, … the user clicked Share on), it is prepended to the admin
+ * message as "**__Item Name__**" — the admin-configured message and link
+ * always follow, unchanged. The Share button opens the Android/Web share
+ * sheet so the user can pick WhatsApp, Telegram, etc.; the dedicated pills
+ * deep-link straight into those apps with the same combined content.
  */
-export function ShareButtons() {
-  const content = useShareContent();
+export function ShareButtons({ itemName }: { itemName?: string }) {
+  const content = withItemName(useShareContent(), itemName);
 
   const size = "h-9 w-9";
 
@@ -28,9 +32,7 @@ export function ShareButtons() {
     if (!shared && !canUseNativeShare()) {
       // No share sheet on this platform — gracefully fall back to copying the link.
       try {
-        await navigator.clipboard.writeText(
-          `${content.title}\n${content.message}\n${content.link}`,
-        );
+        await navigator.clipboard.writeText(`${content.message}\n\n${content.link}`);
         toast.success("Share text copied to clipboard");
       } catch {
         toast.error("Sharing isn't supported on this browser");

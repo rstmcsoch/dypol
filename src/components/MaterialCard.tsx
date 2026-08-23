@@ -148,7 +148,7 @@ function MaterialCardBase({ material: m, examName, index }: Props) {
 
       {/* 8. Secondary action row */}
       <div className="mt-2.5 flex items-center justify-between gap-2 border-t border-border/60 pt-2.5">
-        <ShareButtons />
+        <ShareButtons itemName={m.title} />
         <BookmarkButton
           kind="material"
           refId={m.id}

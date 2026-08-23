@@ -117,7 +117,7 @@ function Portals() {
                     label="Open Portal"
                     icon={<ArrowUpRight className="h-4 w-4" />}
                   />
-                  <ShareButtons />
+                  <ShareButtons itemName={p.name} />
                 </div>
               </motion.div>
             ))}
