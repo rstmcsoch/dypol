@@ -119,7 +119,7 @@ function Essentials() {
                     >
                       Shop Now <ArrowUpRight className="h-4 w-4" />
                     </a>
-                    <ShareButtons />
+                    <ShareButtons itemName={p.title} />
                   </div>
                 </div>
               </motion.div>

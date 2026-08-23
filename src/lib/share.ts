@@ -40,6 +40,25 @@ export function useShareContent(): ShareContent {
   return resolveShareContent(data);
 }
 
+/**
+ * Prefix the share message with the display name of the specific item being
+ * shared, wrapped in literal "**__" / "__**" markers (kept as plain text so
+ * WhatsApp/Telegram can interpret the markdown-style emphasis themselves):
+ *
+ *   **__Item Name__**
+ *
+ *   <admin-configured share message>
+ *
+ * The admin-configured message and link are preserved untouched — only the
+ * message gains the dynamic name at the beginning. Blank/absent names return
+ * the content unchanged, so app-level Share keeps working exactly as before.
+ */
+export function withItemName(c: ShareContent, itemName?: string | null): ShareContent {
+  const name = itemName?.trim();
+  if (!name) return c;
+  return { ...c, message: `**__${name}__**\n\n${c.message}` };
+}
+
 /** true when v is a well-formed http(s) URL — used to validate Share Link. */
 export function isValidHttpUrl(v: string): boolean {
   try {
@@ -50,14 +69,16 @@ export function isValidHttpUrl(v: string): boolean {
   }
 }
 
-/** Deep link that pre-fills WhatsApp with the configured share content. */
+/** Deep link that pre-fills WhatsApp with the share content (message already
+ * includes the dynamic item name when one was provided). */
 export function whatsappShareHref(c: ShareContent): string {
-  return `https://wa.me/?text=${encodeURIComponent(`${c.title}\n${c.message}\n${c.link}`)}`;
+  return `https://wa.me/?text=${encodeURIComponent(`${c.message}\n\n${c.link}`)}`;
 }
 
-/** Deep link that pre-fills Telegram with the configured share content. */
+/** Deep link that pre-fills Telegram with the share content (message already
+ * includes the dynamic item name when one was provided). */
 export function telegramShareHref(c: ShareContent): string {
-  return `https://t.me/share/url?url=${encodeURIComponent(c.link)}&text=${encodeURIComponent(`${c.title} — ${c.message}`)}`;
+  return `https://t.me/share/url?url=${encodeURIComponent(c.link)}&text=${encodeURIComponent(c.message)}`;
 }
 
 /** true when the Web Share API (native share sheet) is available. */
