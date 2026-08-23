@@ -6,6 +6,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { isCatalogRelationMissing } from "@/lib/catalog-rollout";
 
 export interface Material {
   id: string;
@@ -64,16 +65,38 @@ export interface SiteSettings {
   share_image_url: string | null;
 }
 
+function addLegacyMaterialLinkState(rows: Array<Omit<Material, "has_link">>): Material[] {
+  return rows.map((row) => ({
+    ...row,
+    has_link: row.link.trim().length > 0,
+  }));
+}
+
+function addLegacyPortalLinkState(rows: Array<Omit<Portal, "has_link">>): Portal[] {
+  return rows.map((row) => ({
+    ...row,
+    has_link: row.link.trim().length > 0,
+  }));
+}
+
 export const materialsQO = queryOptions({
   queryKey: ["materials"],
   queryFn: async (): Promise<Material[]> => {
-    const { data, error } = await supabase
+    const catalog = await supabase
       .from("materials_catalog")
       .select("*")
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: true });
-    if (error) throw error;
-    return (data ?? []) as Material[];
+    if (!catalog.error) return (catalog.data ?? []) as Material[];
+    if (!isCatalogRelationMissing(catalog.error)) throw catalog.error;
+
+    const legacy = await supabase
+      .from("materials")
+      .select("*")
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: true });
+    if (legacy.error) throw legacy.error;
+    return addLegacyMaterialLinkState(legacy.data ?? []);
   },
 });
 
@@ -98,6 +121,8 @@ export interface MaterialsPage {
 
 const MATERIAL_COLUMNS =
   "id,slug,tier,subject,type,title,description,link,has_link,image_url,credit_name,dio_cost,exam_id,sort_order";
+const LEGACY_MATERIAL_COLUMNS =
+  "id,slug,tier,subject,type,title,description,link,image_url,credit_name,dio_cost,exam_id,sort_order";
 
 interface MaterialFilterable<T> {
   eq(column: string, value: unknown): T;
@@ -140,16 +165,49 @@ export const materialsPageQO = (f: MaterialsPageFilters) =>
       );
 
       const [pageRes, countRes] = await Promise.all([pageQuery, countQuery]);
-      if (pageRes.error) throw pageRes.error;
-      if (countRes.error) throw countRes.error;
+      if (!pageRes.error && !countRes.error) {
+        const items = (pageRes.data ?? []) as Material[];
+        const total = countRes.count ?? 0;
+        return {
+          items,
+          total,
+          page,
+          pageSize,
+          hasMore: offset + items.length < total,
+        };
+      }
 
-      const total = countRes.count ?? 0;
+      const catalogError = pageRes.error ?? countRes.error;
+      if (!isCatalogRelationMissing(catalogError)) throw catalogError;
+
+      const legacyPageQuery = applyMaterialFilters(
+        supabase.from("materials").select(LEGACY_MATERIAL_COLUMNS),
+        f,
+      )
+        .order("sort_order", { ascending: true })
+        .order("created_at", { ascending: true })
+        .range(offset, offset + pageSize - 1);
+
+      const legacyCountQuery = applyMaterialFilters(
+        supabase.from("materials").select("id", { count: "exact", head: true }),
+        f,
+      );
+
+      const [legacyPageRes, legacyCountRes] = await Promise.all([
+        legacyPageQuery,
+        legacyCountQuery,
+      ]);
+      if (legacyPageRes.error) throw legacyPageRes.error;
+      if (legacyCountRes.error) throw legacyCountRes.error;
+
+      const items = addLegacyMaterialLinkState(legacyPageRes.data ?? []);
+      const total = legacyCountRes.count ?? 0;
       return {
-        items: (pageRes.data ?? []) as Material[],
+        items,
         total,
         page,
         pageSize,
-        hasMore: offset + (pageRes.data?.length ?? 0) < total,
+        hasMore: offset + items.length < total,
       };
     },
   });
@@ -157,13 +215,21 @@ export const materialsPageQO = (f: MaterialsPageFilters) =>
 export const portalsQO = queryOptions({
   queryKey: ["portals"],
   queryFn: async (): Promise<Portal[]> => {
-    const { data, error } = await supabase
+    const catalog = await supabase
       .from("portals_catalog")
       .select("*")
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: true });
-    if (error) throw error;
-    return (data ?? []) as Portal[];
+    if (!catalog.error) return (catalog.data ?? []) as Portal[];
+    if (!isCatalogRelationMissing(catalog.error)) throw catalog.error;
+
+    const legacy = await supabase
+      .from("portals")
+      .select("*")
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: true });
+    if (legacy.error) throw legacy.error;
+    return addLegacyPortalLinkState(legacy.data ?? []);
   },
 });
 

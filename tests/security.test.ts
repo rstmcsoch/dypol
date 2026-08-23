@@ -13,6 +13,7 @@ import {
   isPublicIpAddress,
   parsePublicHttpUrl,
 } from "../src/lib/link-meta.server.ts";
+import { isCatalogRelationMissing } from "../src/lib/catalog-rollout.ts";
 import { withSecurityHeaders } from "../src/lib/security-headers.ts";
 
 test("SSRF address filter permits public IPs", () => {
@@ -103,6 +104,14 @@ test("postback body reader rejects oversized payloads", async () => {
     body: "x".repeat(5000),
   });
   await assert.rejects(readLimitedPostbackBody(request), BodyTooLargeError);
+});
+
+test("catalog rollout fallback accepts only missing-relation errors", () => {
+  assert.equal(isCatalogRelationMissing({ code: "PGRST205" }), true);
+  assert.equal(isCatalogRelationMissing({ code: "42P01" }), true);
+  assert.equal(isCatalogRelationMissing({ code: "42501" }), false);
+  assert.equal(isCatalogRelationMissing({ code: "PGRST301" }), false);
+  assert.equal(isCatalogRelationMissing(null), false);
 });
 
 test("resource-link migration uses invoker views and revokes base link reads", async () => {
