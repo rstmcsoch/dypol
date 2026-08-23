@@ -11,35 +11,32 @@ function newKey(value: string) {
  * Uses auth.getUser(token) (a live Auth API check) instead of local JWT claim
  * verification, which fails on projects without asymmetric signing keys.
  */
-export async function requireAdminFromRequest(explicitToken?: string): Promise<string> {
-  const { userId } = await requireAdminClientFromRequest(explicitToken);
+export async function requireAdminFromRequest(): Promise<string> {
+  const { userId } = await requireAdminClientFromRequest();
   return userId;
 }
 
 /** Like requireAdminFromRequest, but also returns a Supabase client bound to the caller's token. */
-export async function requireAdminClientFromRequest(
-  explicitToken?: string,
-): Promise<{ supabase: SupabaseClient<Database>; userId: string }> {
-  const url =
-    process.env["SUPABASE_URL"] ??
-    import.meta.env["VITE_SUPABASE_URL"];
+export async function requireAdminClientFromRequest(): Promise<{
+  supabase: SupabaseClient<Database>;
+  userId: string;
+}> {
+  const url = process.env["SUPABASE_URL"] ?? import.meta.env["VITE_SUPABASE_URL"];
   const key =
     process.env["SUPABASE_PUBLISHABLE_KEY"] ??
     process.env["SUPABASE_ANON_KEY"] ??
     import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
   if (!url || !key) throw new Error("Auth check unavailable: backend keys missing on the server");
 
-  let token = (explicitToken ?? "").trim();
-  if (!token) {
-    let authHeader = "";
-    try {
-      authHeader = getRequest()?.headers.get("authorization") ?? "";
-    } catch {
-      authHeader = "";
-    }
-    token = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
+  let authHeader = "";
+  try {
+    authHeader = getRequest()?.headers.get("authorization") ?? "";
+  } catch {
+    authHeader = "";
   }
-  if (!token) throw new Error("Your session didn't reach the server — reload the page and try again");
+  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
+  if (!token)
+    throw new Error("Your session didn't reach the server — reload the page and try again");
 
   const supabase = createClient<Database>(url, key, {
     global: {

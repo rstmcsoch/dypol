@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Bot, Loader2, Send, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { ensureFreshAccessToken } from "@/integrations/supabase/auth-token";
 import { askAdminAssistant, type AdminAssistantMessage } from "@/lib/admin-ai.functions";
 
 const STARTERS = [
@@ -34,14 +33,7 @@ export function AssistantTab() {
     setBusy(true);
 
     try {
-      const token = await ensureFreshAccessToken();
-      if (!token) {
-        toast.error("Your session expired — please sign in again");
-        setMessages(next.slice(0, -1));
-        return;
-      }
-
-      const result = await ask({ data: { messages: next, token } });
+      const result = await ask({ data: { messages: next } });
       const reply = result?.text?.trim();
       if (!reply) throw new Error("The assistant returned an empty reply");
       setMessages([...next, { role: "assistant", content: reply }]);
@@ -79,7 +71,10 @@ export function AssistantTab() {
         )}
       </div>
 
-      <div ref={scroller} className="max-h-[min(62vh,560px)] min-h-[320px] space-y-3 overflow-y-auto px-5 py-4">
+      <div
+        ref={scroller}
+        className="max-h-[min(62vh,560px)] min-h-[320px] space-y-3 overflow-y-auto px-5 py-4"
+      >
         {messages.length === 0 && !busy && (
           <div className="grid min-h-[280px] place-items-center text-center">
             <div>
@@ -103,7 +98,10 @@ export function AssistantTab() {
         )}
 
         {messages.map((m, i) => (
-          <div key={`${m.role}-${i}`} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+          <div
+            key={`${m.role}-${i}`}
+            className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
+          >
             <div
               className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
                 m.role === "user"

@@ -19,6 +19,7 @@ export function AccessButton({
   itemId,
   cost,
   link,
+  hasLink,
   label,
   icon,
   withBadge = true,
@@ -27,6 +28,7 @@ export function AccessButton({
   itemId: string;
   cost: number;
   link: string;
+  hasLink: boolean;
   label: string;
   icon?: React.ReactNode;
   withBadge?: boolean;
@@ -41,18 +43,34 @@ export function AccessButton({
   const base =
     "flex-1 min-w-0 inline-flex items-center justify-center gap-2 rounded-full gradient-primary text-primary-foreground min-h-10 px-3 py-2 font-semibold btn-glow hover:opacity-95 active:scale-95 transition";
 
-  if (!link) {
+  if (!hasLink) {
     return (
       <>
-        <button disabled title="Link coming soon" className={`${base} cursor-not-allowed opacity-70`}>
-          <Lock className="h-3.5 w-3.5 shrink-0" /> {label} {icon ?? <ArrowRight className="h-4 w-4 shrink-0" />}
+        <button
+          disabled
+          title="Link coming soon"
+          className={`${base} cursor-not-allowed opacity-70`}
+        >
+          <Lock className="h-3.5 w-3.5 shrink-0" /> {label}{" "}
+          {icon ?? <ArrowRight className="h-4 w-4 shrink-0" />}
         </button>
         {withBadge && <DioCostBadge cost={cost} unlocked={unlocked} />}
       </>
     );
   }
 
-  const openLink = () => window.open(link, "_blank", "noopener,noreferrer");
+  const openLink = (target: string) => {
+    let parsed: URL;
+    try {
+      parsed = new URL(target);
+    } catch {
+      throw new Error("This resource has an invalid link");
+    }
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      throw new Error("This resource has an invalid link");
+    }
+    window.open(parsed.toString(), "_blank", "noopener,noreferrer");
+  };
 
   const onClick = async () => {
     if (loading || busy) return;
@@ -61,16 +79,22 @@ export function AccessButton({
       navigate({ to: "/auth" });
       return;
     }
-    if (unlocked || cost === 0) {
-      openLink();
+    if (link && (unlocked || cost === 0)) {
+      try {
+        openLink(link);
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : "This resource has an invalid link");
+      }
       return;
     }
     setBusy(true);
     try {
       const res = await unlock.mutateAsync({ kind, id: itemId });
       if (res.ok) {
-        openLink();
-        if (!res.already) toast.success(`Unlocked for ${cost} Dio.`);
+        const resolvedLink = res.link?.trim() ?? "";
+        if (!resolvedLink) throw new Error("This resource link is unavailable");
+        openLink(resolvedLink);
+        if (!res.already && cost > 0) toast.success(`Unlocked for ${cost} Dio.`);
         return;
       }
       if (res.error === "ACCOUNT_BLOCKED") {
@@ -93,6 +117,14 @@ export function AccessButton({
         navigate({ to: "/auth" });
         return;
       }
+      if (res.error === "ACCESS_REVOKED") {
+        toast.error("Access to this resource was revoked. Contact support if this seems wrong.");
+        return;
+      }
+      if (res.error === "RESOURCE_UNAVAILABLE") {
+        toast.error("This resource is temporarily unavailable.");
+        return;
+      }
       toast.error("Couldn't unlock this right now.");
     } catch (e) {
       // Network/timeout: never guess — the server balance is refetched by the mutation.
@@ -110,7 +142,8 @@ export function AccessButton({
         ) : !user || unlocked || cost === 0 ? null : (
           <DioStar className="text-xs shrink-0" />
         )}
-        <span className="truncate">{label}</span> {icon ?? <ArrowRight className="h-4 w-4 shrink-0" />}
+        <span className="truncate">{label}</span>{" "}
+        {icon ?? <ArrowRight className="h-4 w-4 shrink-0" />}
       </button>
       {withBadge && <DioCostBadge cost={cost} unlocked={unlocked} />}
     </>

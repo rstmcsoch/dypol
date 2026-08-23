@@ -1138,7 +1138,45 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      materials_catalog: {
+        Row: {
+          created_at: string
+          credit_name: string | null
+          description: string
+          dio_cost: number
+          exam_id: string | null
+          has_link: boolean
+          id: string
+          image_url: string | null
+          link: string
+          slug: string | null
+          sort_order: number
+          subject: string
+          tier: string
+          title: string
+          type: string
+          updated_at: string
+        }
+        Relationships: []
+      }
+      portals_catalog: {
+        Row: {
+          created_at: string
+          credit_name: string | null
+          description: string
+          dio_cost: number
+          has_link: boolean
+          id: string
+          link: string
+          link_count: number
+          logo_url: string | null
+          name: string
+          slug: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Relationships: []
+      }
     }
     Functions: {
       activity_begin: { Args: { _client_id?: string }; Returns: string | null }
@@ -1169,6 +1207,10 @@ export type Database = {
         Returns: Json
       }
       admin_user_profile: { Args: { _user_id: string }; Returns: Json }
+      catalog_resource_access: {
+        Args: { _item_id: string; _kind: string }
+        Returns: { has_link: boolean; link: string }[]
+      }
       admin_quote_action: {
         Args: { p_action: string; p_quote_id?: string | null }
         Returns: Json

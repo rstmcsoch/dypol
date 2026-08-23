@@ -44,7 +44,8 @@ export function validateSubmission(v: NewSubmission): string | null {
   if (link) {
     try {
       const u = new URL(link);
-      if (u.protocol !== "http:" && u.protocol !== "https:") return "Link must start with http:// or https://";
+      if (u.protocol !== "http:" && u.protocol !== "https:")
+        return "Link must start with http:// or https://";
     } catch {
       return "Please enter a valid URL (including https://)";
     }
@@ -73,7 +74,7 @@ export function useMySubmissions(userId: string | undefined) {
   return useQuery(mySubmissionsQO(userId));
 }
 
-export function useCreateSubmission(userId: string | undefined, email: string | undefined) {
+export function useCreateSubmission(userId: string | undefined) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (v: NewSubmission) => {
@@ -82,7 +83,6 @@ export function useCreateSubmission(userId: string | undefined, email: string | 
       if (!userId) throw new Error("Please sign in to submit");
       const { error } = await supabase.from("community_submissions").insert({
         user_id: userId,
-        user_email: email ?? "",
         material_name: v.material_name.trim(),
         description: v.description.trim(),
         link: v.link.trim(),
@@ -90,12 +90,6 @@ export function useCreateSubmission(userId: string | undefined, email: string | 
         status: "pending",
       });
       if (error) throw error;
-      await supabase.from("notifications").insert({
-        user_id: userId,
-        event: "submission_received",
-        title: "Submission received",
-        body: `“${v.material_name.trim()}” has been sent to the Dypol Admin Team for review.`,
-      });
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["community_submissions"] });
@@ -274,7 +268,13 @@ export function useApproveSubmission() {
 export function useRejectSubmission() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ submission: s, note }: { submission: CommunitySubmission; note: string }) => {
+    mutationFn: async ({
+      submission: s,
+      note,
+    }: {
+      submission: CommunitySubmission;
+      note: string;
+    }) => {
       const { error } = await supabase
         .from("community_submissions")
         .update({ status: "rejected", admin_notes: note.trim().slice(0, 1000) })

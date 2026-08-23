@@ -11,7 +11,11 @@ export const Route = createFileRoute("/portals")({
   head: () => ({
     meta: [
       { title: "Portals — Dypol" },
-      { name: "description", content: "All your study apps. One launcher. Curated mirrors and access points for popular coachings." },
+      {
+        name: "description",
+        content:
+          "All your study apps. One launcher. Curated mirrors and access points for popular coachings.",
+      },
     ],
   }),
   ssr: false,
@@ -56,7 +60,8 @@ function Portals() {
           <div className="text-sm">
             <strong>Dypol does not own or host any content.</strong>{" "}
             <span className="text-muted-foreground">
-              All resources belong to their respective owners. Dypol only aggregates publicly shared links.
+              All resources belong to their respective owners. Dypol only aggregates publicly shared
+              links.
             </span>
           </div>
         </div>
@@ -114,6 +119,7 @@ function Portals() {
                     itemId={p.id}
                     cost={p.dio_cost ?? 0}
                     link={p.link}
+                    hasLink={p.has_link}
                     label="Open Portal"
                     icon={<ArrowUpRight className="h-4 w-4" />}
                   />

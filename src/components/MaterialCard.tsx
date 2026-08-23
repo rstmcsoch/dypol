@@ -1,6 +1,14 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { BookOpen, FileText, Sparkles, Clock, ClipboardList, GraduationCap, Lock } from "lucide-react";
+import {
+  BookOpen,
+  FileText,
+  Sparkles,
+  Clock,
+  ClipboardList,
+  GraduationCap,
+  Lock,
+} from "lucide-react";
 import { AccessButton } from "@/components/dio/AccessButton";
 import { ShareButtons } from "@/components/ShareButtons";
 import { BookmarkButton } from "@/components/BookmarkButton";
@@ -28,7 +36,7 @@ function MaterialCardBase({ material: m, examName, index }: Props) {
   const { set } = useUnlockedSet(user?.id);
   const unlocked = set.has(unlockKey("material", m.id));
   const cost = m.dio_cost ?? 0;
-  const hasLink = !!m.link;
+  const hasLink = m.has_link;
   const Icon = TYPE_ICONS[m.type] ?? BookOpen;
 
   const badge = (() => {
@@ -65,9 +73,7 @@ function MaterialCardBase({ material: m, examName, index }: Props) {
         className="inline-flex h-10 shrink-0 items-center gap-1 rounded-full border border-[#e8b23a]/40 bg-[#e8b23a]/10 px-3 text-[10px] font-bold text-[#e8b23a]"
       >
         {m.tier === "PREMIUM" ? "Premium" : <DioStar className="text-[9px]" />}
-        <span className="tabular-nums">
-          {m.tier === "PREMIUM" ? <>✦ {cost}</> : cost}
-        </span>
+        <span className="tabular-nums">{m.tier === "PREMIUM" ? <>✦ {cost}</> : cost}</span>
       </span>
     );
   })();
@@ -83,7 +89,9 @@ function MaterialCardBase({ material: m, examName, index }: Props) {
       <div className="flex items-start justify-between gap-2">
         <span
           className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
-            m.tier === "PREMIUM" ? "gradient-primary text-primary-foreground" : "bg-muted text-foreground"
+            m.tier === "PREMIUM"
+              ? "gradient-primary text-primary-foreground"
+              : "bg-muted text-foreground"
           }`}
         >
           {m.tier === "PREMIUM" ? "★ PREMIUM" : "🔥 CORE"}
@@ -140,6 +148,7 @@ function MaterialCardBase({ material: m, examName, index }: Props) {
           itemId={m.id}
           cost={cost}
           link={m.link}
+          hasLink={hasLink}
           label="Access Resource"
           withBadge={false}
         />

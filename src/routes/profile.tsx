@@ -67,7 +67,7 @@ function Profile() {
       setExamSlug(data.selected_exam ?? "");
       setYear(data.preparation_year ?? null);
     });
-  }, [user?.id, loading, navigate]);
+  }, [user, loading, navigate]);
 
   if (loading || !user) {
     return <div className="min-h-[60vh] grid place-items-center"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
@@ -80,14 +80,19 @@ function Profile() {
     }
     setBusy(true);
     try {
-      const { error } = await supabase.from("profiles").upsert({
-        id: user.id,
-        display_name: name,
-        selected_exam: examSlug,
-        preparation_year: year,
-        target: targetLabel,
-      });
-      if (error) throw error;
+      const { data: onboardingData, error: onboardingError } = await supabase.rpc(
+        "complete_onboarding",
+        { _exam_slug: examSlug, _year: year },
+      );
+      if (onboardingError) throw onboardingError;
+      const onboarding = (onboardingData ?? {}) as { ok?: boolean; error?: string };
+      if (!onboarding.ok) throw new Error(onboarding.error ?? "Could not update exam settings");
+
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({ display_name: name.trim().slice(0, 100) })
+        .eq("id", user.id);
+      if (profileError) throw profileError;
       toast.success("Profile saved");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Save failed");
@@ -146,7 +151,7 @@ function Profile() {
             <h2 className="text-xl sm:text-2xl font-bold">Edit profile</h2>
             <div className="mt-6">
               <label className="text-xs tracking-widest text-muted-foreground">DISPLAY NAME</label>
-              <input value={name} onChange={(e) => setName(e.target.value)}
+              <input value={name} maxLength={100} onChange={(e) => setName(e.target.value)}
                 className="mt-2 w-full min-w-0 rounded-2xl border border-border bg-transparent px-4 py-3 outline-none focus:border-primary transition" />
             </div>
             <div className="mt-5">
@@ -312,7 +317,7 @@ function Profile() {
           )}
         </section>
 
-        <SubmitMaterial userId={user.id} email={user.email} />
+        <SubmitMaterial userId={user.id} />
       </div>
     </main>
   );
