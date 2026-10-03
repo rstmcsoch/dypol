@@ -14,6 +14,90 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_download_settings: {
+        Row: {
+          apk_url: string
+          created_at: string
+          description: string
+          dismiss_label: string
+          download_label: string
+          enabled: boolean
+          file_size_label: string
+          image_url: string | null
+          key: string
+          note_text: string
+          title: string
+          updated_at: string
+          version: string
+          whats_new: string
+        }
+        Insert: {
+          apk_url?: string
+          created_at?: string
+          description?: string
+          dismiss_label?: string
+          download_label?: string
+          enabled?: boolean
+          file_size_label?: string
+          image_url?: string | null
+          key?: string
+          note_text?: string
+          title?: string
+          updated_at?: string
+          version?: string
+          whats_new?: string
+        }
+        Update: {
+          apk_url?: string
+          created_at?: string
+          description?: string
+          dismiss_label?: string
+          download_label?: string
+          enabled?: boolean
+          file_size_label?: string
+          image_url?: string | null
+          key?: string
+          note_text?: string
+          title?: string
+          updated_at?: string
+          version?: string
+          whats_new?: string
+        }
+        Relationships: []
+      }
+      app_download_user_states: {
+        Row: {
+          created_at: string
+          dismissed_at: string | null
+          download_clicked_at: string | null
+          popup_seen_at: string | null
+          shown_version: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dismissed_at?: string | null
+          download_clicked_at?: string | null
+          popup_seen_at?: string | null
+          shown_version?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dismissed_at?: string | null
+          download_clicked_at?: string | null
+          popup_seen_at?: string | null
+          shown_version?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       bookmarks: {
         Row: {
           created_at: string
@@ -1190,6 +1274,7 @@ export type Database = {
         Args: { _delta: number; _session_id: string }
         Returns: Json
       }
+      admin_app_popup_stats: { Args: never; Returns: Json }
       admin_block_user: {
         Args: {
           _action: string
@@ -1219,6 +1304,8 @@ export type Database = {
         Returns: Json
       }
       admin_user_profile: { Args: { _user_id: string }; Returns: Json }
+      app_popup_check: { Args: never; Returns: Json }
+      app_popup_mark: { Args: { _action: string }; Returns: Json }
       complete_onboarding: {
         Args: { _exam_slug: string; _year: number }
         Returns: Json

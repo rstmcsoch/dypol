@@ -380,7 +380,7 @@ const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
 
 export async function uploadSiteAsset(
   file: File,
-  folder: "logo" | "hero" | "share" | "misc",
+  folder: "logo" | "hero" | "share" | "misc" | "app-releases",
 ): Promise<string> {
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "png";
   const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
