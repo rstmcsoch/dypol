@@ -323,66 +323,6 @@ export type Database = {
         }
         Relationships: []
       }
-      exam_years: {
-        Row: {
-          created_at: string
-          enabled: boolean
-          exam_id: string
-          id: string
-          sort_order: number
-          updated_at: string
-          year: number
-        }
-        Insert: {
-          created_at?: string
-          enabled?: boolean
-          exam_id: string
-          id?: string
-          sort_order?: number
-          updated_at?: string
-          year: number
-        }
-        Update: {
-          created_at?: string
-          enabled?: boolean
-          exam_id?: string
-          id?: string
-          sort_order?: number
-          updated_at?: string
-          year?: number
-        }
-        Relationships: []
-      }
-      exams: {
-        Row: {
-          created_at: string
-          enabled: boolean
-          id: string
-          name: string
-          slug: string
-          sort_order: number
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          enabled?: boolean
-          id?: string
-          name: string
-          slug: string
-          sort_order?: number
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          enabled?: boolean
-          id?: string
-          name?: string
-          slug?: string
-          sort_order?: number
-          updated_at?: string
-        }
-        Relationships: []
-      }
       essentials: {
         Row: {
           created_at: string
@@ -419,6 +359,74 @@ export type Database = {
           title?: string
           updated_at?: string
           url?: string
+        }
+        Relationships: []
+      }
+      exam_years: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          exam_id: string
+          id: string
+          sort_order: number
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          exam_id: string
+          id?: string
+          sort_order?: number
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          exam_id?: string
+          id?: string
+          sort_order?: number
+          updated_at?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_years_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exams: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -530,6 +538,36 @@ export type Database = {
         }
         Relationships: []
       }
+      material_filters: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          id: string
+          kind: string
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          kind: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          kind?: string
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       material_unlocks: {
         Row: {
           amount_paid: number
@@ -623,37 +661,15 @@ export type Database = {
           type?: string
           updated_at?: string
         }
-        Relationships: []
-      }
-      material_filters: {
-        Row: {
-          created_at: string
-          enabled: boolean
-          id: string
-          kind: string
-          name: string
-          sort_order: number
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          enabled?: boolean
-          id?: string
-          kind: string
-          name: string
-          sort_order?: number
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          enabled?: boolean
-          id?: string
-          kind?: string
-          name?: string
-          sort_order?: number
-          updated_at?: string
-        }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "materials_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       nav_items: {
         Row: {
@@ -775,6 +791,8 @@ export type Database = {
           blocked_by: string | null
           blocked_until: string | null
           created_at: string
+          dio_balance: number | null
+          dio_cost: number | null
           display_name: string | null
           id: string
           is_guest: boolean
@@ -796,6 +814,8 @@ export type Database = {
           blocked_by?: string | null
           blocked_until?: string | null
           created_at?: string
+          dio_balance?: number | null
+          dio_cost?: number | null
           display_name?: string | null
           id: string
           is_guest?: boolean
@@ -817,6 +837,8 @@ export type Database = {
           blocked_by?: string | null
           blocked_until?: string | null
           created_at?: string
+          dio_balance?: number | null
+          dio_cost?: number | null
           display_name?: string | null
           id?: string
           is_guest?: boolean
@@ -1138,56 +1160,42 @@ export type Database = {
       }
     }
     Views: {
-      materials_catalog: {
-        Row: {
-          created_at: string
-          credit_name: string | null
-          description: string
-          dio_cost: number
-          exam_id: string | null
-          has_link: boolean
-          id: string
-          image_url: string | null
-          link: string
-          slug: string | null
-          sort_order: number
-          subject: string
-          tier: string
-          title: string
-          type: string
-          updated_at: string
-        }
-        Relationships: []
-      }
-      portals_catalog: {
-        Row: {
-          created_at: string
-          credit_name: string | null
-          description: string
-          dio_cost: number
-          has_link: boolean
-          id: string
-          link: string
-          link_count: number
-          logo_url: string | null
-          name: string
-          slug: string | null
-          sort_order: number
-          updated_at: string
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
-      activity_begin: { Args: { _client_id?: string }; Returns: string | null }
-      activity_end: { Args: { _delta?: number; _session_id: string }; Returns: Json }
-      activity_heartbeat: { Args: { _delta?: number; _session_id: string }; Returns: Json }
+      _quote_appearance: {
+        Args: { s: Database["public"]["Tables"]["quote_settings"]["Row"] }
+        Returns: Json
+      }
+      _quote_ids_of: { Args: { p_value: Json }; Returns: string[] }
+      _quote_json: { Args: { p_any: boolean; p_ids: string[] }; Returns: Json }
+      _quote_period: {
+        Args: {
+          s: Database["public"]["Tables"]["quote_settings"]["Row"]
+          v_now: string
+          v_tz: string
+        }
+        Returns: {
+          boundary: string
+          period_key: string
+        }[]
+      }
+      _quote_tz: { Args: { p_tz: string }; Returns: string }
+      activity_begin: { Args: { _client_id?: string }; Returns: string }
+      activity_end: {
+        Args: { _delta: number; _session_id: string }
+        Returns: Json
+      }
+      activity_heartbeat: {
+        Args: { _delta: number; _session_id: string }
+        Returns: Json
+      }
       admin_block_user: {
         Args: {
           _action: string
-          _duration_hours?: number | null
-          _reason?: string | null
-          _start_at?: string | null
+          _duration_hours?: number
+          _reason?: string
+          _start_at?: string
           _user_id: string
         }
         Returns: Json
@@ -1206,19 +1214,15 @@ export type Database = {
         }
         Returns: Json
       }
-      admin_user_profile: { Args: { _user_id: string }; Returns: Json }
-      catalog_resource_access: {
-        Args: { _item_id: string; _kind: string }
-        Returns: { has_link: boolean; link: string }[]
-      }
       admin_quote_action: {
-        Args: { p_action: string; p_quote_id?: string | null }
+        Args: { p_action: string; p_quote_id?: string }
         Returns: Json
       }
-      complete_onboarding: { Args: { _exam_slug: string; _year: number }; Returns: Json }
-      get_onboarding_options: { Args: never; Returns: Json }
-      user_is_blocked: { Args: { _uid: string }; Returns: boolean }
-      user_is_onboarded: { Args: { _uid: string }; Returns: boolean }
+      admin_user_profile: { Args: { _user_id: string }; Returns: Json }
+      complete_onboarding: {
+        Args: { _exam_slug: string; _year: number }
+        Returns: Json
+      }
       dio_ad_award: { Args: { _reference: string }; Returns: Json }
       dio_ad_start: { Args: { _offer_id: string }; Returns: Json }
       dio_admin_adjust: {
@@ -1291,10 +1295,8 @@ export type Database = {
         Args: { _item_id: string; _item_kind: string }
         Returns: Json
       }
-      get_active_quotes: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
+      get_active_quotes: { Args: never; Returns: Json }
+      get_onboarding_options: { Args: never; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1302,6 +1304,8 @@ export type Database = {
         }
         Returns: boolean
       }
+      user_is_blocked: { Args: { _uid: string }; Returns: boolean }
+      user_is_onboarded: { Args: { _uid: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "user"
@@ -1320,12 +1324,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1349,11 +1353,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1374,11 +1378,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1399,11 +1403,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1416,11 +1420,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
