@@ -41,7 +41,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: Admin,
 });
 
-type Tab = "site" | "home" | "quotes" | "materials" | "portals" | "essentials" | "pages" | "navigation" | "submissions" | "users" | "exams" | "filters" | "dio" | "assistant" | "account";
+type Tab = "site" | "home" | "quotes" | "materials" | "portals" | "essentials" | "pages" | "navigation" | "submissions" | "users" | "exams" | "filters" | "dio" | "app" | "assistant" | "account";
 
 
 
