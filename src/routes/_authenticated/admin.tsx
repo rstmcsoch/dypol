@@ -33,6 +33,8 @@ import { AssistantTab } from "@/components/admin/AssistantTab";
 import UsersTab from "@/components/admin/UsersTab";
 import ExamsTab from "@/components/admin/ExamsTab";
 import FiltersTab from "@/components/admin/FiltersTab";
+import { AppPopupTab } from "@/components/admin/AppPopupTab";
+import { Smartphone as SmartphoneIcon } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Dypol" }] }),
@@ -127,6 +129,7 @@ function Admin() {
             { k: "exams", label: "Exams", icon: GraduationCap },
             { k: "filters", label: "Filters", icon: SlidersHorizontal },
             { k: "dio", label: "Dio", icon: StarIcon },
+            { k: "app", label: "App Popup", icon: SmartphoneIcon },
             { k: "assistant", label: "Assistant", icon: Bot },
             { k: "account", label: "Account", icon: LogOut },
           ].map((t) => {
@@ -161,6 +164,7 @@ function Admin() {
           {tab === "exams" && <ExamsTab />}
           {tab === "filters" && <FiltersTab />}
           {tab === "dio" && <DioTab />}
+          {tab === "app" && <AppPopupTab />}
           {tab === "assistant" && <AssistantTab />}
           {tab === "account" && <AccountTab />}
 

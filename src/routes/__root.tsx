@@ -16,6 +16,7 @@ import { AppNav } from "@/components/nav/AppNav";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 import { ActivityTracker } from "@/components/ActivityTracker";
+import { AppDownloadPopup } from "@/components/app-popup/AppDownloadPopup";
 import { getAccountState, invalidateAccountState } from "@/lib/account";
 
 /** Routes that are reachable without completed onboarding / while blocked. */
@@ -179,6 +180,7 @@ function RootComponent() {
           <AppNav />
           <div className="app-content"><Outlet /></div>
           <ActivityTracker />
+          <AppDownloadPopup />
           <Toaster position="top-right" richColors />
         </div>
       </ThemeProvider>
