@@ -18,6 +18,7 @@ import { Route as DmcaRouteImport } from './routes/dmca'
 import { Route as EarnDioRouteImport } from './routes/earnDio'
 import { Route as EssentialsRouteImport } from './routes/essentials'
 import { Route as MaterialsRouteImport } from './routes/materials'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as PortalsRouteImport } from './routes/portals'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -25,7 +26,9 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as WelcomeRouteImport } from './routes/welcome'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as ApiPublicDioAdPostbackRouteImport } from './routes/api/public/dio/ad-postback'
 
 const IndexRoute = IndexRouteImport.update({
@@ -72,6 +75,11 @@ const MaterialsRoute = MaterialsRouteImport.update({
   path: '/materials',
   getParentRoute: () => rootRouteImport,
 } as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -107,10 +115,21 @@ const WelcomeRoute = WelcomeRouteImport.update({
   path: '/welcome',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicDioAdPostbackRoute = ApiPublicDioAdPostbackRouteImport.update({
   id: '/api/public/dio/ad-postback',
@@ -127,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/earnDio': typeof EarnDioRoute
   '/essentials': typeof EssentialsRoute
   '/materials': typeof MaterialsRoute
+  '/mcp': typeof McpRoute
   '/onboarding': typeof OnboardingRoute
   '/portals': typeof PortalsRoute
   '/privacy': typeof PrivacyRoute
@@ -134,7 +154,9 @@ export interface FileRoutesByFullPath {
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/welcome': typeof WelcomeRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/api/public/dio/ad-postback': typeof ApiPublicDioAdPostbackRoute
 }
 export interface FileRoutesByTo {
@@ -146,6 +168,7 @@ export interface FileRoutesByTo {
   '/earnDio': typeof EarnDioRoute
   '/essentials': typeof EssentialsRoute
   '/materials': typeof MaterialsRoute
+  '/mcp': typeof McpRoute
   '/onboarding': typeof OnboardingRoute
   '/portals': typeof PortalsRoute
   '/privacy': typeof PrivacyRoute
@@ -153,7 +176,9 @@ export interface FileRoutesByTo {
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/welcome': typeof WelcomeRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/api/public/dio/ad-postback': typeof ApiPublicDioAdPostbackRoute
 }
 export interface FileRoutesById {
@@ -167,6 +192,7 @@ export interface FileRoutesById {
   '/earnDio': typeof EarnDioRoute
   '/essentials': typeof EssentialsRoute
   '/materials': typeof MaterialsRoute
+  '/mcp': typeof McpRoute
   '/onboarding': typeof OnboardingRoute
   '/portals': typeof PortalsRoute
   '/privacy': typeof PrivacyRoute
@@ -174,7 +200,9 @@ export interface FileRoutesById {
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/welcome': typeof WelcomeRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/api/public/dio/ad-postback': typeof ApiPublicDioAdPostbackRoute
 }
 export interface FileRouteTypes {
@@ -188,6 +216,7 @@ export interface FileRouteTypes {
     | '/earnDio'
     | '/essentials'
     | '/materials'
+    | '/mcp'
     | '/onboarding'
     | '/portals'
     | '/privacy'
@@ -195,7 +224,9 @@ export interface FileRouteTypes {
     | '/support'
     | '/terms'
     | '/welcome'
+    | '/.well-known/oauth-protected-resource'
     | '/admin'
+    | '/.lovable/oauth/consent'
     | '/api/public/dio/ad-postback'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -207,6 +238,7 @@ export interface FileRouteTypes {
     | '/earnDio'
     | '/essentials'
     | '/materials'
+    | '/mcp'
     | '/onboarding'
     | '/portals'
     | '/privacy'
@@ -214,7 +246,9 @@ export interface FileRouteTypes {
     | '/support'
     | '/terms'
     | '/welcome'
+    | '/.well-known/oauth-protected-resource'
     | '/admin'
+    | '/.lovable/oauth/consent'
     | '/api/public/dio/ad-postback'
   id:
     | '__root__'
@@ -227,6 +261,7 @@ export interface FileRouteTypes {
     | '/earnDio'
     | '/essentials'
     | '/materials'
+    | '/mcp'
     | '/onboarding'
     | '/portals'
     | '/privacy'
@@ -234,7 +269,9 @@ export interface FileRouteTypes {
     | '/support'
     | '/terms'
     | '/welcome'
+    | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
+    | '/.lovable/oauth/consent'
     | '/api/public/dio/ad-postback'
   fileRoutesById: FileRoutesById
 }
@@ -248,6 +285,7 @@ export interface RootRouteChildren {
   EarnDioRoute: typeof EarnDioRoute
   EssentialsRoute: typeof EssentialsRoute
   MaterialsRoute: typeof MaterialsRoute
+  McpRoute: typeof McpRoute
   OnboardingRoute: typeof OnboardingRoute
   PortalsRoute: typeof PortalsRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -255,6 +293,8 @@ export interface RootRouteChildren {
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
   WelcomeRoute: typeof WelcomeRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   ApiPublicDioAdPostbackRoute: typeof ApiPublicDioAdPostbackRoute
 }
 
@@ -323,6 +363,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MaterialsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -372,12 +419,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WelcomeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/dio/ad-postback': {
       id: '/api/public/dio/ad-postback'
@@ -410,6 +471,7 @@ const rootRouteChildren: RootRouteChildren = {
   EarnDioRoute: EarnDioRoute,
   EssentialsRoute: EssentialsRoute,
   MaterialsRoute: MaterialsRoute,
+  McpRoute: McpRoute,
   OnboardingRoute: OnboardingRoute,
   PortalsRoute: PortalsRoute,
   PrivacyRoute: PrivacyRoute,
@@ -417,6 +479,9 @@ const rootRouteChildren: RootRouteChildren = {
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
   WelcomeRoute: WelcomeRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   ApiPublicDioAdPostbackRoute: ApiPublicDioAdPostbackRoute,
 }
 export const routeTree = rootRouteImport
