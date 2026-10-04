@@ -1,3 +1,4 @@
+import type { ErrorComponentProps } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -42,7 +43,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
@@ -73,7 +74,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   // Global account guard: mandatory onboarding and block enforcement in the
   // navigation layer. Runs client-side (most routes are ssr:false); the
   // authoritative enforcement lives in the database (RLS + RPC checks).
-  beforeLoad: async ({ location }): Promise<void> => {
+  beforeLoad: async ({ location }) => {
     if (typeof window === "undefined") return; // server render: skip
     const path = location.pathname;
     if (GUARD_EXEMPT.has(path)) return;
