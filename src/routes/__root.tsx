@@ -73,7 +73,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   // Global account guard: mandatory onboarding and block enforcement in the
   // navigation layer. Runs client-side (most routes are ssr:false); the
   // authoritative enforcement lives in the database (RLS + RPC checks).
-  beforeLoad: async ({ location }) => {
+  beforeLoad: async ({ location }): Promise<void> => {
     if (typeof window === "undefined") return; // server render: skip
     const path = location.pathname;
     if (GUARD_EXEMPT.has(path)) return;
