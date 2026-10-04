@@ -9,11 +9,16 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Sign in — Dypol" }] }),
   ssr: false,
+  validateSearch: (s: Record<string, unknown>) => ({
+    next: typeof s.next === "string" && s.next.startsWith("/") && !s.next.startsWith("//") ? s.next : undefined,
+  }),
   component: AuthPage,
 });
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
+  const go = () => (next ? window.location.assign(next) : navigate({ to: "/" }));
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,7 +27,7 @@ function AuthPage() {
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: "/" });
+      if (data.user) go();
     });
   }, [navigate]);
 
@@ -36,18 +41,18 @@ function AuthPage() {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/`,
+            emailRedirectTo: `${window.location.origin}${next ?? "/"}`,
             data: { display_name: displayName || email.split("@")[0] },
           },
         });
         if (error) throw error;
         toast.success("Welcome — you're signed in!");
-        navigate({ to: "/" });
+        go();
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Welcome back!");
-        navigate({ to: "/" });
+        go();
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Something went wrong";
@@ -92,12 +97,12 @@ function AuthPage() {
               setBusy(true);
               try {
                 const result = await lovable.auth.signInWithOAuth("google", {
-                  redirect_uri: `${window.location.origin}/auth`,
+                  redirect_uri: `${window.location.origin}/auth${next ? `?next=${encodeURIComponent(next)}` : ""}`,
                 });
                 if (result.error) throw result.error instanceof Error ? result.error : new Error(String(result.error));
                 if (result.redirected) return;
                 toast.success("Signed in with Google");
-                navigate({ to: "/" });
+                go();
               } catch (err) {
                 toast.error(err instanceof Error ? err.message : "Google sign-in failed");
               } finally {
