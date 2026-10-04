@@ -82,8 +82,8 @@ function addLegacyPortalLinkState(rows: Array<Omit<Portal, "has_link">>): Portal
 export const materialsQO = queryOptions({
   queryKey: ["materials"],
   queryFn: async (): Promise<Material[]> => {
-    const catalog = await supabase
-      .from("materials_catalog")
+    const catalog = await catalogFrom("materials_catalog")
+      
       .select("*")
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: true });
@@ -152,7 +152,7 @@ export const materialsPageQO = (f: MaterialsPageFilters) =>
       const offset = (page - 1) * pageSize;
 
       const pageQuery = applyMaterialFilters(
-        supabase.from("materials_catalog").select(MATERIAL_COLUMNS),
+        catalogFrom("materials_catalog").select(MATERIAL_COLUMNS),
         f,
       )
         .order("sort_order", { ascending: true })
@@ -160,7 +160,7 @@ export const materialsPageQO = (f: MaterialsPageFilters) =>
         .range(offset, offset + pageSize - 1);
 
       const countQuery = applyMaterialFilters(
-        supabase.from("materials_catalog").select("id", { count: "exact", head: true }),
+        catalogFrom("materials_catalog").select("id", { count: "exact", head: true }),
         f,
       );
 
@@ -215,8 +215,8 @@ export const materialsPageQO = (f: MaterialsPageFilters) =>
 export const portalsQO = queryOptions({
   queryKey: ["portals"],
   queryFn: async (): Promise<Portal[]> => {
-    const catalog = await supabase
-      .from("portals_catalog")
+    const catalog = await catalogFrom("portals_catalog")
+      
       .select("*")
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: true });
@@ -393,4 +393,11 @@ export async function uploadSiteAsset(
     .createSignedUrl(path, TEN_YEARS);
   if (error || !data?.signedUrl) throw error ?? new Error("Failed to sign URL");
   return data.signedUrl;
+}
+
+// Catalog views may not exist yet in the generated schema; callers fall back to base tables.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function catalogFrom(name: "materials_catalog" | "portals_catalog"): any {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (supabase as any).from(name);
 }

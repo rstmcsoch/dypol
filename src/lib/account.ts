@@ -159,9 +159,9 @@ export const adminSetBlock = createServerFn({ method: "POST" })
     const { data: rpcData, error: rpcError } = await supabase.rpc("admin_block_user", {
       _user_id: data.userId,
       _action: data.action,
-      _duration_hours: data.durationHours ?? null,
+      _duration_hours: data.durationHours ?? undefined,
       _reason: data.reason ?? "",
-      _start_at: data.startAt ?? null,
+      _start_at: data.startAt ?? undefined,
     });
     if (rpcError) throw rpcError;
     const res = (rpcData ?? { ok: false, error: "UNKNOWN" }) as unknown as BlockResult;

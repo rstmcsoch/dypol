@@ -270,7 +270,7 @@ export function useQuoteAction() {
     mutationFn: async ({ action, quoteId }: { action: QuoteAction; quoteId?: string | null }) => {
       const { data, error } = await supabase.rpc("admin_quote_action", {
         p_action: action,
-        p_quote_id: quoteId ?? null,
+        p_quote_id: quoteId ?? undefined,
       });
       if (error) throw error;
       return (data ?? {}) as unknown as ActiveQuotesPayload;
