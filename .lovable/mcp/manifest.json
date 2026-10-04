@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "sdk_version": "3.0.4",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://xddeqahagxpermvrsknj.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "dypol-labs",
+      "version": "0.1.0",
+      "title": "DYPOL LABS"
+    },
+    "tools": [
+      {
+        "name": "list_materials",
+        "title": "List study materials",
+        "description": "List Dypol study materials, optionally filtered by subject or a title search.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "subject": {
+              "description": "Subject to filter by, e.g. Physics.",
+              "type": "string",
+              "maxLength": 60
+            },
+            "search": {
+              "description": "Text to search for in titles.",
+              "type": "string",
+              "maxLength": 100
+            },
+            "limit": {
+              "default": 20,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          },
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_my_account",
+        "title": "Get my account",
+        "description": "Show the signed-in user's target exam, Dio balance, and saved bookmarks.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
