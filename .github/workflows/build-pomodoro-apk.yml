@@ -4,6 +4,8 @@ on:
   workflow_dispatch:
   push:
     branches: [pomodoro-apk]
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: read
